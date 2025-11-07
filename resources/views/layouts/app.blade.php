@@ -50,51 +50,44 @@
         </div>
       </div>
           <!-- Avatar -->
-      <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" 
+      <!-- <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" 
            class="w-8 h-8 rounded-full border text-gray-600">
         <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 
                  0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/>
-      </svg>
+      </svg> -->
     </div>
   </header>
 
   <!-- MAIN WRAPPER (SIDEBAR + CONTENT) -->
   <div class="flex flex-1 overflow-hidden">
-    
-    <!-- SIDEBAR -->
-     <aside class="w-64 bg-white border-r border-gray-200 flex flex-col justify-between">
+  
+<!-- SIDEBAR -->
+<aside id="sidebar" 
+       class="w-64 bg-white border-r border-gray-200 flex flex-col justify-between relative transition-all duration-300">
 
-      <!-- Common menu -->
-       <!-- Dashboard Button -->
-      <a href="/dashboard" 
-         class="flex items-center gap-3 px-6 py-4 font-semibold cursor-pointer
-                {{ request()->is('*dashboard') ? 'bg-red-900 text-white' : 'text-red-900 hover:bg-red-800 hover:text-white' }}
-                transition-colors rounded-r-lg w-full">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6">
-          <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
-        </svg>
-        <span class="text-base">Dashboard</span>
-      </a>
-      
-  <!-- ✅ Sidebar Menu with flex-grow -->
+<!-- Toggle Button -->
+<button id="sidebarToggle" 
+        class="absolute top-[28px] -right-3 transform -translate-y-1/2 
+               bg-white text-red-900 rounded-full shadow p-1 hover:bg-gray-100 transition">
+
+  <!-- Arrow To Right (visible only when collapsed) -->
+  <svg id="iconExpand" xmlns="http://www.w3.org/2000/svg" width="16" height="16"  
+       fill="currentColor" viewBox="0 0 24 24" class="hidden">
+    <path d="M18 6h2v12h-2zM11.71 17.29 7.41 13H16v-2H7.41l4.3-4.29-1.42-1.42L3.59 12l6.7 6.71z"/>
+  </svg>
+
+  <!-- Arrow From Left (visible only when expanded) -->
+  <svg id="iconCollapse" xmlns="http://www.w3.org/2000/svg" width="16" height="16"  
+       fill="currentColor" viewBox="0 0 24 24">
+    <path d="M4 6h2v12H4zM12.29 6.71l4.3 4.29H8v2h8.59l-4.3 4.29 1.42 1.42 6.7-6.71-6.7-6.71z"/>
+  </svg>
+</button>
+
+  <!-- Dynamic sidebar items -->
   <nav class="flex-grow space-y-3">
     @yield('sidebar')
   </nav>
-
-      <!-- ✅ Logout Button (NOT colored by default) -->
-      <div class="border-t border-gray-200">
-        <a href="#" class="flex items-center gap-3 px-6 py-4 font-medium text-red-900 hover:bg-red-800 hover:text-white transition-colors rounded-r-lg w-full">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" 
-               viewBox="0 0 24 24" class="w-6 h-6">
-            <path d="M16 13v-2H7V8l-5 4 5 4v-3h9zm3-10H5c-1.1 
-                     0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 
-                     1.1.9 2 2 2h14c1.1 0 2-.9 
-                     2-2V5c0-1.1-.9-2-2-2z"/>
-          </svg>
-          <span class="text-base">Log out</span>
-        </a>
-      </div>
-    </aside>
+</aside>
 
   <!-- CONTENT AREA -->
     <main class="flex-1 bg-white flex flex-col">
@@ -116,5 +109,10 @@
       </footer>
     </main>
   </div>
+  <!-- <div class="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40" id="mobile-overlay"></div> -->
+</div>
+
+@stack('scripts')
+
 </body>
 </html>

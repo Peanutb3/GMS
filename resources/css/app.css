@@ -13,3 +13,12 @@
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
+/* Collapse sidebar */
+.sidebar-collapsed {
+  width: 4rem; /* Tailwind w-16 */
+}
+
+/* Hide only text, keep icons */
+.sidebar-collapsed .sidebar-text {
+  display: none;
+}

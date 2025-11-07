@@ -21,3 +21,9 @@ class DashboardController extends Controller
         abort(403, 'Unauthorized');
     }
 }
+
+// public function index()
+// {
+//     $grievances = Grievance::latest()->take(5)->get();
+//     return view('dashboard', compact('grievances'));
+// }

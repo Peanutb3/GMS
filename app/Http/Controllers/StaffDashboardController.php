@@ -9,10 +9,15 @@ class StaffDashboardController extends Controller
 {
     public function index()
     {
-        $staffName = Auth::user()->name;
+        $user = Auth::user();
+        $staffName = $user->name;
 
-    // Query builder for grievances filed by this staff
-    $baseQuery = Grievance::where('filed_by', $staffName);
+        // Prefer staff FK when available; fallback to name snapshot for legacy/self-filed
+        if ($user && $user->role === 'staff' && $user->staff) {
+            $baseQuery = Grievance::where('filed_by_staff_id', $user->staff->id);
+        } else {
+            $baseQuery = Grievance::where('filed_by_name_snapshot', $staffName);
+        }
 
     // Summary counts (run efficient queries)
     $totalGrievances = (clone $baseQuery)->count();

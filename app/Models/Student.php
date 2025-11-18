@@ -35,4 +35,9 @@ class Student extends Model
             ? asset('storage/' . $this->profile_photo_path)
             : null; // null means we’ll render SVG instead
     }
+
+    public function grievances()
+    {
+        return $this->hasMany(Grievance::class, 'student_record_id');
+    }
 }

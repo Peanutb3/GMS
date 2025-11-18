@@ -12,8 +12,8 @@ class StudentDashboardController extends Controller
     {
         $student = Auth::user()->student;
 
-        // Retrieve grievances that belong to this student
-        $myGrievances = Grievance::where('student_id', $student->student_id ?? '')
+        // Retrieve grievances by the normalized FK (student_record_id)
+        $myGrievances = Grievance::where('student_record_id', $student->id ?? null)
             ->orderByDesc('created_at')
             ->get();
 

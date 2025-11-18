@@ -1,13 +1,24 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GrievanceController;
 use App\Http\Controllers\StaffDashboardController;
+use App\Http\Controllers\StaffRequestsController;
+use App\Http\Controllers\GoodMoralRequestController;
 use App\Http\Controllers\StudentDashboardController;
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AdminGrievanceController;
+use App\Http\Controllers\AdminStudentController;
+use App\Http\Controllers\AdminStaffController;
+use App\Http\Controllers\AdminManagementController;
+use App\Http\Controllers\AdminRequestController;
+use App\Http\Controllers\AdminSettingsController;
+use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\StaffProfileController;
+use App\Http\Controllers\SafeLoanRequestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +32,12 @@ Route::get('/signup/step2', [AuthController::class, 'showStep2'])->name('signup.
 Route::post('/signup/step2', [AuthController::class, 'storeStep2'])->name('signup.step2.store');
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/requests/good-moral', [GoodMoralRequestController::class, 'store'])->name('good-moral.store');
+Route::get('/requests/good-moral/{requestModel}/print', [GoodMoralRequestController::class, 'print'])->name('good-moral.print');
+Route::post('/requests/safe-loan', [SafeLoanRequestController::class, 'store'])->name('safe-loan.store');
+Route::get('/requests/safe-loan/{requestModel}', [SafeLoanRequestController::class, 'show'])->name('safe-loan.show');
+Route::get('/requests/safe-loan/{requestModel}/print', [SafeLoanRequestController::class, 'print'])->name('safe-loan.print');
+Route::get('/requests/safe-loan/{requestModel}/print', [SafeLoanRequestController::class, 'print'])->name('safe-loan.print');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
@@ -39,12 +56,23 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:staff'])->prefix('staff')->group(function () {
-    // ✅ Now uses a controller — can pass real stats, counts, etc.
+    // Now uses a controller — can pass real stats, counts, etc.
     Route::get('/dashboard', [StaffDashboardController::class, 'index'])->name('staff.dashboard');
+
+    // Requests (Good Moral & Safe Loan)
+    Route::get('/requests', [StaffRequestsController::class, 'index'])->name('staff.requests');
+    Route::patch('/requests/{type}/{id}/check', [StaffRequestsController::class, 'check'])
+        ->whereIn('type', ['goodmoral','safeloan'])
+        ->name('staff.requests.check');
+    Route::post('/requests/{type}/{id}/check', [StaffRequestsController::class, 'check'])->name('staff.requests.check');
 
     // Grievances
     Route::get('/grievances', [GrievanceController::class, 'index'])->name('staff.grievances');
     Route::post('/grievances', [GrievanceController::class, 'store'])->name('staff.grievances.store');
+    Route::patch('/grievances/{grievance}/status', [GrievanceController::class, 'updateStatus'])->name('staff.grievances.status');
+    Route::patch('/grievances/{grievance}/resolve', [GrievanceController::class, 'resolve'])->name('staff.grievances.resolve');
+    Route::delete('/grievances/{grievance}', [GrievanceController::class, 'destroy'])->name('staff.grievances.destroy');
+    Route::get('/audit-logs', [\App\Http\Controllers\AuditLogController::class, 'index'])->name('staff.audit.index');
 
     // Student lookup for form autofill
     Route::get('/students/find/{studentId}', [GrievanceController::class, 'findStudent'])->name('students.find');
@@ -65,15 +93,62 @@ Route::middleware(['auth', 'role:staff'])->prefix('staff')->group(function () {
 Route::middleware(['auth', 'role:student'])->prefix('student')->group(function () {
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('student.dashboard');
     Route::get('/grievances', [GrievanceController::class, 'studentIndex'])->name('student.grievances');
-    // Good Moral / OSAS request page
-    Route::get('/request', function () {
-        return view('request');
-    })->name('student.request-good-moral');
+    // Good Moral / OSAS request page (moved outside student middleware - see separate public route)
     // Use controller so we can pass $user and $student into the view
     Route::get('/profile', [\App\Http\Controllers\StudentProfileController::class, 'show'])->name('student.profile');
     Route::get('/profile/edit', [\App\Http\Controllers\StudentProfileController::class, 'edit'])->name('student.profile.edit');
     Route::patch('/profile', [\App\Http\Controllers\StudentProfileController::class, 'update'])->name('student.profile.update');
 });
+
+Route::get('/request', function () {
+    $studentId = Auth::check() && Auth::user()->role === 'student'
+        ? optional(Auth::user()->student)->id
+        : null;
+    return view('request', ['studentId' => $studentId]);
+})->name('request');
+
+// Local-only preview routes for adjusting print format
+if (app()->environment('local')) {
+    Route::get('/preview/print', function () {
+        $req = (object) [
+            'student' => (object) [
+                'email' => 'student@example.com',
+                'contact' => '0917 123 4567',
+                'last_name' => 'Dela Cruz',
+                'first_name' => 'Juan',
+                'middle_name' => 'Santos',
+                'gender' => 'Male',
+                'program' => 'BSIT - 3rd Year',
+                'year_level' => null,
+                'status' => 'Currently Enrolled',
+                'year_graduated' => null,
+            ],
+            'purpose' => 'For scholarship application',
+            'copies' => 2,
+        ];
+        return view('print', compact('req'));
+    })->name('print.preview');
+
+    Route::get('/preview/print/custom', function (\Illuminate\Http\Request $r) {
+        $req = (object) [
+            'student' => (object) [
+                'email' => $r->query('email', 'student@example.com'),
+                'contact' => $r->query('contact', '0917 123 4567'),
+                'last_name' => $r->query('last', 'Dela Cruz'),
+                'first_name' => $r->query('first', 'Juan'),
+                'middle_name' => $r->query('middle', 'Santos'),
+                'gender' => $r->query('gender', 'Male'),
+                'program' => $r->query('program', 'BSIT - 3rd Year'),
+                'year_level' => null,
+                'status' => $r->query('status', 'Currently Enrolled'),
+                'year_graduated' => $r->query('grad', null),
+            ],
+            'purpose' => $r->query('purpose', 'For scholarship application'),
+            'copies' => (int) $r->query('copies', 2),
+        ];
+        return view('print', compact('req'));
+    })->name('print.preview.custom');
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -81,24 +156,52 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->group(function (
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+    // Dashboard
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
-    // Static admin pages
-    Route::view('/manage-staff', 'admin.manageusers')->name('admin.manage-staff');
-    Route::view('/manage-students', 'admin.managestudents')->name('admin.manage-students');
-    Route::view('/all-grievances-reports', 'admin.allgrievancesreports')->name('admin.all-grievances-reports');
-    Route::view('/action-history', 'admin.actionhistory')->name('admin.action-history');
+    // Grievances Management
+    Route::get('/grievances', [AdminGrievanceController::class, 'index'])->name('admin.grievances');
+    Route::get('/grievances/{id}', [AdminGrievanceController::class, 'show'])->name('admin.grievances.show');
+    Route::post('/grievances/{id}/status', [AdminGrievanceController::class, 'updateStatus'])->name('admin.grievances.update-status');
+    Route::delete('/grievances/{id}', [AdminGrievanceController::class, 'destroy'])->name('admin.grievances.destroy');
+
+    // Request Management
+    Route::get('/requests/good-moral', [AdminRequestController::class, 'goodMoral'])->name('admin.requests.good-moral');
+    Route::get('/requests/safe-loan', [AdminRequestController::class, 'safeLoan'])->name('admin.requests.safe-loan');
+
+    // Student Management
+    Route::get('/manage-students', [AdminStudentController::class, 'index'])->name('admin.manage-students');
+    Route::get('/students/create', [AdminStudentController::class, 'create'])->name('admin.students.create');
+    Route::post('/students', [AdminStudentController::class, 'store'])->name('admin.students.store');
+    Route::get('/students/{id}/edit', [AdminStudentController::class, 'edit'])->name('admin.students.edit');
+    Route::put('/students/{id}', [AdminStudentController::class, 'update'])->name('admin.students.update');
+    Route::delete('/students/{id}', [AdminStudentController::class, 'destroy'])->name('admin.students.destroy');
+
+    // Staff Management
+    Route::get('/manage-staff', [AdminStaffController::class, 'index'])->name('admin.manage-staff');
+    Route::get('/staff/create', [AdminStaffController::class, 'create'])->name('admin.staff.create');
+    Route::post('/staff', [AdminStaffController::class, 'store'])->name('admin.staff.store');
+    Route::get('/staff/{id}/edit', [AdminStaffController::class, 'edit'])->name('admin.staff.edit');
+    Route::put('/staff/{id}', [AdminStaffController::class, 'update'])->name('admin.staff.update');
+    Route::delete('/staff/{id}', [AdminStaffController::class, 'destroy'])->name('admin.staff.destroy');
+
+    // Admin Management
+    Route::get('/manage-admins', [AdminManagementController::class, 'index'])->name('admin.manage-admins');
+    Route::get('/admins/create', [AdminManagementController::class, 'create'])->name('admin.admins.create');
+    Route::post('/admins', [AdminManagementController::class, 'store'])->name('admin.admins.store');
+    Route::get('/admins/{id}/edit', [AdminManagementController::class, 'edit'])->name('admin.admins.edit');
+    Route::put('/admins/{id}', [AdminManagementController::class, 'update'])->name('admin.admins.update');
+    Route::delete('/admins/{id}', [AdminManagementController::class, 'destroy'])->name('admin.admins.destroy');
+
+    // Audit Logs
+    Route::get('/audit-logs', [AuditLogController::class, 'adminIndex'])->name('admin.audit-logs');
+
+    // System Settings
+    Route::get('/settings', [AdminSettingsController::class, 'index'])->name('admin.settings');
+    Route::post('/settings', [AdminSettingsController::class, 'update'])->name('admin.settings.update');
+
+    // Profile
     Route::view('/profile', 'admin.profile')->name('admin.profile');
-    Route::view('/settings', 'admin.settings')->name('admin.settings');
-
-    // Admin test routes (keep these for editing/deleting students)
-    Route::get('/students/{student}/edit', function ($student) {
-        return view('admin.editstudent', ['student' => $student]);
-    })->name('admin.students.edit');
-
-    Route::delete('/students/{student}', function ($student) {
-        return redirect()->route('admin.manage-students');
-    })->name('admin.students.destroy');
 });
 
 /*

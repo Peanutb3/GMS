@@ -42,15 +42,9 @@ class Staff extends Model
             : null; // null means we’ll render SVG instead
     }
 
-
-    // public function grievances()
-    // {
-    //     return $this->hasMany(Grievance::class, 'student_record_id');
-    // }
-
-    // public function grievancesFiled()
-    // {
-    //     return $this->hasMany(Grievance::class, 'filed_by_staff_id');
-    // }
+    public function grievancesFiled()
+    {
+        return $this->hasMany(Grievance::class, 'filed_by_staff_id');
+    }
 }
 

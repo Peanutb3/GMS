@@ -7,18 +7,9 @@
                 <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" class="{{ isset($sidebarCollapsed) && $sidebarCollapsed ? 'w-8 h-8' : 'w-6 h-6' }} flex-shrink-0"/></svg>
             <span class="sidebar-text text-small">Dashboard</span>
         </a>
-
-        <!-- Grievances -->
-        <a href="{{ route('staff.grievances') }}"
-            class="flex items-center gap-3 px-6 py-4 font-medium cursor-pointer {{ request()->routeIs('staff.grievances') ? 'bg-red-900 text-white' : 'text-red-900 hover:bg-red-800 hover:text-white' }} transition-colors rounded-r-lg w-full">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="{{ isset($sidebarCollapsed) && $sidebarCollapsed ? 'w-8 h-8' : 'w-6 h-6' }} flex-shrink-0"><defs><mask id="SVGWVB6RddW"><g fill="none" stroke-linejoin="round" stroke-width="4"><path fill="#fff" stroke="#fff" d="M5 7a3 3 0 0 1 3-3h24a3 3 0 0 1 3 3v37H8a3 3 0 0 1-3-3z"/>
-                <path stroke="#fff" d="M35 24a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v17a3 3 0 0 1-3 3h-5z"/><path stroke="#000" stroke-linecap="round" d="M11 12h8m-8 7h12"/></g></mask></defs><path fill="currentColor" d="M0 0h48v48H0z" mask="url(#SVGWVB6RddW)"/></svg>
-            <span class="sidebar-text text-small">Grievances</span>
-        </a>
-
-    <!-- File Grievances -->
-    <a href="{{ route('staff.file-grievances') }}"
-    class="flex items-center gap-3 px-6 py-4 font-medium cursor-pointer
+        <!-- File Grievances -->
+        <a href="{{ route('staff.file-grievances') }}"
+        class="flex items-center gap-3 px-6 py-4 font-medium cursor-pointer
             {{ request()->routeIs('staff.file-grievances') ? 'bg-red-900 text-white' : 'text-red-900 hover:bg-red-800 hover:text-white' }}
             transition-colors rounded-r-lg w-full">
         
@@ -31,6 +22,30 @@
 
         <!-- Label (will hide when collapsed) -->
         <span class="sidebar-text text-small">File Grievances</span>
+        </a>
+        
+        <!-- Grievances -->
+        <a href="{{ route('staff.grievances') }}"
+            class="flex items-center gap-3 px-6 py-4 font-medium cursor-pointer {{ request()->routeIs('staff.grievances') ? 'bg-red-900 text-white' : 'text-red-900 hover:bg-red-800 hover:text-white' }} transition-colors rounded-r-lg w-full">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="{{ isset($sidebarCollapsed) && $sidebarCollapsed ? 'w-8 h-8' : 'w-6 h-6' }} flex-shrink-0"><defs><mask id="SVGWVB6RddW"><g fill="none" stroke-linejoin="round" stroke-width="4"><path fill="#fff" stroke="#fff" d="M5 7a3 3 0 0 1 3-3h24a3 3 0 0 1 3 3v37H8a3 3 0 0 1-3-3z"/>
+                <path stroke="#fff" d="M35 24a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v17a3 3 0 0 1-3 3h-5z"/><path stroke="#000" stroke-linecap="round" d="M11 12h8m-8 7h12"/></g></mask></defs><path fill="currentColor" d="M0 0h48v48H0z" mask="url(#SVGWVB6RddW)"/></svg>
+            <span class="sidebar-text text-small">Grievances</span>
+        </a>
+
+        <!-- Requests (Good Moral & Safe Loan) -->
+        <a href="{{ route('staff.requests') }}"
+            class="flex items-center gap-3 px-6 py-4 font-medium cursor-pointer {{ request()->routeIs('staff.requests') ? 'bg-red-900 text-white' : 'text-red-900 hover:bg-red-800 hover:text-white' }} transition-colors rounded-r-lg w-full">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="{{ isset($sidebarCollapsed) && $sidebarCollapsed ? 'w-8 h-8' : 'w-6 h-6' }} flex-shrink-0" fill="currentColor">
+                    <path fill="currentColor" d="M16.5 23.5a2 2 0 1 0 0-4a2 2 0 0 0 0 4m2 9a2 2 0 1 1-4 0a2 2 0 0 1 4 0M6 12.25A6.25 6.25 0 0 1 12.25 6h23.5A6.25 6.25 0 0 1 42 12.25v11.794a12.9 12.9 0 0 0-6.033-2.009q.033-.137.033-.285c0-.69-.56-1.25-1.25-1.25h-10.5a1.25 1.25 0 1 0 0 2.5h5.741C25.298 24.961 22 29.596 22 35c0 2.577.75 4.98 2.044 7H12.25A6.25 6.25 0 0 1 6 35.75zm15 9.25a4.5 4.5 0 1 0-9 0a4.5 4.5 0 0 0 9 0M16.5 37a4.5 4.5 0 1 0 0-9a4.5 4.5 0 0 0 0 9m-3.25-26a1.25 1.25 0 1 0 0 2.5h21.5a1.25 1.25 0 1 0 0-2.5zM46 35c0 6.075-4.925 11-11 11s-11-4.925-11-11s4.925-11 11-11s11 4.925 11 11m-10-7a1 1 0 1 0-2 0v6h-6a1 1 0 1 0 0 2h6v6a1 1 0 1 0 2 0v-6h6a1 1 0 1 0 0-2h-6z"/>
+                </svg>
+            <span class="sidebar-text text-small">Requests</span>
+        </a>
+
+        <!-- Logs -->
+        <a href="{{ route('staff.audit.index') }}"
+            class="flex items-center gap-3 px-6 py-4 font-medium cursor-pointer {{ request()->routeIs('staff.audit.index') ? 'bg-red-900 text-white' : 'text-red-900 hover:bg-red-800 hover:text-white' }} transition-colors rounded-r-lg w-full">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="{{ isset($sidebarCollapsed) && $sidebarCollapsed ? 'w-8 h-8' : 'w-6 h-6' }} flex-shrink-0"><path d="M3 5a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zm9 0a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2zm0 8a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2z"/></svg>
+            <span class="sidebar-text text-small">Logs</span>
         </a>
 
         <!-- Profile -->

@@ -11,6 +11,7 @@ use App\Models\Student;
 use App\Models\Staff;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Models\AuditLog;
 
 class AuthController extends Controller
 {
@@ -155,6 +156,17 @@ class AuthController extends Controller
 
         // Check if too many attempts
         if (\Illuminate\Support\Facades\RateLimiter::tooManyAttempts($key, 5)) {
+            // log rate-limited attempt (if we can resolve a user id)
+            AuditLog::create([
+                'auditable_type' => User::class,
+                'auditable_id'   => $user?->id ?? 0,
+                'action'         => 'login_rate_limited',
+                'user_id'        => $user?->id,
+                'staff_id'       => optional(optional($user)->staff)->id,
+                'old_values'     => null,
+                'new_values'     => ['email' => $request->email],
+                'ip_address'     => $request->ip(),
+            ]);
             throw \Illuminate\Validation\ValidationException::withMessages([
                 'password' => 'Too many login attempts. Please try again in a few minutes.',
             ]);
@@ -169,6 +181,18 @@ class AuthController extends Controller
             $request->session()->regenerate();
             $user = Auth::user();
 
+            // log successful login
+            AuditLog::create([
+                'auditable_type' => User::class,
+                'auditable_id'   => $user->id,
+                'action'         => 'login',
+                'user_id'        => $user->id,
+                'staff_id'       => optional($user->staff)->id,
+                'old_values'     => null,
+                'new_values'     => ['remember' => $remember],
+                'ip_address'     => $request->ip(),
+            ]);
+
             // Redirect based on role
             return match ($user->role) {
                 'student' => redirect()->route('student.dashboard'),
@@ -180,12 +204,37 @@ class AuthController extends Controller
 
         // If login failed → count failed attempt
         \Illuminate\Support\Facades\RateLimiter::hit($key, 60); // lockout for 60 seconds
+        // log failed login attempt
+        AuditLog::create([
+            'auditable_type' => User::class,
+            'auditable_id'   => $user?->id ?? 0,
+            'action'         => 'login_failed',
+            'user_id'        => $user?->id,
+            'staff_id'       => optional(optional($user)->staff)->id,
+            'old_values'     => null,
+            'new_values'     => ['email' => $request->email],
+            'ip_address'     => $request->ip(),
+        ]);
         return back()->withErrors(['password' => 'Incorrect password.'])->onlyInput('email');
     }
 
 
     public function logout(Request $request)
     {
+        $user = $request->user();
+        // log before session is cleared
+        if ($user) {
+            AuditLog::create([
+                'auditable_type' => User::class,
+                'auditable_id'   => $user->id,
+                'action'         => 'logout',
+                'user_id'        => $user->id,
+                'staff_id'       => optional($user->staff)->id,
+                'old_values'     => null,
+                'new_values'     => null,
+                'ip_address'     => $request->ip(),
+            ]);
+        }
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

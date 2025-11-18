@@ -59,51 +59,61 @@
         <thead class="bg-white text-blue-900 text-xs uppercase">
             <tr>
                 <th class="px-6 py-3 font-semibold">Case ID</th>
+                <th class="px-6 py-3 font-semibold">Name</th>
+                <th class="px-6 py-3 font-semibold">Program</th>
                 <th class="px-6 py-3 font-semibold">Type</th>
                 <th class="px-6 py-3 font-semibold">Date Filed</th>
                 <th class="px-6 py-3 font-semibold">Status</th>
-                <th class="px-6 py-3 font-semibold">Filed By</th>
                 <th class="px-6 py-3 font-semibold text-center">Remarks</th>
             </tr>
         </thead>
 
-        <tbody>
-        @forelse ($grievances as $g)
-                <tr class="{{ $loop->odd ? 'bg-[#EDEBEB]' : 'bg-white' }} hover:bg-gray-100 transition">
-                <td class="px-5 py-3">{{ $g->case_id }}</td>
-                <td class="px-5 py-3">{{ $g->grievance }}</td>
-                <td class="px-5 py-3">{{ $g->created_at->format('Y-m-d') }}</td>
-                <td class="px-5 py-3">
-                        <x-status-badge :status="$g->status" />
-                </td>
-                <td class="px-5 py-3">
-                        @if($g->filed_by_staff_id && $g->staff)
-                                {{ $g->staff->first_name }} {{ $g->staff->last_name }} <span class="text-xs text-gray-500">(staff)</span>
-                        @else
-                                {{ $g->filed_by ?? 'Student' }}
-                        @endif
-                </td>
-                <td class="px-5 py-3 text-center">{{ 
-                        Illuminate\Support\Str::limit($g->description ?? '-', 60)
-                }}</td>
-                </tr>
-        @empty
-                <tr>
-                <td colspan="6" class="px-5 py-4 text-center text-gray-500">No grievances found.</td>
-                </tr>
-        @endforelse
-        </tbody>
+    <tbody>
+    @forelse ($grievances as $g)
+        <tr class="{{ $loop->odd ? 'bg-[#EDEBEB]' : 'bg-white' }} hover:bg-gray-100 transition">
+        <td class="px-5 py-3">{{ $g->case_id }}</td>
+        <td class="px-5 py-3">{{ optional($g->student)->first_name ? optional($g->student)->first_name . ' ' . optional($g->student)->last_name : $g->name }}</td>
+        <td class="px-5 py-3">{{ optional($g->student)->program ?? $g->program }}</td>
+        <td class="px-5 py-3">{{ str_replace('_', ' ', $g->grievance) }}</td>
+        <td class="px-5 py-3">{{ optional($g->created_at)->format('Y-m-d') }}</td>
+        <td class="px-5 py-3">
+            <x-status-badge :status="$g->status" />
+        </td>
+        @php $hasRemark = !empty($g->description); @endphp
+        <td class="px-5 py-3 text-center">
+            @if($hasRemark)
+                <button type="button" onclick="showRemark({!! json_encode($g->description) !!}, {!! json_encode($g->case_id) !!})" title="View remark" aria-label="View remark" class="p-1 rounded hover:bg-gray-100">
+                    <!-- three dots icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <circle cx="5" cy="12" r="2" />
+                        <circle cx="12" cy="12" r="2" />
+                        <circle cx="19" cy="12" r="2" />
+                    </svg>
+                </button>
+            @else
+                <button type="button" disabled title="No remark" aria-label="No remark" class="p-1 rounded text-gray-300 cursor-not-allowed opacity-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <circle cx="5" cy="12" r="2" />
+                        <circle cx="12" cy="12" r="2" />
+                        <circle cx="19" cy="12" r="2" />
+                    </svg>
+                </button>
+            @endif
+        </td>
+        </tr>
+    @empty
+        <tr>
+        <td colspan="7" class="px-5 py-4 text-center text-gray-500">No grievances found.</td>
+        </tr>
+    @endforelse
+    </tbody>
     </table>
-</div>
 
     <!-- Pagination -->
-    <div class="mt-4 px-4">
-        @if(method_exists($grievances, 'links'))
-            <div class="bg-white p-4 rounded-lg">
-                {{ $grievances->links() }}
-            </div>
-        @endif
-    </div>
+    @if(method_exists($grievances, 'links'))
+        {{ $grievances->links('vendor.pagination.tailwind') }}
+    @endif
+</div>
 
 </div>
 @endsection

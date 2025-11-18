@@ -62,45 +62,50 @@
         </div>
 
         <!-- Table -->
-        <h3 class="text-lg font-semibold mb-4">Recent Grievances</h3>
-        <div class="bg-white rounded-xl shadow-lg p-6">
-            <div class="overflow-x-auto">
-                <table class="min-w-full text-sm text-left">
-                    <thead class="bg-gray-50">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold">Recent Grievances</h3>
+            <a href="{{ route('student.grievances') }}" class="text-sm text-blue-600 hover:underline">View all</a>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+            <table class="w-full text-sm text-left text-gray-700 border border-gray-200">
+                <thead class="bg-white text-blue-900 text-xs uppercase">
+                    <tr>
+                        <th class="px-6 py-3 font-semibold text-gray-700">Case ID</th>
+                        <th class="px-6 py-3 font-semibold text-gray-700">Name</th>
+                        <th class="px-6 py-3 font-semibold text-gray-700">Program</th>
+                        <th class="px-6 py-3 font-semibold text-gray-700">Type</th>
+                        <th class="px-6 py-3 font-semibold text-gray-700">Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php $items = collect($myGrievances ?? [])->take(2); @endphp
+
+                    @if($items->isNotEmpty())
+                        @foreach($items as $g)
+                            <tr class="{{ $loop->odd ? 'bg-[#EDEBEB]' : 'bg-white' }} hover:bg-gray-100 transition">
+                                <td class="px-5 py-3">{{ $g->case_id }}</td>
+                                <td class="px-5 py-3">{{ optional($g->student)->first_name ? optional($g->student)->first_name . ' ' . optional($g->student)->last_name : ($g->name_snapshot ?? $g->name ?? '-') }}</td>
+                                <td class="px-5 py-3">{{ optional($g->student)->program ?? ($g->program_snapshot ?? $g->program ?? '-') }}</td>
+                                <td class="px-5 py-3">{{ Str::limit($g->grievance ?? $g->description, 80) }}</td>
+                                <td class="px-5 py-3">{{ optional($g->date)->format('Y-m-d') ?? optional($g->created_at)->format('Y-m-d') }}</td>
+                                <!-- <td class="px-5 py-3">
+                                    <div class="text-sm text-gray-700">{{ ucfirst($g->status ?? 'pending') }}</div>
+                                    @if($g->filed_by_staff_id && $g->staff)
+                                        <div class="text-xs text-gray-500 mt-1">Filed by staff: {{ $g->staff->first_name }} {{ $g->staff->last_name }}</div>
+                                    @elseif(!empty($g->filed_by))
+                                        <div class="text-xs text-gray-500 mt-1">Filed by: {{ $g->filed_by }}</div>
+                                    @endif
+                                </td> -->
+                            </tr>
+                        @endforeach
+                    @else
                         <tr>
-                            <th class="px-6 py-3 font-semibold text-gray-700">Case ID</th>
-                            <th class="px-6 py-3 font-semibold text-gray-700">Name</th>
-                            <th class="px-6 py-3 font-semibold text-gray-700">Program</th>
-                            <th class="px-6 py-3 font-semibold text-gray-700">Date</th>
-                            <th class="px-6 py-3 font-semibold text-gray-700">Grievance</th>
-                            <th class="px-6 py-3 font-semibold text-gray-700">Remarks</th>
+                            <td colspan="6" class="px-5 py-4 text-center text-gray-500">No grievances found.</td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($myGrievances as $g)
-                        <tr class="border-b last:border-b-0 hover:bg-gray-50">
-                            <td class="px-6 py-4">{{ $g->case_id }}</td>
-                            <td class="px-6 py-4">{{ $g->name }}</td>
-                            <td class="px-6 py-4">{{ $g->program }}</td>
-                            <td class="px-6 py-4">{{ optional($g->created_at)->format('M d, Y') }}</td>
-                            <td class="px-6 py-4">{{ Str::limit($g->grievance ?? $g->description, 80) }}</td>
-                            <td class="px-6 py-4">
-                                <div class="text-sm text-gray-700">{{ ucfirst($g->status ?? 'pending') }}</div>
-                                @if($g->filed_by_staff_id && $g->staff)
-                                    <div class="text-xs text-gray-500 mt-1">Filed by staff: {{ $g->staff->first_name }} {{ $g->staff->last_name }}</div>
-                                @elseif(!empty($g->filed_by))
-                                    <div class="text-xs text-gray-500 mt-1">Filed by: {{ $g->filed_by }}</div>
-                                @endif
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="6" class="px-6 py-4 text-center text-gray-400">No grievances found.</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                    @endif
+                </tbody>
+            </table>
         </div>
     </div>
 
@@ -117,24 +122,11 @@
             <p><span class="font-semibold">Student ID:</span> {{ $student->student_id ?? '—' }}</p>
             <p><span class="font-semibold">Email:</span> {{ Auth::user()->email }}</p>
             <p><span class="font-semibold">Program:</span> {{ $student->program ?? '—' }}@if(!empty($student->year)) | {{ $student->year }}@endif</p>
-            @php
-                $pendingStatuses = ['pending', 'in_progress', 'open'];
-                $hasPending = isset($myGrievances) ? $myGrievances->whereIn('status', $pendingStatuses)->count() > 0 : false;
-                $goodStatus = $hasPending ? 'Not Eligible' : 'Eligible';
-            @endphp
-            <p><span class="font-semibold">Good Moral Status:</span> <span class="ml-1 text-sm text-gray-700">{{ $goodStatus }}</span></p>
         </div>
-        @if($hasPending)
-            <button type="button" disabled
-                class="mt-4 inline-block text-center px-4 py-2 bg-gray-200 text-gray-500 rounded-lg cursor-not-allowed text-sm">
-                Request for Good Moral
-            </button>
-        @else
-            @php $gmRoute = \Illuminate\Support\Facades\Route::has('student.request-good-moral') ? route('student.request-good-moral') : '#'; @endphp
-            <a href="{{ $gmRoute }}" class="mt-auto inline-block text-center px-4 py-2 bg-red-900 text-white rounded-lg hover:bg-red-800 font-medium">
-                Request for Good Moral
-            </a>
-        @endif
+        @php $editRoute = \Illuminate\Support\Facades\Route::has('student.profile.edit') ? route('student.profile.edit') : '#'; @endphp
+        <a href="{{ $editRoute }}" class="text-center px-6 py-3 bg-red-900 text-white rounded-lg hover:bg-red-800 font-medium">
+            Edit Profile
+        </a>
     </div>
 </div>
 @endsection

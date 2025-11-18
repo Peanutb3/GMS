@@ -88,8 +88,8 @@
                             @foreach($items as $g)
                                 <tr class="{{ $loop->odd ? 'bg-[#EDEBEB]' : 'bg-white' }} hover:bg-gray-100 transition">
                                     <td class="px-5 py-3">{{ $g->case_id }}</td>
-                                    <td class="px-5 py-3">{{ $g->name }}</td>
-                                    <td class="px-5 py-3">{{ $g->program }}</td>
+                                    <td class="px-5 py-3">{{ optional($g->student)->first_name ? optional($g->student)->first_name . ' ' . optional($g->student)->last_name : $g->name }}</td>
+                                    <td class="px-5 py-3">{{ optional($g->student)->program ?? $g->program }}</td>
                                     <td class="px-5 py-3">{{ str_replace('_', ' ', $g->grievance) }}</td>
                                     <td class="px-5 py-3">{{ optional($g->date)->format('Y-m-d') ?? $g->created_at->format('Y-m-d') }}</td>
                                     <td class="px-5 py-3">
@@ -129,7 +129,6 @@
                 <p><span class="font-semibold">Staff ID:</span> {{ Auth::user()->staff->employee_id ?? 'N/A' }}</p>
                 <p><span class="font-semibold">Email:</span> {{ Auth::user()->email }}</p>
                 <p><span class="font-semibold">Role:</span> {{ ucfirst(Auth::user()->role) }}</p>
-                <p><span class="font-semibold">Status:</span> Active</p>
             </div>
             <button class="px-6 py-3 bg-red-900 text-white rounded-lg hover:bg-red-800 font-medium">
                 Edit Profile

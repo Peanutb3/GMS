@@ -77,10 +77,10 @@
                     <div class="text-sm text-gray-800">{{ $student->program_and_year ?? 'BSIT - 4th Year' }}</div>
                 </div>
 
-                <div class="flex items-center justify-between px-6 py-4">
+                <!-- <div class="flex items-center justify-between px-6 py-4">
                     <div class="text-sm text-gray-600">Phone</div>
                     <div class="text-sm text-gray-800">{{ $student->phone ?? '0991 234 5678' }}</div>
-                </div>
+                </div> -->
 
                 <div class="flex items-center justify-between px-6 py-4">
                     <div class="text-sm text-gray-600">Email</div>

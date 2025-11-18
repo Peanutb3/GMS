@@ -8,10 +8,10 @@
 
 
 @section('content')
-  <div class="max-w-4l mx-auto px-1 overflow-x-hidden">
+  <!-- <div class="max-w-4l mx-auto px-1 overflow-x-hidden"> -->
 
-    <div class="px-5 mb-6">
-      <nav class="text-sm text-gray-600 flex items-center">
+    <!-- <div class="px-5 mb-6"> -->
+      <nav class="text-sm text-gray-600 flex items-center mb-6">
         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 30 30" class="w-5 h-5 mr-2 text-gray-500">
         <path d="M3 9.75L12 3l9 6.75V21a1 1 0 0 1-1 1h-5.5a.5.5 0 0 1-.5-.5V15h-4v6.5a.5.5 0 0 1-.5.5H4a1 1 0 0 1-1-1V9.75z"/>
         </svg>
@@ -19,7 +19,7 @@
         <span class="mx-2 text-gray-400">/</span>
         <span class="text-blue-600">File Grievance</span>
       </nav>
-    </div>
+    <!-- </div> -->
     
   <!-- Form Card -->
   <div class="flex-1 max-w-[1400px] mx-auto w-full">
@@ -59,11 +59,10 @@
           <div class="relative">
             <select id="grievance" name="grievance"
                     class="w-full px-4 py-3 pr-10 border border-gray-300 rounded focus:ring-2 focus:ring-red-800 focus:border-red-800 outline-none appearance-none bg-white">
-              <option value="">Grievance</option>
-              <option value="spot_report">Spot Report</option>
-              <option value="arf">ARF (Academic Review Form)</option>
-              <option value="disciplinary">Disciplinary Action</option>
-              <option value="other">Other</option>
+              <option value="Grievance">Grievance</option>
+              <option value="Spot Report">Spot Report</option>
+              <option value="Pending Arf">Pending ARF</option>
+              <option value="Other">Other</option>
             </select>
           </div>
         </div>

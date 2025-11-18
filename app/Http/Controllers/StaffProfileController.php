@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage; // Imported here, so we use the alias 'Storage'
 use App\Models\Staff;
 use App\Models\User;
 
@@ -54,7 +55,7 @@ class StaffProfileController extends Controller
                 // delete previous avatar if exists
                 if ($staff->avatar) {
                     try {
-                        \Storage::disk('public')->delete($staff->avatar);
+                        Storage::disk('public')->delete($staff->avatar);
                     } catch (\Exception $e) {
                         // ignore deletion errors
                     }

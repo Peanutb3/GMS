@@ -106,28 +106,52 @@ class AdminStudentController extends Controller
 
     public function update(Request $request, $id)
     {
-        $student = Student::findOrFail($id);
+        $student = Student::with('user')->findOrFail($id);
 
         $validated = $request->validate([
-            'student_no' => 'required|unique:students,student_no,' . $id,
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:students,email,' . $id,
+            'student_id' => 'required|unique:students,student_id,' . $id,
+            'first_name' => 'required|string|max:255',
+            'middle_initial' => 'nullable|string|max:2',
+            'last_name' => 'required|string|max:255',
+            'suffix' => 'nullable|string|max:10',
+            'email' => 'required|email|unique:users,email,' . $student->user_id,
+            'college' => 'required|string|max:255',
             'program' => 'required|string|max:255',
-            'year_level' => 'required|integer|between:1,5',
-            'gender' => 'required|in:Male,Female',
-            'date_of_birth' => 'nullable|date',
-            'phone_number' => 'nullable|string|max:20',
-            'address' => 'nullable|string',
+            'year' => 'required|string|max:10',
+            'password' => 'nullable|min:8|confirmed',
         ]);
 
-        $student->update($validated);
+        // Build full name
+        $fullName = trim($validated['first_name'] . ' ' . 
+                        ($validated['middle_initial'] ?? '') . ' ' . 
+                        $validated['last_name'] . ' ' . 
+                        ($validated['suffix'] ?? ''));
 
-        // Update user email and name
+        // Update student record
+        $student->update([
+            'student_id' => $validated['student_id'],
+            'first_name' => $validated['first_name'],
+            'middle_initial' => $validated['middle_initial'] ?? null,
+            'last_name' => $validated['last_name'],
+            'suffix' => $validated['suffix'] ?? null,
+            'college' => $validated['college'],
+            'program' => $validated['program'],
+            'year' => $validated['year'],
+        ]);
+
+        // Update user account
         if ($student->user) {
-            $student->user->update([
-                'name' => $validated['name'],
+            $userData = [
+                'name' => $fullName,
                 'email' => $validated['email'],
-            ]);
+            ];
+
+            // Update password if provided
+            if ($request->filled('password')) {
+                $userData['password'] = Hash::make($validated['password']);
+            }
+
+            $student->user->update($userData);
         }
 
         return redirect()->route('admin.manage-students')

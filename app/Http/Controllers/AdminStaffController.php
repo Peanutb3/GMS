@@ -99,32 +99,37 @@ class AdminStaffController extends Controller
 
     public function update(Request $request, $id)
     {
-        $staff = User::where('role', 'staff')->findOrFail($id);
+        $staff = User::with('staff')->where('role', 'staff')->findOrFail($id);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
-            'staff_type' => 'nullable|string|max:100',
             'department' => 'nullable|string|max:100',
+            'staff_type' => 'nullable|string|max:100',
+            'password' => 'nullable|min:8|confirmed',
         ]);
 
-        $staff->update([
+        // Update user account
+        $userData = [
             'name' => $validated['name'],
             'email' => $validated['email'],
-        ]);
+        ];
+
+        // Update password if provided
+        if ($request->filled('password')) {
+            $userData['password'] = Hash::make($validated['password']);
+        }
+
+        $staff->update($userData);
 
         // Sync Staff profile if table exists
         try {
-            if (Schema::hasTable('staff')) {
-                Staff::updateOrCreate(
-                    ['user_id' => $staff->id],
-                    [
-                        'first_name' => $validated['name'],
-                        'email' => $validated['email'],
-                        'department' => $validated['department'] ?? null,
-                        'staff_type' => $validated['staff_type'] ?? null,
-                    ]
-                );
+            if (Schema::hasTable('staff') && $staff->staff) {
+                $staff->staff->update([
+                    'email' => $validated['email'],
+                    'department' => $validated['department'] ?? $staff->staff->department,
+                    'staff_type' => $validated['staff_type'] ?? $staff->staff->staff_type,
+                ]);
             }
         } catch (\Throwable $e) {
             // ignore silently

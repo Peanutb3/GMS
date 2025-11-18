@@ -165,6 +165,13 @@
 
 @push('scripts')
 <script>
+// Show success message on page load if it exists
+@if(session('success'))
+document.addEventListener('DOMContentLoaded', function() {
+    showToast('{{ session('success') }}', 'success');
+});
+@endif
+
 function deleteStudent(id) {
     if (!confirm('Are you sure you want to delete this student? This will also delete their user account.')) {
         return;

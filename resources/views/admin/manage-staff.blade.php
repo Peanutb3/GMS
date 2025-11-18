@@ -138,6 +138,13 @@
 
 @push('scripts')
 <script>
+// Show success message on page load if it exists
+@if(session('success'))
+document.addEventListener('DOMContentLoaded', function() {
+    showToast('{{ session('success') }}', 'success');
+});
+@endif
+
 function deleteStaff(id) {
     if (!confirm('Are you sure you want to delete this staff member?')) {
         return;

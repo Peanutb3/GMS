@@ -64,9 +64,21 @@ class AdminManagementController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
+            'password' => 'nullable|min:8|confirmed',
         ]);
 
-        $admin->update($validated);
+        // Prepare update data
+        $updateData = [
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+        ];
+
+        // Update password if provided
+        if ($request->filled('password')) {
+            $updateData['password'] = Hash::make($validated['password']);
+        }
+
+        $admin->update($updateData);
 
         return redirect()->route('admin.manage-admins')
             ->with('success', 'Admin updated successfully');

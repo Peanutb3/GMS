@@ -18,7 +18,7 @@
    @vite('resources/css/app.css')
    @vite('resources/js/app.js')  
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col">
+<body class="bg-white min-h-screen flex flex-col">
 <!-- <body class="bg-white h-screen w-screen flex flex-col"> -->
   <!-- HEADER -->
   <!-- <header class="flex items-center justify-between bg-white border-b border-gray-200 px-4 h-14 flex-shrink-0"> -->
@@ -90,13 +90,13 @@
 </aside>
 
   <!-- CONTENT AREA -->
-    <main class="flex-1 bg-white flex flex-col">
+    <main class="flex-1 flex flex-col" style="background-color: #F5F5F5;">
       <div class="flex-grow p-8 overflow-y-auto">
         @yield('content')
       </div>
 
       <!-- Footer -->
-      <footer class="w-full text-center py-4 text-sm text-gray-600 bg-white border-t border-gray-200">
+      <footer class="w-full text-center py-4 text-sm text-gray-600 border-t border-gray-200" style="background-color: #F5F5F5;">
         <p>
           © Office of Student Affairs and Services. All Rights Reserved.
           <a href="#" class="text-blue-600 hover:underline">Terms of Use</a> |

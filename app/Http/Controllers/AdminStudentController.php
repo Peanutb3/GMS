@@ -12,15 +12,16 @@ class AdminStudentController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Student::with('user');
+    $query = Student::with('user');
 
         // Search filter
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('student_no', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                $q->where('student_id', 'like', "%{$search}%")
+                  ->orWhere('first_name', 'like', "%{$search}%")
+                  ->orWhere('last_name', 'like', "%{$search}%")
+                  ->orWhere('program', 'like', "%{$search}%");
             });
         }
 
@@ -31,7 +32,7 @@ class AdminStudentController extends Controller
 
         // Year level filter
         if ($request->filled('year_level')) {
-            $query->where('year_level', $request->year_level);
+            $query->where('year', $request->year_level);
         }
 
         $students = $query->latest()->paginate(15);

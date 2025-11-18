@@ -3,14 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Staff;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 
 class AdminStaffController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::where('role', 'staff');
+    $query = User::with('staff')->where('role', 'staff');
 
         // Search filter
         if ($request->filled('search')) {
@@ -23,7 +25,7 @@ class AdminStaffController extends Controller
 
         $staff = $query->latest()->paginate(15);
 
-        return view('admin.manage-staff', compact('staff'));
+    return view('admin.manage-staff', compact('staff'));
     }
 
     public function create()
@@ -41,14 +43,32 @@ class AdminStaffController extends Controller
             'department' => 'nullable|string|max:100',
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role' => 'staff',
-            'staff_type' => $validated['staff_type'] ?? null,
-            'department' => $validated['department'] ?? null,
         ]);
+
+        // If Staff profile table exists, create/update a profile row
+        try {
+            if (Schema::hasTable('staff')) {
+                Staff::updateOrCreate(
+                    ['user_id' => $user->id],
+                    [
+                        'first_name' => $user->name, // simple seed; real form can collect properly
+                        'last_name' => '',
+                        'email' => $user->email,
+                        'department' => $validated['department'] ?? null,
+                        'staff_type' => $validated['staff_type'] ?? null,
+                        'role' => 'staff',
+                        'employee_id' => 'EMP-' . str_pad((string)$user->id, 5, '0', STR_PAD_LEFT),
+                    ]
+                );
+            }
+        } catch (\Throwable $e) {
+            // non-fatal; view will still show N/A if profile missing
+        }
 
         return redirect()->route('admin.manage-staff')
             ->with('success', 'Staff member created successfully');
@@ -71,7 +91,27 @@ class AdminStaffController extends Controller
             'department' => 'nullable|string|max:100',
         ]);
 
-        $staff->update($validated);
+        $staff->update([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+        ]);
+
+        // Sync Staff profile if table exists
+        try {
+            if (Schema::hasTable('staff')) {
+                Staff::updateOrCreate(
+                    ['user_id' => $staff->id],
+                    [
+                        'first_name' => $validated['name'],
+                        'email' => $validated['email'],
+                        'department' => $validated['department'] ?? null,
+                        'staff_type' => $validated['staff_type'] ?? null,
+                    ]
+                );
+            }
+        } catch (\Throwable $e) {
+            // ignore silently
+        }
 
         return redirect()->route('admin.manage-staff')
             ->with('success', 'Staff member updated successfully');

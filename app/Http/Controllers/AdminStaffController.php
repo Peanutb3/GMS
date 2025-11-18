@@ -36,38 +36,55 @@ class AdminStaffController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
+            'employee_id' => 'required|unique:staff,employee_id',
+            'first_name' => 'required|string|max:255',
+            'middle_initial' => 'nullable|string|max:2',
+            'last_name' => 'required|string|max:255',
+            'suffix' => 'nullable|string|max:10',
+            'email' => 'required|email|unique:users,email',
+            'phone' => 'nullable|string|max:20',
+            'department' => 'required|string|max:255',
+            'position' => 'required|string|max:255',
+            'staff_type' => 'required|in:Academic,Non-Academic,Administrative',
             'password' => 'required|min:8|confirmed',
-            'staff_type' => 'nullable|string|max:100',
-            'department' => 'nullable|string|max:100',
         ]);
 
+        // Build full name
+        $fullName = trim($validated['first_name'] . ' ' . 
+                        ($validated['middle_initial'] ?? '') . ' ' . 
+                        $validated['last_name'] . ' ' . 
+                        ($validated['suffix'] ?? ''));
+
+        // Create user account
         $user = User::create([
-            'name' => $validated['name'],
+            'name' => $fullName,
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role' => 'staff',
         ]);
 
-        // If Staff profile table exists, create/update a profile row
+        // Create staff profile if table exists
         try {
             if (Schema::hasTable('staff')) {
-                Staff::updateOrCreate(
-                    ['user_id' => $user->id],
-                    [
-                        'first_name' => $user->name, // simple seed; real form can collect properly
-                        'last_name' => '',
-                        'email' => $user->email,
-                        'department' => $validated['department'] ?? null,
-                        'staff_type' => $validated['staff_type'] ?? null,
-                        'role' => 'staff',
-                        'employee_id' => 'EMP-' . str_pad((string)$user->id, 5, '0', STR_PAD_LEFT),
-                    ]
-                );
+                Staff::create([
+                    'user_id' => $user->id,
+                    'employee_id' => $validated['employee_id'],
+                    'first_name' => $validated['first_name'],
+                    'middle_initial' => $validated['middle_initial'] ?? null,
+                    'last_name' => $validated['last_name'],
+                    'suffix' => $validated['suffix'] ?? null,
+                    'email' => $validated['email'],
+                    'phone' => $validated['phone'] ?? null,
+                    'department' => $validated['department'],
+                    'position' => $validated['position'],
+                    'staff_type' => $validated['staff_type'],
+                    'role' => 'staff',
+                ]);
             }
         } catch (\Throwable $e) {
-            // non-fatal; view will still show N/A if profile missing
+            // Rollback user if staff creation fails
+            $user->delete();
+            throw $e;
         }
 
         return redirect()->route('admin.manage-staff')

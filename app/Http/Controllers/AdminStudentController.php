@@ -55,21 +55,27 @@ class AdminStudentController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'student_no' => 'required|unique:students',
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:students',
+            'student_id' => 'required|unique:students,student_id',
+            'first_name' => 'required|string|max:255',
+            'middle_initial' => 'nullable|string|max:2',
+            'last_name' => 'required|string|max:255',
+            'suffix' => 'nullable|string|max:10',
+            'email' => 'required|email|unique:users,email',
+            'college' => 'required|string|max:255',
             'program' => 'required|string|max:255',
-            'year_level' => 'required|integer|between:1,5',
-            'gender' => 'required|in:Male,Female',
-            'date_of_birth' => 'nullable|date',
-            'phone_number' => 'nullable|string|max:20',
-            'address' => 'nullable|string',
+            'year' => 'required|string|max:10',
             'password' => 'required|min:8|confirmed',
         ]);
 
+        // Build full name
+        $fullName = trim($validated['first_name'] . ' ' . 
+                        ($validated['middle_initial'] ?? '') . ' ' . 
+                        $validated['last_name'] . ' ' . 
+                        ($validated['suffix'] ?? ''));
+
         // Create user account
         $user = User::create([
-            'name' => $validated['name'],
+            'name' => $fullName,
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role' => 'student',
@@ -78,15 +84,14 @@ class AdminStudentController extends Controller
         // Create student record
         $student = Student::create([
             'user_id' => $user->id,
-            'student_no' => $validated['student_no'],
-            'name' => $validated['name'],
-            'email' => $validated['email'],
+            'student_id' => $validated['student_id'],
+            'first_name' => $validated['first_name'],
+            'middle_initial' => $validated['middle_initial'] ?? null,
+            'last_name' => $validated['last_name'],
+            'suffix' => $validated['suffix'] ?? null,
+            'college' => $validated['college'],
             'program' => $validated['program'],
-            'year_level' => $validated['year_level'],
-            'gender' => $validated['gender'],
-            'date_of_birth' => $validated['date_of_birth'] ?? null,
-            'phone_number' => $validated['phone_number'] ?? null,
-            'address' => $validated['address'] ?? null,
+            'year' => $validated['year'],
         ]);
 
         return redirect()->route('admin.manage-students')

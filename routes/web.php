@@ -20,6 +20,7 @@ use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\StaffProfileController;
 use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\SafeLoanRequestController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +42,20 @@ Route::get('/requests/safe-loan/{requestModel}/print', [SafeLoanRequestControlle
 Route::get('/requests/safe-loan/{requestModel}/print', [SafeLoanRequestController::class, 'print'])->name('safe-loan.print');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+/*
+|--------------------------------------------------------------------------
+| Notification Routes (Authenticated Users)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth'])->prefix('notifications')->group(function () {
+    Route::get('/', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/unread-count', [NotificationController::class, 'unreadCount'])->name('notifications.unread-count');
+    Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-read');
+    Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+    Route::delete('/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+    Route::get('/all', [NotificationController::class, 'all'])->name('notifications.all');
+});
 
 /*
 |--------------------------------------------------------------------------

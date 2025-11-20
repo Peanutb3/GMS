@@ -17,7 +17,7 @@
         <span class="mx-2 text-gray-400">/</span>
         <span class="text-gray-600">Manage Users</span>
         <span class="mx-2 text-gray-400">/</span>
-    <a href="{{ route('admin.manage-staff') }}" class="text-gray-600 hover:text-red-800">Staff</a>
+        <a href="{{ route('admin.manage-staff') }}" class="text-gray-600 hover:text-red-800">Staff</a>
         <span class="mx-2 text-gray-400">/</span>
         <span class="text-blue-600">Edit</span>
     </nav>

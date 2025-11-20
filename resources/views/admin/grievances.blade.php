@@ -207,7 +207,10 @@
     @endif
 </div>
 
-<!-- Per-page toast removed; using global container -->
+<!-- Toast Notification -->
+<div id="toast" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hidden transition-all transform translate-y-0">
+    <p id="toast-message"></p>
+</div>
 
 @endsection
 
@@ -229,19 +232,30 @@ function deleteGrievance(id) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            pushToast('Grievance deleted successfully!', 'success');
+            showToast('Grievance deleted successfully!', 'success');
             document.getElementById(`grievance-row-${id}`).remove();
         } else {
-            pushToast('Failed to delete grievance', 'error');
+            showToast('Failed to delete grievance', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-    pushToast('An error occurred', 'error');
+        showToast('An error occurred', 'error');
     });
 }
 
 // Toast notification
-// Local showToast removed; using global pushToast from layout
+function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    const toastMessage = document.getElementById('toast-message');
+    
+    toastMessage.textContent = message;
+    toast.classList.remove('hidden', 'bg-green-500', 'bg-red-500');
+    toast.classList.add(type === 'success' ? 'bg-green-500' : 'bg-red-500');
+    
+    setTimeout(() => {
+        toast.classList.add('hidden');
+    }, 3000);
+}
 </script>
 @endpush

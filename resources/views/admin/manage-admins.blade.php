@@ -38,6 +38,16 @@
     </div>
 </div>
 
+@if(session('success'))
+<div class="bg-green-100 border border-green-400 text-green-700 px-6 py-4 rounded-lg mb-6 flex items-center justify-between">
+    <span>{{ session('success') }}</span>
+    <button onclick="this.parentElement.remove()" class="text-green-700 hover:text-green-900">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+    </button>
+</div>
+@endif
 
 <!-- Search -->
 <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
@@ -137,12 +147,20 @@
     @endif
 </div>
 
-<!-- Per-page toast removed; using global container -->
+<div id="toast" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hidden">
+    <p id="toast-message"></p>
+</div>
 
 @endsection
 
 @push('scripts')
 <script>
+// Show success message on page load if it exists
+@if(session('success'))
+document.addEventListener('DOMContentLoaded', function() {
+    showToast('{{ session('success') }}', 'success');
+});
+@endif
 
 function deleteAdmin(id) {
     if (!confirm('Are you sure you want to delete this administrator?')) {
@@ -159,18 +177,27 @@ function deleteAdmin(id) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            pushToast(data.message, 'success');
+            showToast(data.message, 'success');
             document.getElementById(`admin-row-${id}`).remove();
         } else {
-            pushToast(data.message || 'Failed to delete administrator', 'error');
+            showToast(data.message || 'Failed to delete administrator', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-    pushToast('An error occurred', 'error');
+        showToast('An error occurred', 'error');
     });
 }
 
-// Local showToast removed; using global pushToast from layout
+function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    const toastMessage = document.getElementById('toast-message');
+    
+    toastMessage.textContent = message;
+    toast.classList.remove('hidden', 'bg-green-500', 'bg-red-500');
+    toast.classList.add(type === 'success' ? 'bg-green-500' : 'bg-red-500');
+    
+    setTimeout(() => toast.classList.add('hidden'), 3000);
+}
 </script>
 @endpush

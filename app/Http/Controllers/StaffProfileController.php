@@ -86,4 +86,30 @@ class StaffProfileController extends Controller
 
         return redirect()->route('staff.profile')->with('success', 'Profile updated.');
     }
+
+    public function updatePassword(Request $request)
+    {
+        $user = Auth::user();
+
+        $data = $request->validate([
+            'current_password' => 'required|string',
+            'password' => 'required|string|min:8|confirmed'
+        ]);
+
+        // Verify current password
+        if (!Hash::check($data['current_password'], $user->password)) {
+            return back()->with('error', 'Current password is incorrect.');
+        }
+
+        // Update password
+        $user->password = Hash::make($data['password']);
+        $user->save();
+
+        // Log out the user after password change
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login')->with('success', 'Password changed successfully. Please login with your new password.');
+    }
 }

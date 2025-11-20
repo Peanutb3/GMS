@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Grievance;
 use App\Models\GrievanceHistory;
+use App\Traits\CreatesNotifications;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AdminGrievanceController extends Controller
 {
+    use CreatesNotifications;
     public function index(Request $request)
     {
         $query = Grievance::query();
@@ -86,6 +88,25 @@ class AdminGrievanceController extends Controller
             'details' => "Status changed from {$oldStatus} to {$request->status}",
             'performed_by' => Auth::id(),
         ]);
+
+        // Notify student about status change
+        if ($grievance->student && $grievance->student->user) {
+            $this->notifyGrievanceStatusUpdated(
+                $grievance->student->user->id,
+                $grievance->id,
+                $grievance->case_id,
+                ucfirst($request->status)
+            );
+        }
+
+        // If resolved, send resolved notification
+        if ($request->status === 'resolved' && $grievance->student && $grievance->student->user) {
+            $this->notifyGrievanceResolved(
+                $grievance->student->user->id,
+                $grievance->id,
+                $grievance->case_id
+            );
+        }
 
         return response()->json([
             'success' => true,

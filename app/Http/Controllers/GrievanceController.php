@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Grievance;
 use App\Models\Student;
+use App\Traits\CreatesNotifications;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -13,6 +14,7 @@ use App\Models\GrievanceHistory;
 
 class GrievanceController extends Controller
 {
+    use CreatesNotifications;
     // public function index()
     // {
     //     $grievances = Grievance::orderByDesc('created_at')->get();
@@ -172,7 +174,22 @@ class GrievanceController extends Controller
         }
 
         // No need to set filed_by here anymore — model handles it.
-        Grievance::create($data);
+        $grievance = Grievance::create($data);
+
+        // Notify all admins about new grievance
+        $studentName = $data['name'];
+        $this->notifyAllAdmins(
+            'grievance',
+            'New grievance submitted',
+            "Student {$studentName} filed a new case ({$grievance->case_id})",
+            [
+                'icon' => 'grievance',
+                'color' => 'red',
+                'link' => route('admin.grievances.show', $grievance->id),
+                'related_id' => $grievance->id,
+                'related_type' => 'App\Models\Grievance'
+            ]
+        );
 
         return redirect()->route('staff.grievances')->with('success', 'Grievance filed successfully.');
     }
@@ -335,6 +352,15 @@ class GrievanceController extends Controller
                 'snapshot'=>['old'=>$old,'new'=>['status'=>'resolved']],
                 'staff_id'=>optional($user->staff)->id,
             ]);
+
+            // Notify student about resolution
+            if ($grievance->student && $grievance->student->user) {
+                $this->notifyGrievanceResolved(
+                    $grievance->student->user->id,
+                    $grievance->id,
+                    $grievance->case_id
+                );
+            }
         }
         return response()->json(['ok'=>true,'action'=>'resolved','id'=>$grievance->id]);
     }

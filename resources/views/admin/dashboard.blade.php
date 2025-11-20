@@ -211,8 +211,14 @@
             <div class="space-y-3">
                 @forelse($recentGoodMoral as $request)
                 <div class="border-l-4 border-teal-500 bg-gray-50 p-3 rounded">
-                    <div class="font-medium text-sm text-gray-900">{{ $request->student->name ?? 'N/A' }}</div>
-                    <div class="text-xs text-gray-500 mt-1">{{ $request->student->student_no ?? 'N/A' }}</div>
+                    <div class="font-medium text-sm text-gray-900">
+                        {{ $request->first_name }} {{ $request->middle_name ? $request->middle_name . ' ' : '' }}{{ $request->last_name }}
+                    </div>
+                    @if($request->student)
+                        <div class="text-xs text-gray-500 mt-1">
+                            {{ $request->student->student_id }}
+                        </div>
+                    @endif
                     <div class="flex items-center justify-between mt-2">
                         <span class="text-xs px-2 py-1 rounded-full 
                             @if($request->status === 'pending') bg-orange-100 text-orange-800
@@ -231,34 +237,6 @@
                 @endforelse
             </div>
         </div>
-    </div>
-</div>
-
-<!-- Grievance Status Distribution -->
-<div class="bg-white rounded-xl shadow-lg p-6">
-    <h3 class="text-lg font-semibold text-gray-800 mb-4">Grievance Status Distribution</h3>
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        @foreach($grievancesByStatus as $status => $count)
-        <div class="border rounded-lg p-4 text-center">
-            <p class="text-2xl font-bold 
-                @if($status === 'pending') text-orange-600
-                @elseif($status === 'resolved') text-green-600
-                @else text-blue-600
-                @endif">
-                {{ $count }}
-            </p>
-            <p class="text-sm text-gray-600 mt-1">{{ ucfirst($status) }}</p>
-            <div class="mt-2 bg-gray-200 rounded-full h-2">
-                <div class="h-2 rounded-full 
-                    @if($status === 'pending') bg-orange-500
-                    @elseif($status === 'resolved') bg-green-500
-                    @else bg-blue-500
-                    @endif" 
-                    style="width: {{ $stats['total_grievances'] > 0 ? ($count / $stats['total_grievances'] * 100) : 0 }}%">
-                </div>
-            </div>
-        </div>
-        @endforeach
     </div>
 </div>
 

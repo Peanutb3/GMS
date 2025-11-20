@@ -22,7 +22,7 @@
 <!-- <body class="bg-white h-screen w-screen flex flex-col"> -->
   <!-- HEADER -->
   <!-- <header class="flex items-center justify-between bg-white border-b border-gray-200 px-4 h-14 flex-shrink-0"> -->
-    <header class="px-6 py-3 border-b border-gray-200 flex items-center justify-between space-x-2 cursor-default">
+  <header class="px-6 py-3 border-b border-gray-200 flex items-center justify-between space-x-2 cursor-default relative">
     <div class="flex items-center space-x-3">
       <img src="/images/Logo_GMS.png" alt="GMS Logo" class="h-12">
     </div>
@@ -57,6 +57,8 @@
       </svg> -->
     </div>
   </header>
+  <!-- Global Toast Container (fixed top-right) -->
+  <div id="toast-container" class="fixed top-4 right-4 z-[100] space-y-3 flex flex-col items-end"></div>
 
   <!-- MAIN WRAPPER (SIDEBAR + CONTENT) -->
   <div class="flex flex-1 overflow-hidden">
@@ -90,8 +92,8 @@
 </aside>
 
   <!-- CONTENT AREA -->
-    <main class="flex-1 flex flex-col" style="background-color: #F5F5F5;">
-      <div class="flex-grow p-8 overflow-y-auto">
+    <main class="flex-1 overflow-y-auto" style="background-color: #F8F8FF;">
+      <div class="p-8">
         @yield('content')
       </div>
 
@@ -111,6 +113,63 @@
   </div>
   <!-- <div class="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40" id="mobile-overlay"></div> -->
 </div>
+
+
+<script>
+  window.__sessionSuccess = @json(session('success'));
+  window.__sessionError = @json(session('error'));
+</script>
+
+<script>
+  function buildToast(message, variant = 'success') {
+    const variants = {
+      success: {
+        icon: `<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 11.917 9.724 16.5 19 7.5"/></svg>`,
+        iconWrap: 'text-green-700 bg-green-100',
+        sr: 'Success'
+      },
+      error: {
+        icon: `<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/></svg>`,
+        iconWrap: 'text-red-700 bg-red-100',
+        sr: 'Error'
+      },
+      warning: {
+        icon: `<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13V8m0 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>`,
+        iconWrap: 'text-yellow-700 bg-yellow-100',
+        sr: 'Warning'
+      },
+      info: {
+        icon: `<svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17v-6m0-4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>`,
+        iconWrap: 'text-blue-700 bg-blue-100',
+        sr: 'Info'
+      }
+    };
+    const v = variants[variant] || variants.success;
+    const el = document.createElement('div');
+    // solid card style so it never looks transparent
+    el.className = 'flex items-center w-full max-w-sm p-4 bg-white text-gray-800 rounded-lg shadow-lg border border-gray-200';
+    el.setAttribute('role','alert');
+    el.innerHTML = `
+      <div class="inline-flex items-center justify-center shrink-0 w-7 h-7 rounded ${v.iconWrap}">${v.icon}<span class="sr-only">${v.sr} icon</span></div>
+      <div class="ms-3 text-sm font-normal">${message}</div>
+      <button type="button" class="ms-auto flex items-center justify-center text-gray-600 hover:text-gray-900 bg-transparent rounded h-8 w-8 focus:outline-none" aria-label="Close">\n        <span class="sr-only">Close</span>\n        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/></svg>\n      </button>
+    `;
+    el.querySelector('button').addEventListener('click', () => el.remove());
+    return el;
+  }
+  function pushToast(msg, variant='success') {
+    if(!msg) return;
+    const c = document.getElementById('toast-container');
+    const t = buildToast(msg, variant);
+    c.appendChild(t);
+    setTimeout(()=> t.remove(), 5000);
+  }
+  window.pushToast = pushToast;
+  document.addEventListener('DOMContentLoaded', ()=> {
+    if(window.__sessionSuccess){ pushToast(window.__sessionSuccess,'success'); }
+    if(window.__sessionError){ pushToast(window.__sessionError,'error'); }
+  });
+</script>
 
 @stack('scripts')
 

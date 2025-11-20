@@ -7,6 +7,20 @@
 @endsection
 
 @section('content')
+<!-- Breadcrumb -->
+<div class="px-3 -mt-2 mb-4">
+    <nav class="text-sm text-gray-600 flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 30 30" class="w-5 h-5 mr-2 text-gray-500">
+        <path d="M3 9.75L12 3l9 6.75V21a1 1 0 0 1-1 1h-5.5a.5.5 0 0 1-.5-.5V15h-4v6.5a.5.5 0 0 1-.5.5H4a1 1 0 0 1-1-1V9.75z"/>
+        </svg>
+        <a href="{{ route('admin.dashboard') }}" class="hover:text-red-800">Dashboard</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-gray-600">Requests</span>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-blue-600">Good Moral</span>
+    </nav>
+</div>
+
 <!-- Page Header -->
 <div class="bg-gradient-to-r from-[#760000] to-[#D62F26] text-white rounded-xl p-8 mb-8 shadow-lg">
     <div class="flex items-center justify-between">
@@ -70,7 +84,7 @@
                 <tr>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">ID</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Student</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Program</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Program & Year</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Purpose</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Status</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Date</th>
@@ -84,18 +98,24 @@
                         #{{ $request->id }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm font-medium text-gray-900">{{ $request->student->name ?? 'N/A' }}</div>
-                        <div class="text-xs text-gray-500">{{ $request->student->student_no ?? 'N/A' }}</div>
+                        <div class="text-sm font-medium text-gray-900">
+                            {{ $request->first_name }} 
+                            {{ $request->middle_name ? $request->middle_name . ' ' : '' }}
+                            {{ $request->last_name }}
+                        </div>
+                        @if($request->student)
+                            <div class="text-xs text-gray-500">{{ $request->student->student_id }}</div>
+                        @endif
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                        {{ $request->student->program ?? 'N/A' }}
+                        {{ $request->program_year ?? 'N/A' }}
                     </td>
                     <td class="px-6 py-4 text-sm text-gray-700">
                         {{ $request->purpose ?? 'N/A' }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <span class="px-3 py-1 text-xs font-semibold rounded-full
-                            @if($request->status === 'pending') bg-orange-100 text-orange-800
+                            @if($request->status === 'pending') bg-yellow-100 text-yellow-800
                             @elseif($request->status === 'approved') bg-green-100 text-green-800
                             @else bg-red-100 text-red-800
                             @endif">

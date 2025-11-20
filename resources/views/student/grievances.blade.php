@@ -82,15 +82,15 @@
         @php $hasRemark = !empty($g->description); @endphp
         <td class="px-5 py-3 text-center">
             @if($hasRemark)
-                <button type="button" onclick="showRemark({!! json_encode($g->description) !!}, {!! json_encode($g->case_id) !!})" title="View remark" aria-label="View remark" class="p-1 rounded hover:bg-gray-100">
-                    <!-- three dots icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                        <circle cx="5" cy="12" r="2" />
-                        <circle cx="12" cy="12" r="2" />
-                        <circle cx="19" cy="12" r="2" />
-                    </svg>
-                </button>
-            @else
+                    <button type="button" onclick='showRemark(@json($g->description), @json($g->case_id))' title="View remark" aria-label="View remark" class="p-1 rounded hover:bg-gray-100">
+                        <!-- three dots icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <circle cx="5" cy="12" r="2" />
+                            <circle cx="12" cy="12" r="2" />
+                            <circle cx="19" cy="12" r="2" />
+                        </svg>
+                    </button>
+                @else
                 <button type="button" disabled title="No remark" aria-label="No remark" class="p-1 rounded text-gray-300 cursor-not-allowed opacity-50">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                         <circle cx="5" cy="12" r="2" />

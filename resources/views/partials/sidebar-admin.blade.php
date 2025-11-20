@@ -25,17 +25,15 @@
                     <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
                 </svg>
                 <span class="sidebar-text text-small flex-1">Requests</span>
-                <svg class="w-4 h-4 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="sidebar-text w-4 h-4 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
             </summary>
-            <div class="bg-red-50 bg-opacity-10">
+            <div class="sidebar-text bg-red-50 bg-opacity-10">
                 <a href="{{ route('admin.requests.good-moral') }}" class="flex items-center gap-3 px-10 py-3 text-sm {{ request()->routeIs('admin.requests.good-moral') ? 'bg-red-900 text-white' : 'text-red-900 hover:bg-red-800 hover:text-white' }} transition-colors">
-                    <span class="w-1 h-1 bg-current rounded-full"></span>
                     Good Moral Requests
                 </a>
                 <a href="{{ route('admin.requests.safe-loan') }}" class="flex items-center gap-3 px-10 py-3 text-sm {{ request()->routeIs('admin.requests.safe-loan') ? 'bg-red-900 text-white' : 'text-red-900 hover:bg-red-800 hover:text-white' }} transition-colors">
-                    <span class="w-1 h-1 bg-current rounded-full"></span>
                     Safe Loan Requests
                 </a>
             </div>
@@ -48,21 +46,18 @@
                     <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                 </svg>
                 <span class="sidebar-text text-small flex-1">Manage Users</span>
-                <svg class="w-4 h-4 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="sidebar-text w-4 h-4 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
             </summary>
-            <div class="bg-red-50 bg-opacity-10">
+            <div class="sidebar-text bg-red-50 bg-opacity-10">
                 <a href="{{ route('admin.manage-students') }}" class="flex items-center gap-3 px-10 py-3 text-sm {{ request()->routeIs('admin.manage-students') ? 'bg-red-900 text-white' : 'text-red-900 hover:bg-red-800 hover:text-white' }} transition-colors">
-                    <span class="w-1 h-1 bg-current rounded-full"></span>
                     Students
                 </a>
                 <a href="{{ route('admin.manage-staff') }}" class="flex items-center gap-3 px-10 py-3 text-sm {{ request()->routeIs('admin.manage-staff') ? 'bg-red-900 text-white' : 'text-red-900 hover:bg-red-800 hover:text-white' }} transition-colors">
-                    <span class="w-1 h-1 bg-current rounded-full"></span>
                     Staff
                 </a>
                 <a href="{{ route('admin.manage-admins') }}" class="flex items-center gap-3 px-10 py-3 text-sm {{ request()->routeIs('admin.manage-admins') ? 'bg-red-900 text-white' : 'text-red-900 hover:bg-red-800 hover:text-white' }} transition-colors">
-                    <span class="w-1 h-1 bg-current rounded-full"></span>
                     Admins
                 </a>
             </div>

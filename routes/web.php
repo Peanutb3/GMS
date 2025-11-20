@@ -18,6 +18,7 @@ use App\Http\Controllers\AdminRequestController;
 use App\Http\Controllers\AdminSettingsController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\StaffProfileController;
+use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\SafeLoanRequestController;
 
 /*
@@ -83,6 +84,12 @@ Route::middleware(['auth', 'role:staff'])->prefix('staff')->group(function () {
     Route::get('/profile', [StaffProfileController::class, 'show'])->name('staff.profile');
     Route::get('/profile/edit', [StaffProfileController::class, 'edit'])->name('staff.profile.edit');
     Route::patch('/profile', [StaffProfileController::class, 'update'])->name('staff.profile.update');
+    
+    // Password change routes
+    Route::get('/change-password', function () {
+        return view('staff.change-password');
+    })->name('staff.change-password');
+    Route::patch('/password', [StaffProfileController::class, 'updatePassword'])->name('staff.password.update');
 });
 
 /*
@@ -200,8 +207,16 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/settings', [AdminSettingsController::class, 'index'])->name('admin.settings');
     Route::post('/settings', [AdminSettingsController::class, 'update'])->name('admin.settings.update');
 
-    // Profile
+    // Profile routes (view, edit, update)
     Route::view('/profile', 'admin.profile')->name('admin.profile');
+    Route::get('/profile/edit', [\App\Http\Controllers\AdminProfileController::class, 'edit'])->name('admin.profile.edit');
+    Route::patch('/profile', [\App\Http\Controllers\AdminProfileController::class, 'update'])->name('admin.profile.update');
+    
+    // Password change routes
+    Route::get('/change-password', function () {
+        return view('admin.change-password');
+    })->name('admin.change-password');
+    Route::patch('/password', [\App\Http\Controllers\AdminProfileController::class, 'updatePassword'])->name('admin.password.update');
 });
 
 /*

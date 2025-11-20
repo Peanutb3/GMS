@@ -7,6 +7,20 @@
 @endsection
 
 @section('content')
+<!-- Breadcrumb -->
+<div class="px-3 -mt-2 mb-4">
+    <nav class="text-sm text-gray-600 flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 30 30" class="w-5 h-5 mr-2 text-gray-500">
+        <path d="M3 9.75L12 3l9 6.75V21a1 1 0 0 1-1 1h-5.5a.5.5 0 0 1-.5-.5V15h-4v6.5a.5.5 0 0 1-.5.5H4a1 1 0 0 1-1-1V9.75z"/>
+        </svg>
+        <a href="{{ route('admin.dashboard') }}" class="hover:text-red-800">Dashboard</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-gray-600">Manage Users</span>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-blue-600">Staff</span>
+    </nav>
+</div>
+
 <!-- Page Header -->
 <div class="bg-gradient-to-r from-[#760000] to-[#D62F26] text-white rounded-xl p-8 mb-8 shadow-lg">
     <div class="flex items-center justify-between">
@@ -24,16 +38,6 @@
     </div>
 </div>
 
-@if(session('success'))
-<div class="bg-green-100 border border-green-400 text-green-700 px-6 py-4 rounded-lg mb-6 flex items-center justify-between">
-    <span>{{ session('success') }}</span>
-    <button onclick="this.parentElement.remove()" class="text-green-700 hover:text-green-900">
-        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-    </button>
-</div>
-@endif
 
 <!-- Search -->
 <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
@@ -59,7 +63,7 @@
     </div>
 
     <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
+        <table class="w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">ID</th>
@@ -130,20 +134,12 @@
     @endif
 </div>
 
-<div id="toast" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hidden">
-    <p id="toast-message"></p>
-</div>
+<!-- Per-page toast removed; using global container -->
 
 @endsection
 
 @push('scripts')
 <script>
-// Show success message on page load if it exists
-@if(session('success'))
-document.addEventListener('DOMContentLoaded', function() {
-    showToast('{{ session('success') }}', 'success');
-});
-@endif
 
 function deleteStaff(id) {
     if (!confirm('Are you sure you want to delete this staff member?')) {
@@ -160,27 +156,18 @@ function deleteStaff(id) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            showToast(data.message, 'success');
+            pushToast(data.message, 'success');
             document.getElementById(`staff-row-${id}`).remove();
         } else {
-            showToast('Failed to delete staff member', 'error');
+            pushToast('Failed to delete staff member', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        showToast('An error occurred', 'error');
+    pushToast('An error occurred', 'error');
     });
 }
 
-function showToast(message, type = 'success') {
-    const toast = document.getElementById('toast');
-    const toastMessage = document.getElementById('toast-message');
-    
-    toastMessage.textContent = message;
-    toast.classList.remove('hidden', 'bg-green-500', 'bg-red-500');
-    toast.classList.add(type === 'success' ? 'bg-green-500' : 'bg-red-500');
-    
-    setTimeout(() => toast.classList.add('hidden'), 3000);
-}
+// Local showToast removed; using global pushToast from layout
 </script>
 @endpush

@@ -7,6 +7,20 @@
 @endsection
 
 @section('content')
+<!-- Breadcrumb -->
+<div class="px-3 -mt-2 mb-4">
+    <nav class="text-sm text-gray-600 flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 30 30" class="w-5 h-5 mr-2 text-gray-500">
+        <path d="M3 9.75L12 3l9 6.75V21a1 1 0 0 1-1 1h-5.5a.5.5 0 0 1-.5-.5V15h-4v6.5a.5.5 0 0 1-.5.5H4a1 1 0 0 1-1-1V9.75z"/>
+        </svg>
+        <a href="{{ route('admin.dashboard') }}" class="hover:text-red-800">Dashboard</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-gray-600">Requests</span>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-blue-600">Safe Loan</span>
+    </nav>
+</div>
+
 <!-- Page Header -->
 <div class="bg-gradient-to-r from-[#760000] to-[#D62F26] text-white rounded-xl p-8 mb-8 shadow-lg">
     <div class="flex items-center justify-between">

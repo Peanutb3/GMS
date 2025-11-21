@@ -93,7 +93,7 @@
   <div class="option-card w-full p-6 rounded-xl text-center cursor-pointer transition transform bg-red-50 shadow hover:-translate-y-1 hover:shadow-lg hover:bg-red-100"
        style="border:2px solid #8B0000;" data-option="safe-loan-form" tabindex="0" role="button" aria-pressed="false">
     <i class="fas fa-hand-holding-usd text-5xl mb-3" style="color:#8B0000;"></i>
-  <h3 class="text-xl font-bold mb-2" style="color:#8B0000;">Safe Loan Application</h3>
+  <h3 class="text-xl font-bold mb-2" style="color:#8B0000;">Safe Loan Payment</h3>
   <p class="text-sm text-gray-600">Apply for a student loan with flexible terms and easy approval process.</p>
   <span class="inline-block mt-4 px-2 py-0.5 text-xs font-semibold text-white rounded-full" style="background-color:#8B0000;">Financial Aid</span>
   </div>
@@ -414,7 +414,7 @@
 <div id="safe-loan-form-modal" class="modal fixed inset-0 hidden bg-black/50 z-50 items-center justify-center p-4">
   <div class="modal-content bg-gray-50 rounded-xl p-6 shadow-xl max-w-2xl w-2/3 relative overflow-y-auto max-h-[80vh]">
     <button class="close-btn absolute top-3 right-3 text-xl text-gray-400 hover:text-red-600">&times;</button>
-    <h2 class="text-lg font-bold mb-4 text-center" style="color:#8B0000;">Safe Loan Application</h2>
+    <h2 class="text-lg font-bold mb-4 text-center" style="color:#8B0000;">Safe Loan Payment</h2>
     <!-- Step Progress Indicator (Loan) -->
     <div class="mb-8">
       <div class="flex items-center justify-between max-w-md mx-auto">

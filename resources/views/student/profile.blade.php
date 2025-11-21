@@ -41,15 +41,26 @@
                 </div>
 
                 <div class="flex-1">
-                    <h2 class="text-lg md:text-xl font-semibold text-gray-900">{{ $user->name ?? 'Anna Alleah Jane B. Lindo' }}</h2>
-                    <div class="text-sm text-gray-500 mt-1">Student</div>
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <h2 class="text-lg md:text-xl font-semibold text-gray-900">{{ $user->name ?? 'Anna Alleah Jane B. Lindo' }}</h2>
+                            <div class="text-sm text-gray-500 mt-1">Student</div>
 
-                    <div class="mt-3 text-sm text-gray-600">
-                        <span class="font-semibold">Student ID:</span>
-                        <span class="text-gray-800">{{ $student->student_id ?? 'ST-001' }}</span>
-                        <span class="mx-3 text-gray-300">|</span>
-                        <span class="font-semibold">Email:</span>
-                        <span class="text-gray-800">{{ $user->email ?? 'aajlindo@usep.edu.ph' }}</span>
+                            <div class="mt-3 text-sm text-gray-600">
+                                <span class="font-semibold">Student ID:</span>
+                                <span class="text-gray-800">{{ $student->student_id ?? 'ST-001' }}</span>
+                                <span class="mx-3 text-gray-300">|</span>
+                                <span class="font-semibold">Email:</span>
+                                <span class="text-gray-800">{{ $user->email ?? 'aajlindo@usep.edu.ph' }}</span>
+                            </div>
+                        </div>
+                        <a href="{{ route('student.profile.edit') }}" 
+                           class="px-4 py-2 bg-red-800 text-white text-sm font-medium rounded-lg hover:bg-red-900 transition duration-200 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            Edit Profile
+                        </a>
                     </div>
                 </div>
             </div>

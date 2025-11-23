@@ -109,6 +109,8 @@ class AuthController extends Controller
         return match ($user->role) {
             'student' => redirect()->route('student.dashboard'),
             'staff' => redirect()->route('staff.dashboard'),
+            'osas_gmc' => redirect()->route('osas-gmc.dashboard'),
+            'osas_du' => redirect()->route('osas-du.dashboard'),
             'admin' => redirect()->route('admin.dashboard'),
             default => redirect()->route('dashboard'),
         };
@@ -178,6 +180,8 @@ class AuthController extends Controller
             return match ($user->role) {
                 'student' => redirect()->route('student.dashboard'),
                 'staff' => redirect()->route('staff.dashboard'),
+                'osas_gmc' => redirect()->route('osas-gmc.dashboard'),
+                'osas_du' => redirect()->route('osas-du.dashboard'),
                 'admin' => redirect()->route('admin.dashboard'),
                 default => redirect()->route('dashboard'),
             };

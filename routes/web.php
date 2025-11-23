@@ -21,6 +21,9 @@ use App\Http\Controllers\StaffProfileController;
 use App\Http\Controllers\AdminProfileController;
 use App\Http\Controllers\SafeLoanRequestController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\OsasGmcDashboardController;
+use App\Http\Controllers\OsasDuDashboardController;
+use App\Http\Controllers\OsasGmcRequestsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -105,6 +108,70 @@ Route::middleware(['auth', 'role:staff'])->prefix('staff')->group(function () {
         return view('staff.change-password');
     })->name('staff.change-password');
     Route::patch('/password', [StaffProfileController::class, 'updatePassword'])->name('staff.password.update');
+});
+
+/*
+|--------------------------------------------------------------------------
+| OSAS GMC ROUTES (Good Moral Certificate & Safe Loan)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:osas_gmc'])->prefix('osas-gmc')->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\OsasGmcDashboardController::class, 'index'])->name('osas-gmc.dashboard');
+    
+    // Requests Management
+    Route::get('/requests', [\App\Http\Controllers\OsasGmcRequestsController::class, 'index'])->name('osas-gmc.requests');
+    Route::post('/requests/{type}/{id}/check', [\App\Http\Controllers\OsasGmcRequestsController::class, 'check'])->name('osas-gmc.requests.check');
+    
+    // View-only Grievances
+    Route::get('/grievances', [GrievanceController::class, 'index'])->name('osas-gmc.grievances');
+    
+    // Profile routes
+    Route::get('/profile', [StaffProfileController::class, 'show'])->name('osas-gmc.profile');
+    Route::get('/profile/edit', [StaffProfileController::class, 'edit'])->name('osas-gmc.profile.edit');
+    Route::patch('/profile', [StaffProfileController::class, 'update'])->name('osas-gmc.profile.update');
+    
+    // Password change
+    Route::get('/change-password', function () {
+        return view('osas-gmc.change-password');
+    })->name('osas-gmc.change-password');
+    Route::patch('/password', [StaffProfileController::class, 'updatePassword'])->name('osas-gmc.password.update');
+});
+
+/*
+|--------------------------------------------------------------------------
+| OSAS DU ROUTES (Discipline Unit)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:osas_du'])->prefix('osas-du')->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\OsasDuDashboardController::class, 'index'])->name('osas-du.dashboard');
+    
+    // Grievances (Full Access - File & View)
+    Route::get('/grievances', [GrievanceController::class, 'index'])->name('osas-du.grievances');
+    Route::get('/file-grievances', [GrievanceController::class, 'create'])->name('osas-du.file-grievances');
+    Route::post('/grievances', [GrievanceController::class, 'store'])->name('osas-du.grievances.store');
+    Route::patch('/grievances/{grievance}/status', [GrievanceController::class, 'updateStatus'])->name('osas-du.grievances.status');
+    Route::patch('/grievances/{grievance}/resolve', [GrievanceController::class, 'resolve'])->name('osas-du.grievances.resolve');
+    Route::delete('/grievances/{grievance}', [GrievanceController::class, 'destroy'])->name('osas-du.grievances.destroy');
+    
+    // Student lookup
+    Route::get('/students/find/{studentId}', [GrievanceController::class, 'findStudent'])->name('osas-du.students.find');
+    
+    // View-only Requests
+    Route::get('/requests', [\App\Http\Controllers\OsasGmcRequestsController::class, 'index'])->name('osas-du.requests');
+    
+    // Profile routes
+    Route::get('/profile', [StaffProfileController::class, 'show'])->name('osas-du.profile');
+    Route::get('/profile/edit', [StaffProfileController::class, 'edit'])->name('osas-du.profile.edit');
+    Route::patch('/profile', [StaffProfileController::class, 'update'])->name('osas-du.profile.update');
+    
+    // Password change
+    Route::get('/change-password', function () {
+        return view('osas-du.change-password');
+    })->name('osas-du.change-password');
+    Route::patch('/password', [StaffProfileController::class, 'updatePassword'])->name('osas-du.password.update');
+    
+    // Audit logs
+    Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('osas-du.audit.index');
 });
 
 /*

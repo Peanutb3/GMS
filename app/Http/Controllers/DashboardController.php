@@ -16,6 +16,10 @@ class DashboardController extends Controller
             return view('student.dashboard');
         } elseif ($user->role === 'admin') {
             return view('admin.dashboard');
+        } elseif ($user->role === 'osas_gmc') {
+            return redirect()->route('osas-gmc.dashboard');
+        } elseif ($user->role === 'osas_du') {
+            return redirect()->route('osas-du.dashboard');
         }
 
         abort(403, 'Unauthorized');

@@ -12,7 +12,8 @@ class AdminStaffController extends Controller
 {
     public function index(Request $request)
     {
-    $query = User::with('staff')->where('role', 'staff');
+        // Include all staff-related roles: staff, osas_gmc, osas_du
+        $query = User::with('staff')->whereIn('role', ['staff', 'osas_gmc', 'osas_du']);
 
         // Search filter
         if ($request->filled('search')) {
@@ -23,9 +24,14 @@ class AdminStaffController extends Controller
             });
         }
 
+        // Role filter
+        if ($request->filled('role') && in_array($request->role, ['staff', 'osas_gmc', 'osas_du'])) {
+            $query->where('role', $request->role);
+        }
+
         $staff = $query->latest()->paginate(15);
 
-    return view('admin.manage-staff', compact('staff'));
+        return view('admin.manage-staff', compact('staff'));
     }
 
     public function create()
@@ -46,6 +52,7 @@ class AdminStaffController extends Controller
             'department' => 'required|string|max:255',
             'position' => 'required|string|max:255',
             'staff_type' => 'required|in:Academic,Non-Academic,Administrative',
+            'role' => 'required|in:staff,osas_gmc,osas_du',
             'password' => 'required|min:8|confirmed',
         ]);
 
@@ -55,12 +62,12 @@ class AdminStaffController extends Controller
                         $validated['last_name'] . ' ' . 
                         ($validated['suffix'] ?? ''));
 
-        // Create user account
+        // Create user account with specified role
         $user = User::create([
             'name' => $fullName,
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role' => 'staff',
+            'role' => $validated['role'], // Use selected role
         ]);
 
         // Create staff profile if table exists
@@ -78,7 +85,7 @@ class AdminStaffController extends Controller
                     'department' => $validated['department'],
                     'position' => $validated['position'],
                     'staff_type' => $validated['staff_type'],
-                    'role' => 'staff',
+                    'role' => $validated['role'], // Store role in staff table too
                 ]);
             }
         } catch (\Throwable $e) {
@@ -93,19 +100,20 @@ class AdminStaffController extends Controller
 
     public function edit($id)
     {
-        $staff = User::where('role', 'staff')->findOrFail($id);
+        $staff = User::whereIn('role', ['staff', 'osas_gmc', 'osas_du'])->findOrFail($id);
         return view('admin.staff-edit', compact('staff'));
     }
 
     public function update(Request $request, $id)
     {
-        $staff = User::with('staff')->where('role', 'staff')->findOrFail($id);
+        $staff = User::with('staff')->whereIn('role', ['staff', 'osas_gmc', 'osas_du'])->findOrFail($id);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
             'department' => 'nullable|string|max:100',
             'staff_type' => 'nullable|string|max:100',
+            'role' => 'required|in:staff,osas_gmc,osas_du',
             'password' => 'nullable|min:8|confirmed',
         ]);
 
@@ -113,6 +121,7 @@ class AdminStaffController extends Controller
         $userData = [
             'name' => $validated['name'],
             'email' => $validated['email'],
+            'role' => $validated['role'], // Update role
         ];
 
         // Update password if provided
@@ -129,6 +138,7 @@ class AdminStaffController extends Controller
                     'email' => $validated['email'],
                     'department' => $validated['department'] ?? $staff->staff->department,
                     'staff_type' => $validated['staff_type'] ?? $staff->staff->staff_type,
+                    'role' => $validated['role'], // Update role in staff table
                 ]);
             }
         } catch (\Throwable $e) {
@@ -141,7 +151,7 @@ class AdminStaffController extends Controller
 
     public function destroy($id)
     {
-        $staff = User::where('role', 'staff')->findOrFail($id);
+        $staff = User::whereIn('role', ['staff', 'osas_gmc', 'osas_du'])->findOrFail($id);
         $staff->delete();
 
         return response()->json([

@@ -115,6 +115,24 @@
                         <option value="Administrative" {{ old('staff_type', optional($staff->staff)->staff_type) === 'Administrative' ? 'selected' : '' }}>Administrative</option>
                     </select>
                 </div>
+
+                <!-- Role -->
+                <div>
+                    <label for="role" class="block text-sm font-medium text-gray-700 mb-2">Role/Access Level <span class="text-red-600">*</span></label>
+                    <select id="role" name="role" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent @error('role') border-red-500 @enderror">
+                        <option value="">Select Role</option>
+                        <option value="staff" {{ old('role', $staff->role) === 'staff' ? 'selected' : '' }}>General Staff (Full Access)</option>
+                        <option value="osas_gmc" {{ old('role', $staff->role) === 'osas_gmc' ? 'selected' : '' }}>OSAS GMC (Requests Only)</option>
+                        <option value="osas_du" {{ old('role', $staff->role) === 'osas_du' ? 'selected' : '' }}>OSAS DU (Grievances Only)</option>
+                    </select>
+                    <p class="mt-1 text-xs text-gray-500">
+                        Staff: Full access | OSAS GMC: Manage requests, view grievances | OSAS DU: Manage grievances, view requests
+                    </p>
+                    @error('role')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
             </div>
         </div>
 

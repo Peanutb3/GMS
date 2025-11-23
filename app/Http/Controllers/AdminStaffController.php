@@ -86,7 +86,8 @@ class AdminStaffController extends Controller
                     'staff_type' => $validated['staff_type'],
                     'role' => $validated['role'], // Store role in staff table too
                 ]);
-            }ch (\Throwable $e) {
+            }
+        } catch (\Throwable $e) {
             // Rollback user if staff creation fails
             $user->delete();
             throw $e;

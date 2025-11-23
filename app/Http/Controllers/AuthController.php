@@ -28,18 +28,12 @@ class AuthController extends Controller
     public function storeStep1(Request $request)
     {
         $validated = $request->validate([
-            'account_type'   => 'required|in:student,staff',
+            'account_type'   => 'required|in:student',
             // Student-specific
-            'student_id'     => 'required_if:account_type,student|unique:students,student_id',
-            'college'        => 'required_if:account_type,student',
-            'program'        => 'required_if:account_type,student',
-            'year'           => 'required_if:account_type,student',
-            // Staff-specific
-            'employee_id'    => 'required_if:account_type,staff|unique:staff,employee_id',
-            'staff_type'     => 'required_if:account_type,staff',
-            'department'     => 'required_if:account_type,staff',
-            'position'       => 'required_if:account_type,staff',
-            'phone'          => 'required_if:account_type,staff',
+            'student_id'     => 'required|unique:students,student_id',
+            'college'        => 'required',
+            'program'        => 'required',
+            'year'           => 'required',
             // Common fields
             'first_name'     => 'required|string|max:255',
             'middle_initial' => 'nullable|string|max:5',
@@ -74,39 +68,26 @@ class AuthController extends Controller
             'password' => 'required|string|min:6|confirmed',
         ]);
 
+        // Create user with student role
         $user = User::create([
             'name' => $step1['first_name'].' '.$step1['last_name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
-            'role' => $step1['account_type'],
+            'role' => 'student',
         ]);
 
-        if ($step1['account_type'] === 'student') {
-            Student::create([
-                'user_id'        => $user->id,
-                'student_id'     => $step1['student_id'],
-                'first_name'     => $step1['first_name'],
-                'middle_initial' => $step1['middle_initial'] ?? null,
-                'last_name'      => $step1['last_name'],
-                'suffix'         => $step1['suffix'] ?? null,
-                'college'        => $step1['college'],
-                'program'        => $step1['program'],
-                'year'           => $step1['year'],
-            ]);
-        } elseif ($step1['account_type'] === 'staff') {
-            Staff::create([
-                'user_id'        => $user->id,
-                'employee_id'    => $step1['employee_id'],
-                'first_name'     => $step1['first_name'],
-                'middle_initial' => $step1['middle_initial'] ?? null,
-                'last_name'      => $step1['last_name'],
-                'suffix'         => $step1['suffix'] ?? null,
-                'department'     => $step1['department'],
-                'position'       => $step1['position'],
-                'phone'          => $step1['phone'],
-                'staff_type'     => $step1['staff_type'],
-            ]);
-        }
+        // Create student record
+        Student::create([
+            'user_id'        => $user->id,
+            'student_id'     => $step1['student_id'],
+            'first_name'     => $step1['first_name'],
+            'middle_initial' => $step1['middle_initial'] ?? null,
+            'last_name'      => $step1['last_name'],
+            'suffix'         => $step1['suffix'] ?? null,
+            'college'        => $step1['college'],
+            'program'        => $step1['program'],
+            'year'           => $step1['year'],
+        ]);
 
         session()->forget('signup_step1');
 

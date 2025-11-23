@@ -37,17 +37,8 @@
         <form action="{{ route('signup.step1.store') }}" method="POST" class="space-y-6">
           @csrf
 
-        <!-- Account Type -->
-        <div class="flex gap-4">
-          <div class="flex-1 relative">
-            <select name="account_type" required onchange="toggleFields(this.value)"
-              class="w-full border-b border-white/70 focus:border-white focus:outline-none pb-3 text-white bg-transparent text-sm appearance-none cursor-pointer pr-8">
-              <option value="" disabled selected class="text-black bg-white">Select Role</option>
-              <option value="student" class="text-black bg-white">Student</option>
-              <option value="staff" class="text-black bg-white">Staff</option>
-            </select>
-          </div>
-        </div>
+        <!-- Hidden Account Type (Student only) -->
+        <input type="hidden" name="account_type" value="student">
 
         <!-- Student Fields -->
         <div id="studentFields" class="space-y-6">
@@ -102,55 +93,6 @@
           </div>
         </div>
 
-          <!-- Staff Fields -->
-          <div id="staffFields" class="space-y-6 hidden">
-            <div class="flex gap-4">
-              <select name="staff_type"
-                class="flex-1 border-b border-white/70 focus:border-white bg-transparent text-white/80 pb-3 text-sm cursor-pointer">
-                <option value="" disabled selected class="text-black bg-white">Staff Type</option>
-                <option value="academic" class="text-black bg-white">Academic Staff</option>
-                <option value="administrative" class="text-black bg-white">Administrative Staff</option>
-                <option value="support" class="text-black bg-white">Support Staff</option>
-              </select>
-              <input type="text" name="employee_id" placeholder="Employee ID"
-                class="flex-1 border-b border-white/70 focus:border-white bg-transparent text-white/80 pb-3 placeholder-white/70 text-sm">
-            </div>
-
-            <!-- Names -->
-            <div class="flex gap-4">
-              <input type="text" name="first_name" placeholder="First Name"
-                class="flex-1 border-b border-white/70 focus:border-white bg-transparent text-white/80 pb-3 placeholder-white/70 text-sm">
-              <input type="text" name="middle_initial" placeholder="M.I."
-                class="w-20 border-b border-white/70 focus:border-white bg-transparent text-white/80 pb-3 placeholder-white/70 text-sm">
-            </div>
-            <div class="flex gap-4">
-              <input type="text" name="last_name" placeholder="Last Name"
-                class="flex-1 border-b border-white/70 focus:border-white bg-transparent text-white/80 pb-3 placeholder-white/70 text-sm">
-              <input type="text" name="suffix" placeholder="Suffix"
-                class="w-24 border-b border-white/70 focus:border-white bg-transparent text-white/80 pb-3 placeholder-white/70 text-sm">
-            </div>
-
-            <!-- Department -->
-            <select name="department"
-              class="w-full border-b border-white/70 focus:border-white bg-transparent text-white/80 pb-3 text-sm cursor-pointer">
-              <option value="" disabled selected class="text-black bg-white">Department</option>
-              <option value="College of Arts and Sciences" class="text-black bg-white">College of Arts and Sciences</option>
-              <option value="College of Business" class="text-black bg-white">College of Business</option>
-              <option value="College of Education" class="text-black bg-white">College of Education</option>
-              <option value="Registrar's Office" class="text-black bg-white">Registrar's Office</option>
-              <option value="Student Affairs" class="text-black bg-white">Student Affairs</option>
-              <option value="Human Resources" class="text-black bg-white">Human Resources</option>
-            </select>
-
-            <!-- Position + Phone -->
-            <div class="flex gap-4">
-              <input type="text" name="position" placeholder="Position"
-                class="flex-1 border-b border-white/70 focus:border-white bg-transparent text-white/80 pb-3 placeholder-white/70 text-sm">
-              <input type="tel" name="phone" placeholder="Phone"
-                class="flex-1 border-b border-white/70 focus:border-white bg-transparent text-white/80 pb-3 placeholder-white/70 text-sm">
-            </div>
-          </div>
-
           <!-- Next Button -->
           <div class="flex justify-end">
             <button type="submit"
@@ -178,31 +120,6 @@
     </div>
     <div class="text-sm text-gray-400 pb-6">All Rights Reserved.</div>
   </div>
-
-    <script>
-      function toggleFields(role) {
-        const studentFields = document.getElementById("studentFields");
-        const staffFields = document.getElementById("staffFields");
-
-        // Hide both sections
-        studentFields.classList.add("hidden");
-        staffFields.classList.add("hidden");
-
-        // Disable all inputs in both sections
-        studentFields.querySelectorAll("input, select").forEach(el => el.disabled = true);
-        staffFields.querySelectorAll("input, select").forEach(el => el.disabled = true);
-
-        // Show + enable the correct section
-        if (role === "student") {
-          studentFields.classList.remove("hidden");
-          studentFields.querySelectorAll("input, select").forEach(el => el.disabled = false);
-        } else if (role === "staff") {
-          staffFields.classList.remove("hidden");
-          staffFields.querySelectorAll("input, select").forEach(el => el.disabled = false);
-        }
-      }
-    </script>
-
 
 </body>
 </html>

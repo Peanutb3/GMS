@@ -132,17 +132,6 @@
                         <option value="IV" {{ old('suffix') === 'IV' ? 'selected' : '' }}>IV</option>
                     </select>
                 </div>
-
-                <!-- Phone -->
-                <div>
-                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                    <input type="tel" id="phone" name="phone" value="{{ old('phone') }}"
-                        placeholder="+63 912 345 6789"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent @error('phone') border-red-500 @enderror">
-                    @error('phone')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
             </div>
         </div>
 

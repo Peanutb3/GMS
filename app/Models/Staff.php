@@ -23,7 +23,6 @@ class Staff extends Model
         'position',
         'role',
         'staff_type',
-        'phone',
         'email',
         'profile_photo_path',
     ];

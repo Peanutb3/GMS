@@ -48,7 +48,6 @@ class AdminStaffController extends Controller
             'last_name' => 'required|string|max:255',
             'suffix' => 'nullable|string|max:10',
             'email' => 'required|email|unique:users,email',
-            'phone' => 'nullable|string|max:20',
             'department' => 'required|string|max:255',
             'position' => 'required|string|max:255',
             'staff_type' => 'required|in:Academic,Non-Academic,Administrative',
@@ -71,6 +70,7 @@ class AdminStaffController extends Controller
         ]);
 
         // Create staff profile if table exists
+        // Create staff profile if table exists
         try {
             if (Schema::hasTable('staff')) {
                 Staff::create([
@@ -81,14 +81,12 @@ class AdminStaffController extends Controller
                     'last_name' => $validated['last_name'],
                     'suffix' => $validated['suffix'] ?? null,
                     'email' => $validated['email'],
-                    'phone' => $validated['phone'] ?? null,
                     'department' => $validated['department'],
                     'position' => $validated['position'],
                     'staff_type' => $validated['staff_type'],
                     'role' => $validated['role'], // Store role in staff table too
                 ]);
-            }
-        } catch (\Throwable $e) {
+            }ch (\Throwable $e) {
             // Rollback user if staff creation fails
             $user->delete();
             throw $e;

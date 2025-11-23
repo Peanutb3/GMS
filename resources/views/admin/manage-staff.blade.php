@@ -95,6 +95,7 @@
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
+                @forelse($staff as $member)
                 <tr class="hover:bg-gray-50" id="staff-row-{{ $member->id }}">
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                         #{{ $member->id }}
@@ -125,16 +126,15 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                         {{ optional($member->staff)->department ?? 'N/A' }}
-                    </td>{ optional($member->staff)->department ?? 'N/A' }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                         {{ $member->created_at->format('M d, Y') }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div class="flex gap-2">
-                @empty
-                <tr>
-                    <td colspan="8" class="px-6 py-12 text-center text-gray-400">5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <a href="{{ route('admin.staff.edit', $member->id) }}" 
+                               class="text-blue-600 hover:text-blue-900" title="Edit">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                 </svg>
                             </a>
@@ -149,9 +149,10 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="px-6 py-12 text-center text-gray-400">
+                    <td colspan="8" class="px-6 py-12 text-center text-gray-400">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <circle cx="12" cy="6" r="4" fill="currentColor"/><path fill="currentColor" d="M20 17.5c0 2.485 0 4.5-8 4.5s-8-2.015-8-4.5S7.582 13 12 13s8 2.015 8 4.5"/>
+                            <circle cx="12" cy="6" r="4" fill="currentColor"/>
+                            <path fill="currentColor" d="M20 17.5c0 2.485 0 4.5-8 4.5s-8-2.015-8-4.5S7.582 13 12 13s8 2.015 8 4.5"/>
                         </svg>
                         <p class="text-lg">No staff members found.</p>
                     </td>

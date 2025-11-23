@@ -27,9 +27,10 @@ class SafeLoanRequestController extends Controller
             'loan_amount' => ['nullable','numeric','min:0'],
         ]);
 
-        // Generate reference number: SLR-YYYY-XXX
-        $next = SafeLoanRequest::count() + 1;
-        $data['reference_no'] = 'SLR-' . now()->format('Y') . '-' . str_pad($next, 3, '0', STR_PAD_LEFT);
+        // Generate reference number: YYYYMM-####
+        $yearMonth = now()->format('Ym'); // e.g., 202511
+        $count = SafeLoanRequest::whereRaw("reference_no LIKE '{$yearMonth}-%'")->count() + 1;
+        $data['reference_no'] = $yearMonth . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
 
         $req = SafeLoanRequest::create($data);
 

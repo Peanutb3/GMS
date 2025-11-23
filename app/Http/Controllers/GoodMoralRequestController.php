@@ -29,9 +29,10 @@ class GoodMoralRequestController extends Controller
             'copies' => ['nullable', 'integer', 'min:1', 'max:50'],
         ]);
 
-        // Generate reference number: GMR-YYYY-XXX
-        $next = GoodMoralRequest::count() + 1;
-        $data['reference_no'] = 'GMR-' . now()->format('Y') . '-' . str_pad($next, 3, '0', STR_PAD_LEFT);
+        // Generate reference number: YYYYMM-####
+        $yearMonth = now()->format('Ym'); // e.g., 202511
+        $count = GoodMoralRequest::whereRaw("reference_no LIKE '{$yearMonth}-%'")->count() + 1;
+        $data['reference_no'] = $yearMonth . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
 
     $req = GoodMoralRequest::create($data);
 

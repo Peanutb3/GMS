@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'Staff Dashboard')
+@section('title', 'OSAS DU Dashboard')
 
 @section('sidebar')
-    @include('partials.sidebar-staff')
+    @include('partials.sidebar-osas-du')
 @endsection
 
 @section('content')

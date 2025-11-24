@@ -3,7 +3,7 @@
 @section('title', 'Edit Profile')
 
 @section('sidebar')
-    @include('partials.sidebar-staff')
+    @include('partials.sidebar-osas-gmc')
 @endsection
 
 @section('content')

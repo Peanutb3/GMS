@@ -1,5 +1,11 @@
 @extends('layouts.app')
 
+@section('title', 'Requests')
+
+@section('sidebar')
+    @include('partials.sidebar-osas-gmc')
+@endsections('layouts.app')
+
 @section('title', 'OSAS Requests')
 
 @section('sidebar')

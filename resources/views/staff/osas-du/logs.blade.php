@@ -3,7 +3,7 @@
 @section('title', 'Logs')
 
 @section('sidebar')
-  @include('partials.sidebar-staff')
+  @include('partials.sidebar-osas-du')
 @endsection
 
 @section('content')

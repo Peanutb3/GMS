@@ -3,13 +3,7 @@
 @section('title', 'Requests')
 
 @section('sidebar')
-    @include('partials.sidebar-osas-gmc')
-@endsections('layouts.app')
-
-@section('title', 'OSAS Requests')
-
-@section('sidebar')
-    @include('partials.sidebar-staff')
+  @include('partials.sidebar-osas-gmc')
 @endsection
 
 @section('content')
@@ -18,30 +12,30 @@
     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 30 30" class="w-5 h-5 mr-2 text-gray-500">
       <path d="M3 9.75L12 3l9 6.75V21a1 1 0 0 1-1 1h-5.5a.5.5 0 0 1-.5-.5V15h-4v6.5a.5.5 0 0 1-.5.5H4a1 1 0 0 1-1-1V9.75z"/>
     </svg>
-    <a href="/staff/dashboard" class="hover:text-red-800">Dashboard</a>
-    <span class="mx-2 text-gray-500">></span>
-    <a href="{{ route('staff.requests') }}" class="text-blue-600 hover">Requests</a>
+    <a href="{{ route('osas-gmc.dashboard') }}" class="hover:text-red-800">Dashboard</a>
+    <span class="mx-2 text-gray-500">/</span>
+    <span class="text-blue-600">Requests</span>
   </nav>
 
   <div class="mb-6">
-    <h2 class="text-2xl font-semibold">Good Moral & Safe Loan Requests</h2>
-    <p class="text-sm text-gray-600">View and manage incoming requests.</p>
+  <h2 class="text-2xl font-semibold">Good Moral & Safe Loan Requests</h2>
+  <p class="text-sm text-gray-600">View and manage incoming requests.</p>
   </div>
 
   <!-- Tabs -->
   <div class="border-b border-gray-200 mb-4">
     <div class="flex items-end justify-between gap-4">
       <nav class="-mb-px flex gap-4" aria-label="Tabs">
-        <a href="{{ route('staff.requests', ['tab' => 'goodmoral']) }}"
-           class="whitespace-nowrap py-3 px-4 border-b-2 text-sm font-medium {{ ($tab ?? 'goodmoral') === 'goodmoral' ? 'border-red-700 text-red-800' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+      <a href="{{ route('osas-gmc.requests', ['tab' => 'goodmoral']) }}"
+        class="whitespace-nowrap py-3 px-4 border-b-2 text-sm font-medium {{ ($tab ?? 'goodmoral') === 'goodmoral' ? 'border-red-700 text-red-800' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
           Good Moral
         </a>
-        <a href="{{ route('staff.requests', ['tab' => 'safeloan']) }}"
-           class="whitespace-nowrap py-3 px-4 border-b-2 text-sm font-medium {{ ($tab ?? 'goodmoral') === 'safeloan' ? 'border-red-700 text-red-800' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
+      <a href="{{ route('osas-gmc.requests', ['tab' => 'safeloan']) }}"
+        class="whitespace-nowrap py-3 px-4 border-b-2 text-sm font-medium {{ ($tab ?? 'goodmoral') === 'safeloan' ? 'border-red-700 text-red-800' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">
           Safe Loan
         </a>
       </nav>
-      <form method="GET" action="{{ route('staff.requests') }}" class="flex items-center space-x-2 pb-2">
+    <form method="GET" action="{{ route('osas-gmc.requests') }}" class="flex items-center space-x-2 pb-2">
         <input type="hidden" name="tab" value="{{ $tab }}" />
         <div class="relative">
           <input type="text" name="q" value="{{ request('q') }}" placeholder="Search name or ref no."

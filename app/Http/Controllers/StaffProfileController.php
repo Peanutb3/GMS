@@ -16,7 +16,14 @@ class StaffProfileController extends Controller
         $user = Auth::user();
         $staff = Staff::where('user_id', $user->id)->first();
 
-        return view('staff.profile', compact('user', 'staff'));
+        // Determine view based on role
+        $viewPath = match($user->role) {
+            'osas_gmc' => 'staff.osas-gmc.profile',
+            'osas_du' => 'staff.osas-du.profile',
+            default => 'staff.profile'
+        };
+
+        return view($viewPath, compact('user', 'staff'));
     }
 
     public function edit()
@@ -24,7 +31,14 @@ class StaffProfileController extends Controller
         $user = Auth::user();
         $staff = Staff::where('user_id', $user->id)->first();
 
-        return view('staff.profile-edit', compact('user', 'staff'));
+        // Determine view based on role
+        $viewPath = match($user->role) {
+            'osas_gmc' => 'staff.osas-gmc.profile-edit',
+            'osas_du' => 'staff.osas-du.profile-edit',
+            default => 'staff.profile-edit'
+        };
+
+        return view($viewPath, compact('user', 'staff'));
     }
 
     public function update(Request $request)
@@ -85,7 +99,14 @@ class StaffProfileController extends Controller
         }
         $user->save();
 
-        return redirect()->route('staff.profile')->with('success', 'Profile updated.');
+        // Redirect based on role
+        $redirectRoute = match($user->role) {
+            'osas_gmc' => 'osas-gmc.profile',
+            'osas_du' => 'osas-du.profile',
+            default => 'staff.profile'
+        };
+
+        return redirect()->route($redirectRoute)->with('success', 'Profile updated.');
     }
     public function updatePassword(Request $request)
     {

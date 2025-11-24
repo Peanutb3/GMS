@@ -13,7 +13,7 @@
     <div class="md:w-2/3 flex flex-col justify-center">
         <p class="text-xs text-gray-200 mb-7">{{ now()->format('F j, Y') }}</p>
         <h2 class="text-3xl font-bold mb-1">Welcome back, {{ Auth::user()->name }}!</h2>
-        <p class="text-sm">Keep track of your grievance history and make sure your record stays clean.</p>
+        <p class="text-sm">Manage Good Moral Certificate and Safe Loan requests efficiently.</p>
     </div>
 
     <!-- Image Section -->
@@ -32,74 +32,123 @@
         <!-- Summary -->
         <div>
             <h3 class="text-xl font-semibold mb-4">Summary</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 <div class="bg-white rounded-lg shadow p-6 text-center">
-                    <p class="text-4xl font-bold text-red-800 mb-2">{{ $totalGrievances }}</p>
+                    <p class="text-4xl font-bold text-red-800 mb-2">{{ $totalGoodMoralRequests }}</p>
                     <p class="text-sm text-gray-600 flex items-center justify-center">
                         <span class="w-3 h-3 bg-blue-500 rounded-full mr-3"></span>
-                        Total Grievances
+                        Total GM Requests
                     </p>
                 </div>
                 <div class="bg-white rounded-lg shadow p-6 text-center">
-                    <p class="text-4xl font-bold text-red-800 mb-2">{{ $pendingCases }}</p>
+                    <p class="text-4xl font-bold text-red-800 mb-2">{{ $pendingGoodMoralRequests }}</p>
                     <p class="text-sm text-gray-600 flex items-center justify-center">
                         <span class="w-3 h-3 bg-orange-500 rounded-full mr-3"></span>
-                        Pending Cases
+                        Pending GM
                     </p>
                 </div>
                 <div class="bg-white rounded-lg shadow p-6 text-center">
-                    <p class="text-4xl font-bold text-red-800 mb-2">{{ $resolvedCases }}</p>
+                    <p class="text-4xl font-bold text-red-800 mb-2">{{ $totalSafeLoanRequests }}</p>
                     <p class="text-sm text-gray-600 flex items-center justify-center">
-                        <span class="w-3 h-3 bg-green-500 rounded-full mr-3"></span>
-                        Resolved Cases
+                        <span class="w-3 h-3 bg-purple-500 rounded-full mr-3"></span>
+                        Total SL Requests
+                    </p>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6 text-center">
+                    <p class="text-4xl font-bold text-red-800 mb-2">{{ $pendingSafeLoanRequests }}</p>
+                    <p class="text-sm text-gray-600 flex items-center justify-center">
+                        <span class="w-3 h-3 bg-yellow-500 rounded-full mr-3"></span>
+                        Pending SL
                     </p>
                 </div>
             </div>
         </div>
 
-        <!-- Table -->
+        <!-- Good Moral Requests Table -->
         <div>
             <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold">Recent Grievances</h3>
-                <a href="{{ route('staff.grievances') }}" class="text-sm text-blue-600 hover:underline">View all</a>
+                <h3 class="text-lg font-semibold">Recent Good Moral Requests</h3>
+                <a href="{{ route('osas-gmc.requests') }}" class="text-sm text-blue-600 hover:underline">View all</a>
             </div>
 
             <div class="bg-white rounded-2xl shadow-md overflow-hidden">
                 <table class="w-full text-sm text-left text-gray-700 border border-gray-200">
                     <thead class="bg-white text-blue-900 text-xs uppercase">
                         <tr>
-                            <th class="px-6 py-3 font-semibold">Case ID</th>
-                            <th class="px-6 py-3 font-semibold">Name</th>
-                            <th class="px-6 py-3 font-semibold">Program</th>
-                            <th class="px-6 py-3 font-semibold">Type</th>
+                            <th class="px-6 py-3 font-semibold">Reference No</th>
+                            <th class="px-6 py-3 font-semibold">Student Name</th>
+                            <th class="px-6 py-3 font-semibold">Purpose</th>
                             <th class="px-6 py-3 font-semibold">Date</th>
                             <th class="px-6 py-3 font-semibold">Status</th>
-                            <!-- <th class="px-6 py-3 font-semibold">Filed By</th> -->
-                            <!-- <th class="px-6 py-3 font-semibold text-center">Actions</th> -->
                         </tr>
                     </thead>
 
                     <tbody>
                         @php
-                            $items = collect($recentGrievances ?? [])->take(2);
+                            $items = collect($recentGoodMoral ?? [])->take(3);
                         @endphp
 
                         @if($items->isNotEmpty())
-                            @foreach($items as $g)
+                            @foreach($items as $request)
                                 <tr class="{{ $loop->odd ? 'bg-[#EDEBEB]' : 'bg-white' }} hover:bg-gray-100 transition">
-                                    <td class="px-5 py-3">{{ $g->case_id }}</td>
-                                    <td class="px-5 py-3">{{ optional($g->student)->first_name ? optional($g->student)->first_name . ' ' . optional($g->student)->last_name : $g->name }}</td>
-                                    <td class="px-5 py-3">{{ optional($g->student)->program ?? $g->program }}</td>
-                                    <td class="px-5 py-3">{{ str_replace('_', ' ', $g->grievance) }}</td>
-                                    <td class="px-5 py-3">{{ optional($g->date)->format('Y-m-d') ?? $g->created_at->format('Y-m-d') }}</td>
+                                    <td class="px-5 py-3">{{ $request->reference_number }}</td>
+                                    <td class="px-5 py-3">{{ $request->student->first_name ?? 'N/A' }} {{ $request->student->last_name ?? '' }}</td>
+                                    <td class="px-5 py-3">{{ $request->purpose }}</td>
+                                    <td class="px-5 py-3">{{ $request->created_at->format('Y-m-d') }}</td>
                                     <td class="px-5 py-3">
-                                        <x-status-badge :status="$g->status" />
+                                        <x-status-badge :status="$request->status" />
                                     </td>
                                 </tr>
                             @endforeach
                         @else
                             <tr>
-                                <td colspan="8" class="px-5 py-4 text-center text-gray-500">No grievances found.</td>
+                                <td colspan="5" class="px-5 py-4 text-center text-gray-500">No requests found.</td>
+                            </tr>
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Safe Loan Requests Table -->
+        <div>
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold">Recent Safe Loan Requests</h3>
+                <a href="{{ route('osas-gmc.requests') }}" class="text-sm text-blue-600 hover:underline">View all</a>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+                <table class="w-full text-sm text-left text-gray-700 border border-gray-200">
+                    <thead class="bg-white text-blue-900 text-xs uppercase">
+                        <tr>
+                            <th class="px-6 py-3 font-semibold">Reference No</th>
+                            <th class="px-6 py-3 font-semibold">Student Name</th>
+                            <th class="px-6 py-3 font-semibold">Amount</th>
+                            <th class="px-6 py-3 font-semibold">Date</th>
+                            <th class="px-6 py-3 font-semibold">Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @php
+                            $items = collect($recentSafeLoan ?? [])->take(3);
+                        @endphp
+
+                        @if($items->isNotEmpty())
+                            @foreach($items as $request)
+                                <tr class="{{ $loop->odd ? 'bg-[#EDEBEB]' : 'bg-white' }} hover:bg-gray-100 transition">
+                                    <td class="px-5 py-3">{{ $request->reference_number }}</td>
+                                    <td class="px-5 py-3">{{ $request->student->first_name ?? 'N/A' }} {{ $request->student->last_name ?? '' }}</td>
+                                    <td class="px-5 py-3">₱{{ number_format($request->amount ?? 0, 2) }}</td>
+                                    <td class="px-5 py-3">{{ $request->created_at->format('Y-m-d') }}</td>
+                                    <td class="px-5 py-3">
+                                        <x-status-badge :status="$request->status" />
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @else
+                            <tr>
+                                <td colspan="5" class="px-5 py-4 text-center text-gray-500">No requests found.</td>
                             </tr>
                         @endif
                     </tbody>

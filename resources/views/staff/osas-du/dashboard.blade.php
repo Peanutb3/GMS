@@ -13,7 +13,7 @@
     <div class="md:w-2/3 flex flex-col justify-center">
         <p class="text-xs text-gray-200 mb-7">{{ now()->format('F j, Y') }}</p>
         <h2 class="text-3xl font-bold mb-1">Welcome back, {{ Auth::user()->name }}!</h2>
-        <p class="text-sm">Keep track of your grievance history and make sure your record stays clean.</p>
+        <p class="text-sm">Monitor and manage student grievances and disciplinary cases.</p>
     </div>
 
     <!-- Image Section -->
@@ -32,7 +32,7 @@
         <!-- Summary -->
         <div>
             <h3 class="text-xl font-semibold mb-4">Summary</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 <div class="bg-white rounded-lg shadow p-6 text-center">
                     <p class="text-4xl font-bold text-red-800 mb-2">{{ $totalGrievances }}</p>
                     <p class="text-sm text-gray-600 flex items-center justify-center">
@@ -41,17 +41,24 @@
                     </p>
                 </div>
                 <div class="bg-white rounded-lg shadow p-6 text-center">
-                    <p class="text-4xl font-bold text-red-800 mb-2">{{ $pendingCases }}</p>
+                    <p class="text-4xl font-bold text-red-800 mb-2">{{ $pendingGrievances }}</p>
                     <p class="text-sm text-gray-600 flex items-center justify-center">
                         <span class="w-3 h-3 bg-orange-500 rounded-full mr-3"></span>
-                        Pending Cases
+                        Pending
                     </p>
                 </div>
                 <div class="bg-white rounded-lg shadow p-6 text-center">
-                    <p class="text-4xl font-bold text-red-800 mb-2">{{ $resolvedCases }}</p>
+                    <p class="text-4xl font-bold text-red-800 mb-2">{{ $investigatingGrievances }}</p>
+                    <p class="text-sm text-gray-600 flex items-center justify-center">
+                        <span class="w-3 h-3 bg-yellow-500 rounded-full mr-3"></span>
+                        Investigating
+                    </p>
+                </div>
+                <div class="bg-white rounded-lg shadow p-6 text-center">
+                    <p class="text-4xl font-bold text-red-800 mb-2">{{ $resolvedGrievances }}</p>
                     <p class="text-sm text-gray-600 flex items-center justify-center">
                         <span class="w-3 h-3 bg-green-500 rounded-full mr-3"></span>
-                        Resolved Cases
+                        Resolved
                     </p>
                 </div>
             </div>
@@ -61,7 +68,7 @@
         <div>
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-semibold">Recent Grievances</h3>
-                <a href="{{ route('staff.grievances') }}" class="text-sm text-blue-600 hover:underline">View all</a>
+                <a href="{{ route('osas-du.grievances') }}" class="text-sm text-blue-600 hover:underline">View all</a>
             </div>
 
             <div class="bg-white rounded-2xl shadow-md overflow-hidden">

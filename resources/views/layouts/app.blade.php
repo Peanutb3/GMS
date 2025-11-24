@@ -135,37 +135,12 @@
   <div id="toast-container" class="fixed top-4 right-4 z-[100] space-y-3 flex flex-col items-end"></div>
 
   <!-- MAIN WRAPPER (SIDEBAR + CONTENT) -->
-  <div class="flex flex-1 overflow-hidden">
+  <div class="flex flex-1 overflow-hidden" x-data="{ sidebarOpen: true }">
   
-<!-- SIDEBAR -->
-<aside id="sidebar" 
-       class="w-64 bg-white border-r border-gray-200 flex flex-col justify-between relative transition-all duration-300">
-
-<!-- Toggle Button -->
-<button id="sidebarToggle" 
-        class="absolute top-[28px] -right-3 transform -translate-y-1/2 
-               bg-white text-red-900 rounded-full shadow p-1 hover:bg-gray-100 transition">
-
-  <!-- Arrow To Right (visible only when collapsed) -->
-  <svg id="iconExpand" xmlns="http://www.w3.org/2000/svg" width="16" height="16"  
-       fill="currentColor" viewBox="0 0 24 24" class="hidden">
-    <path d="M18 6h2v12h-2zM11.71 17.29 7.41 13H16v-2H7.41l4.3-4.29-1.42-1.42L3.59 12l6.7 6.71z"/>
-  </svg>
-
-  <!-- Arrow From Left (visible only when expanded) -->
-  <svg id="iconCollapse" xmlns="http://www.w3.org/2000/svg" width="16" height="16"  
-       fill="currentColor" viewBox="0 0 24 24">
-    <path d="M4 6h2v12H4zM12.29 6.71l4.3 4.29H8v2h8.59l-4.3 4.29 1.42 1.42 6.7-6.71-6.7-6.71z"/>
-  </svg>
-</button>
-
-  <!-- Dynamic sidebar items -->
-  <nav class="flex-grow space-y-3">
+    <!-- SIDEBAR (from individual blade files) -->
     @yield('sidebar')
-  </nav>
-</aside>
 
-  <!-- CONTENT AREA -->
+    <!-- CONTENT AREA -->
     <main class="flex-1 overflow-y-auto" style="background-color: #F8F8FF;">
       <div class="p-8">
         @yield('content')

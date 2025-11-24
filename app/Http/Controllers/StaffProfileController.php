@@ -29,6 +29,7 @@ class StaffProfileController extends Controller
 
     public function update(Request $request)
     {
+        /** @var User $user */
         $user = Auth::user();
         $staff = Staff::where('user_id', $user->id)->first();
 
@@ -86,10 +87,15 @@ class StaffProfileController extends Controller
 
         return redirect()->route('staff.profile')->with('success', 'Profile updated.');
     }
-
     public function updatePassword(Request $request)
     {
+        /** @var User $user */
         $user = Auth::user();
+
+        // ensure we have the expected User model instance before calling save()
+        if (! $user instanceof User) {
+            return redirect()->route('login')->with('error', 'User not authenticated.');
+        }
 
         $data = $request->validate([
             'current_password' => 'required|string',

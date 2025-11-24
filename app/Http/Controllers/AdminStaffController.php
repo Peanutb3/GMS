@@ -49,7 +49,7 @@ class AdminStaffController extends Controller
             'suffix' => 'nullable|string|max:10',
             'email' => 'required|email|unique:users,email',
             'staff_type' => 'required|in:Academic,Non-Academic,Administrative',
-            'role' => 'required|in:staff,osas_gmc,osas_du',
+            'role' => 'required|in:osas_gmc,osas_du',
             'password' => 'required|min:8|confirmed',
         ]);
 
@@ -107,7 +107,7 @@ class AdminStaffController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
             'staff_type' => 'nullable|string|max:100',
-            'role' => 'required|in:staff,osas_gmc,osas_du',
+            'role' => 'required|in:osas_gmc,osas_du',
             'password' => 'nullable|min:8|confirmed',
         ]);
 

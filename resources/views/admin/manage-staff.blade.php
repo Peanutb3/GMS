@@ -103,11 +103,7 @@
                         {{ $member->name }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm">
-                        @if($member->role === 'staff')
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                General Staff
-                            </span>
-                        @elseif($member->role === 'osas_gmc')
+                        @if($member->role === 'osas_gmc')
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                 OSAS GMC
                             </span>

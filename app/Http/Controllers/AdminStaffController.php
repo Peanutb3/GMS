@@ -101,8 +101,6 @@ class AdminStaffController extends Controller
 
     public function update(Request $request, $id)
     {
-    public function update(Request $request, $id)
-    {
         $staff = User::with('staff')->whereIn('role', ['staff', 'osas_gmc', 'osas_du'])->findOrFail($id);
 
         $validated = $request->validate([
@@ -111,7 +109,9 @@ class AdminStaffController extends Controller
             'staff_type' => 'nullable|string|max:100',
             'role' => 'required|in:staff,osas_gmc,osas_du',
             'password' => 'nullable|min:8|confirmed',
-        ]);Update user account
+        ]);
+
+        // Update user account
         $userData = [
             'name' => $validated['name'],
             'email' => $validated['email'],
@@ -126,7 +126,6 @@ class AdminStaffController extends Controller
         $staff->update($userData);
 
         // Sync Staff profile if table exists
-        // Sync Staff profile if table exists
         try {
             if (Schema::hasTable('staff') && $staff->staff) {
                 $staff->staff->update([
@@ -136,6 +135,7 @@ class AdminStaffController extends Controller
                 ]);
             }
         } catch (\Throwable $e) {
+            // ignore silently
         }
 
         return redirect()->route('admin.manage-staff')

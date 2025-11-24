@@ -145,10 +145,10 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="8" class="px-6 py-12 text-center text-gray-400">
-                @empty
-                <tr>
-                    <td colspan="7" class="px-6 py-12 text-center text-gray-400"> 4.5s-8-2.015-8-4.5S7.582 13 12 13s8 2.015 8 4.5"/>
+                    <td colspan="7" class="px-6 py-12 text-center text-gray-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <circle cx="12" cy="6" r="4" fill="currentColor"/>
+                            <path fill="currentColor" d="M20 17.5c0 2.485 0 4.5-8 4.5s-8-2.015-8-4.5S7.582 13 12 13s8 2.015 8 4.5"/>
                         </svg>
                         <p class="text-lg">No staff members found.</p>
                     </td>

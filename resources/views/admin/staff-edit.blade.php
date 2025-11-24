@@ -89,21 +89,6 @@
                     @enderror
                 </div>
 
-                <!-- Department -->
-                <div>
-                    <label for="department" class="block text-sm font-medium text-gray-700 mb-2">Department</label>
-                    <select id="department" name="department"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent">
-                        <option value="">Select Department</option>
-                        <option value="Office of Student Affairs and Services" {{ old('department', optional($staff->staff)->department) === 'Office of Student Affairs and Services' ? 'selected' : '' }}>Office of Student Affairs and Services</option>
-                        <option value="Registrar's Office" {{ old('department', optional($staff->staff)->department) === 'Registrar\'s Office' ? 'selected' : '' }}>Registrar's Office</option>
-                        <option value="Academic Affairs" {{ old('department', optional($staff->staff)->department) === 'Academic Affairs' ? 'selected' : '' }}>Academic Affairs</option>
-                        <option value="Finance Office" {{ old('department', optional($staff->staff)->department) === 'Finance Office' ? 'selected' : '' }}>Finance Office</option>
-                        <option value="Human Resources" {{ old('department', optional($staff->staff)->department) === 'Human Resources' ? 'selected' : '' }}>Human Resources</option>
-                        <option value="IT Department" {{ old('department', optional($staff->staff)->department) === 'IT Department' ? 'selected' : '' }}>IT Department</option>
-                    </select>
-                </div>
-
                 <!-- Staff Type -->
                 <div>
                     <label for="staff_type" class="block text-sm font-medium text-gray-700 mb-2">Staff Type</label>

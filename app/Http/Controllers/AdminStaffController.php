@@ -48,8 +48,6 @@ class AdminStaffController extends Controller
             'last_name' => 'required|string|max:255',
             'suffix' => 'nullable|string|max:10',
             'email' => 'required|email|unique:users,email',
-            'department' => 'required|string|max:255',
-            'position' => 'required|string|max:255',
             'staff_type' => 'required|in:Academic,Non-Academic,Administrative',
             'role' => 'required|in:staff,osas_gmc,osas_du',
             'password' => 'required|min:8|confirmed',
@@ -81,8 +79,6 @@ class AdminStaffController extends Controller
                     'last_name' => $validated['last_name'],
                     'suffix' => $validated['suffix'] ?? null,
                     'email' => $validated['email'],
-                    'department' => $validated['department'],
-                    'position' => $validated['position'],
                     'staff_type' => $validated['staff_type'],
                     'role' => $validated['role'], // Store role in staff table too
                 ]);
@@ -105,18 +101,17 @@ class AdminStaffController extends Controller
 
     public function update(Request $request, $id)
     {
+    public function update(Request $request, $id)
+    {
         $staff = User::with('staff')->whereIn('role', ['staff', 'osas_gmc', 'osas_du'])->findOrFail($id);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
-            'department' => 'nullable|string|max:100',
             'staff_type' => 'nullable|string|max:100',
             'role' => 'required|in:staff,osas_gmc,osas_du',
             'password' => 'nullable|min:8|confirmed',
-        ]);
-
-        // Update user account
+        ]);Update user account
         $userData = [
             'name' => $validated['name'],
             'email' => $validated['email'],
@@ -131,17 +126,16 @@ class AdminStaffController extends Controller
         $staff->update($userData);
 
         // Sync Staff profile if table exists
+        // Sync Staff profile if table exists
         try {
             if (Schema::hasTable('staff') && $staff->staff) {
                 $staff->staff->update([
                     'email' => $validated['email'],
-                    'department' => $validated['department'] ?? $staff->staff->department,
                     'staff_type' => $validated['staff_type'] ?? $staff->staff->staff_type,
                     'role' => $validated['role'], // Update role in staff table
                 ]);
             }
         } catch (\Throwable $e) {
-            // ignore silently
         }
 
         return redirect()->route('admin.manage-staff')

@@ -19,8 +19,6 @@ class Staff extends Model
         'middle_initial',
         'last_name',
         'suffix',
-        'department',
-        'position',
         'role',
         'staff_type',
         'email',

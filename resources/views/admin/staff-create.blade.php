@@ -139,35 +139,6 @@
         <div class="mb-8">
             <h2 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Employment Information</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Department -->
-                <div>
-                    <label for="department" class="block text-sm font-medium text-gray-700 mb-2">Department <span class="text-red-600">*</span></label>
-                    <select id="department" name="department" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent @error('department') border-red-500 @enderror">
-                        <option value="">Select Department</option>
-                        <option value="Office of Student Affairs and Services" {{ old('department') === 'Office of Student Affairs and Services' ? 'selected' : '' }}>Office of Student Affairs and Services</option>
-                        <option value="Registrar's Office" {{ old('department') === 'Registrar\'s Office' ? 'selected' : '' }}>Registrar's Office</option>
-                        <option value="Academic Affairs" {{ old('department') === 'Academic Affairs' ? 'selected' : '' }}>Academic Affairs</option>
-                        <option value="Finance Office" {{ old('department') === 'Finance Office' ? 'selected' : '' }}>Finance Office</option>
-                        <option value="Human Resources" {{ old('department') === 'Human Resources' ? 'selected' : '' }}>Human Resources</option>
-                        <option value="IT Department" {{ old('department') === 'IT Department' ? 'selected' : '' }}>IT Department</option>
-                    </select>
-                    @error('department')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- Position -->
-                <div>
-                    <label for="position" class="block text-sm font-medium text-gray-700 mb-2">Position <span class="text-red-600">*</span></label>
-                    <input type="text" id="position" name="position" value="{{ old('position') }}" required
-                        placeholder="e.g., Guidance Counselor, Registrar"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent @error('position') border-red-500 @enderror">
-                    @error('position')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
                 <!-- Staff Type -->
                 <div>
                     <label for="staff_type" class="block text-sm font-medium text-gray-700 mb-2">Staff Type <span class="text-red-600">*</span></label>

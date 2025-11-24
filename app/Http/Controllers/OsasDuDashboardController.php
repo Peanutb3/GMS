@@ -23,7 +23,7 @@ class OsasDuDashboardController extends Controller
             ->take(10)
             ->get();
 
-        return view('osas-du.dashboard', compact(
+        return view('staff.osas-du.dashboard', compact(
             'user',
             'totalGrievances',
             'pendingGrievances',

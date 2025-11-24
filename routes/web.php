@@ -132,7 +132,7 @@ Route::middleware(['auth', 'role:osas_gmc'])->prefix('osas-gmc')->group(function
     
     // Password change
     Route::get('/change-password', function () {
-        return view('osas-gmc.change-password');
+        return view('staff.osas-gmc.change-password');
     })->name('osas-gmc.change-password');
     Route::patch('/password', [StaffProfileController::class, 'updatePassword'])->name('osas-gmc.password.update');
 });
@@ -166,7 +166,7 @@ Route::middleware(['auth', 'role:osas_du'])->prefix('osas-du')->group(function (
     
     // Password change
     Route::get('/change-password', function () {
-        return view('osas-du.change-password');
+        return view('staff.osas-du.change-password');
     })->name('osas-du.change-password');
     Route::patch('/password', [StaffProfileController::class, 'updatePassword'])->name('osas-du.password.update');
     

@@ -29,7 +29,7 @@ class OsasGmcDashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('osas-gmc.dashboard', compact(
+        return view('staff.osas-gmc.dashboard', compact(
             'user',
             'totalGoodMoralRequests',
             'pendingGoodMoralRequests',

@@ -42,7 +42,7 @@ class OsasGmcRequestsController extends Controller
         }
         $safeLoanRequests = $safeLoanQuery->latest()->paginate(10, ['*'], 'sl_page');
         
-        return view('osas-gmc.requests', compact(
+        return view('staff.osas-gmc.requests', compact(
             'goodMoralRequests',
             'safeLoanRequests',
             'tab'

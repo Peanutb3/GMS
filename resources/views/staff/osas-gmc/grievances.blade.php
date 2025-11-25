@@ -14,9 +14,9 @@
     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 30 30" class="w-5 h-5 mr-2 text-gray-500">
       <path d="M3 9.75L12 3l9 6.75V21a1 1 0 0 1-1 1h-5.5a.5.5 0 0 1-.5-.5V15h-4v6.5a.5.5 0 0 1-.5.5H4a1 1 0 0 1-1-1V9.75z"/>
     </svg>
-    <a href="/staff/dashboard" class="hover:text-red-800">Dashboard</a>
+  <a href="{{ route('osas-gmc.dashboard') }}" class="hover:text-red-800">Dashboard</a>
     <span class="mx-2 text-gray-500">></span>
-    <a href="/staff/file-grievances" class="text-blue-600 hover">Grievances</a>
+  <span class="text-blue-600">Grievances</span>
   </nav>
 
   <!-- Header -->
@@ -39,12 +39,12 @@
   <div class="border-b border-gray-200 mb-4">
     <div class="flex items-end justify-between gap-4">
       <nav class="-mb-px flex gap-4" aria-label="Tabs">
-        <a href="{{ route('staff.grievances', array_merge(request()->except('page'), ['tab'=>'active'])) }}"
+  <a href="{{ route('osas-gmc.grievances', array_merge(request()->except('page'), ['tab'=>'active'])) }}"
            class="whitespace-nowrap py-3 px-4 border-b-2 text-sm font-medium {{ ($tab ?? 'active')==='active' ? 'border-red-700 text-red-800' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">Active</a>
-        <a href="{{ route('staff.grievances', array_merge(request()->except('page'), ['tab'=>'history'])) }}"
+  <a href="{{ route('osas-gmc.grievances', array_merge(request()->except('page'), ['tab'=>'history'])) }}"
            class="whitespace-nowrap py-3 px-4 border-b-2 text-sm font-medium {{ ($tab ?? 'active')==='history' ? 'border-red-700 text-red-800' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">History</a>
       </nav>
-      <form method="GET" action="{{ route('staff.grievances') }}" class="flex items-center space-x-2 pb-2">
+  <form method="GET" action="{{ route('osas-gmc.grievances') }}" class="flex items-center space-x-2 pb-2">
         <input type="hidden" name="tab" value="{{ $tab ?? 'active' }}" />
         <div class="relative">
           <input type="text" name="search" value="{{ request('search') }}" placeholder="Search..."
@@ -122,7 +122,7 @@
         <td class="px-5 py-3 capitalize">{{ str_replace('_', ' ', $g->grievance) }}</td>
         <td class="px-5 py-3">{{ $g->created_at->format('Y-m-d') }}</td>
         <td class="px-5 py-3">
-          <form method="POST" action="{{ route('staff.grievances.status', $g) }}" class="relative inline-flex items-center gap-1 align-middle">
+          <div class="relative inline-flex items-center gap-1 align-middle opacity-60" title="Status changes disabled for GMC">
             @csrf
             @method('PATCH')
             <div class="flex items-center">
@@ -141,28 +141,17 @@
                 </svg>
               </span>
             </div>
-            <select name="status" title="Change status" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="this.form.submit()">
-              <option value="pending" @selected($g->status==='pending')>Pending</option>
-              <option value="in_progress" @selected($g->status==='in_progress')>In Progress</option>
-              <option value="resolved" @selected($g->status==='resolved')>Resolved</option>
-            </select>
-          </form>
+          </div>
         </td>
   <td class="px-5 py-3">{{ $g->filed_by_display }}</td>
         <td class="px-5 py-3">
-          <div class="flex items-center gap-3 justify-center" data-row="{{ $g->id }}">
-            @if($g->status !== 'resolved')
-            <button type="button" data-action="resolve" data-id="{{ $g->id }}" title="Mark Resolved" class="text-green-600 hover:text-green-800">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-              </svg>
-            </button>
-            @endif
-            <button type="button" data-action="delete" data-id="{{ $g->id }}" title="Delete" class="text-red-600 hover:text-red-800">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-            </button>
+          <div class="flex items-center gap-3 justify-center opacity-50" title="Actions disabled for GMC role">
+            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 0 1-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v3M4 7h16" />
+            </svg>
           </div>
         </td>
       </tr>

@@ -8,6 +8,24 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Poppins', sans-serif; }
+    /* Transparent inputs (prevent white fill when typing/autofill) */
+    input, select, textarea { background-color: transparent !important; }
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active,
+    select:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+      box-shadow: 0 0 0 1000px transparent inset !important;
+      -webkit-text-fill-color: #ffffff !important;
+      caret-color: #ffffff;
+      transition: background-color 9999s ease-in-out 0s;
+    }
+    input:-moz-autofill, select:-moz-autofill {
+      box-shadow: 0 0 0 1000px transparent inset !important;
+      -moz-text-fill-color: #ffffff !important;
+    }
+    ::placeholder { color: rgba(255,255,255,0.7); }
   </style>
 </head>
 <body class="h-screen w-screen flex">
@@ -36,7 +54,7 @@
               <input type="email" name="email" value="{{ old('email') }}" placeholder="Email Address" required
               class="w-full border-b border-white/70 focus:border-white focus:outline-none pb-3 
                      text-white/80 bg-transparent placeholder-white/70 text-sm">
-            @error('username')
+            @error('email')
               <p class="text-red-400 text-xs mt-1">{{ $message }}</p>
             @enderror
           </div>
@@ -131,20 +149,24 @@
     function togglePassword(id, iconId) {
       const pwd = document.getElementById(id);
       const eye = document.getElementById(iconId);
+      const openEye = `
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M2.458 12C3.732 7.943 7.523 5 12 5
+              c4.477 0 8.268 2.943 9.542 7
+              -1.274 4.057-5.065 7-9.542 7
+              -4.477 0-8.268-2.943-9.542-7z" />`;
+      const closedEye = `
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7
+              a9.97 9.97 0 012.224-3.592M9.88 9.88A3 3 0 0114.12 14.12M6.1 6.1l11.8 11.8" />`;
       if (pwd.type === "password") {
         pwd.type = "text";
-        eye.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-          d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7
-          a9.97 9.97 0 012.224-3.592M9.88 9.88A3 3 0 0114.12 14.12M6.1 6.1l11.8 11.8" />`;
+        eye.innerHTML = openEye; // open eye shows password
       } else {
         pwd.type = "password";
-        eye.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M2.458 12C3.732 7.943 7.523 5 12 5
-          c4.477 0 8.268 2.943 9.542 7
-          -1.274 4.057-5.065 7-9.542 7
-          -4.477 0-8.268-2.943-9.542-7z" />`;
+        eye.innerHTML = closedEye; // slashed eye hides password
       }
     }
 

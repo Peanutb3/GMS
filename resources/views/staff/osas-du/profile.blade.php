@@ -53,7 +53,7 @@
 
                 <div class="flex-1">
                     <h2 class="text-lg md:text-xl font-semibold text-gray-900">{{ $user->name }}</h2>
-                    <div class="text-sm text-gray-500 mt-1">{{ $staff->position ?? 'OSAS Officer' }}</div>
+                    <div class="text-sm text-gray-500 mt-1">OSAS DU</div>
 
                     <div class="mt-3 text-sm text-gray-600">
                         <span class="font-semibold">Staff ID:</span>
@@ -142,35 +142,7 @@
                     </div>
                 </a>
 
-                <a href="{{ route('staff.profile.edit') }}#password" class="flex items-center justify-between gap-4 px-6 py-4 hover:bg-gray-50">
-                    <div class="text-sm text-gray-600">Change password</div>
-                    <div class="flex items-center gap-3">
-                        <div class="text-sm text-gray-800">********</div>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                        </svg>
-                    </div>
-                </a>
-            </div>
-        </div>
-
-        <!-- System Info card -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 overflow-hidden">
-            <div class="px-6 py-5">
-                <h3 class="text-lg font-semibold text-gray-800">System Info</h3>
-            </div>
-            <div class="divide-y divide-gray-100">
-                <div class="flex items-center justify-between px-6 py-4">
-                    <div class="text-sm text-gray-600">Role</div>
-                    <div class="text-sm text-gray-900">Staff</div>
-                </div>
-                <div class="flex items-center justify-between px-6 py-4">
-                    <div class="text-sm text-gray-600">Date Joined</div>
-                    <div class="text-sm text-gray-900">{{ optional($user->created_at)->format('M d, Y – h:i A') ?? '—' }}</div>
-                </div>
-                <div class="flex items-center justify-between px-6 py-4">
-                    <div class="text-sm text-gray-600">Last Login</div>
-                    <div class="text-sm text-gray-900">{{ optional($user->last_login_at)->format('M d, Y – h:i A') ?? '—' }}</div>
+                <!-- Office, Position, Phone removed per request -->
                 </div>
             </div>
         </div>

@@ -73,7 +73,81 @@ class GoodMoralRequestController extends Controller
 
         return view('print', compact('req'));
     }
+
+    public function enterOrNumber(Request $request, GoodMoralRequest $goodMoralRequest)
+    {
+        $request->validate([
+            'or_number' => ['required', 'string', 'max:100'],
+        ]);
+
+        $goodMoralRequest->update([
+            'or_number' => $request->or_number,
+            'or_entered_at' => now(),
+        ]);
+
+        AuditLog::create([
+            'auditable_type' => GoodMoralRequest::class,
+            'auditable_id' => $goodMoralRequest->id,
+            'action' => 'or_entered',
+            'user_id' => optional($request->user())->id,
+            'staff_id' => optional($request->user()->staff ?? null)->id,
+            'old_values' => ['or_number' => null],
+            'new_values' => ['or_number' => $request->or_number],
+            'ip_address' => $request->ip(),
+        ]);
+
+        return redirect()->route('good-moral.certificate', $goodMoralRequest);
+    }
+
+    public function showCertificate(GoodMoralRequest $goodMoralRequest)
+    {
+        if (!$goodMoralRequest->or_number) {
+            return redirect()->route('osas-gmc.requests')
+                ->with('error', 'OR number must be entered first.');
+        }
+
+        return view('good-moral-certificate', ['request' => $goodMoralRequest]);
+    }
+
+    public function markCompleted(GoodMoralRequest $goodMoralRequest)
+    {
+        $goodMoralRequest->update([
+            'status' => 'completed',
+            'completed_at' => now(),
+        ]);
+
+        AuditLog::create([
+            'auditable_type' => GoodMoralRequest::class,
+            'auditable_id' => $goodMoralRequest->id,
+            'action' => 'completed',
+            'user_id' => auth()->id(),
+            'staff_id' => optional(auth()->user())->staff_id,
+            'old_values' => ['status' => 'pending'],
+            'new_values' => ['status' => 'completed'],
+            'ip_address' => request()->ip(),
+        ]);
+
+        return redirect()->route('osas-gmc.requests', ['tab' => 'history'])
+            ->with('status', 'Request marked as completed.');
+    }
+
+    public function destroy(GoodMoralRequest $goodMoralRequest)
+    {
+        AuditLog::create([
+            'auditable_type' => GoodMoralRequest::class,
+            'auditable_id' => $goodMoralRequest->id,
+            'action' => 'deleted',
+            'user_id' => auth()->id(),
+            'staff_id' => optional(auth()->user())->staff_id,
+            'old_values' => $goodMoralRequest->snapshot(),
+            'new_values' => null,
+            'ip_address' => request()->ip(),
+        ]);
+
+        $goodMoralRequest->delete();
+
+        return redirect()->route('osas-gmc.requests')
+            ->with('status', 'Good moral request deleted successfully.');
+    }
 }
-
-
 

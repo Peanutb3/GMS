@@ -24,10 +24,27 @@ class GrievanceController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
+        // Determine view prefix based on role
+        $role = $user?->role;
+        $viewBase = match($role) {
+            'staff' => 'staff',
+            'osas_gmc' => 'staff.osas-gmc',
+            'osas_du' => 'staff.osas-du',
+            default => 'staff', // fallback
+        };
 
-        if ($user->role === 'staff' && $user->staff) {
+        if (in_array($role, ['staff','osas_gmc','osas_du']) && ($user->staff || $role !== 'staff')) {
             $tab = $request->query('tab', 'active');
-            $query = Grievance::where('filed_by_staff_id', $user->staff->id);
+            // GMC: view-only (their own filed grievances not relevant) -> show all pending/in_progress
+            // DU: full access (all grievances)
+            // staff: only own filed grievances
+            if ($role === 'staff' && $user->staff) {
+                $query = Grievance::where('filed_by_staff_id', $user->staff->id);
+            } elseif ($role === 'osas_du') {
+                $query = Grievance::query();
+            } else { // osas_gmc view-only
+                $query = Grievance::query();
+            }
 
             // Search by name, program, or case ID
             if ($request->filled('search')) {
@@ -107,7 +124,7 @@ class GrievanceController extends Controller
             $historyItems = collect();
         }
 
-        return view('staff.grievances', [
+    return view("{$viewBase}.grievances", [
             'grievances' => $grievances,
             'tab' => $tab,
             'historyItems' => $historyItems ?? collect(),
@@ -191,7 +208,12 @@ class GrievanceController extends Controller
             ]
         );
 
-        return redirect()->route('staff.grievances')->with('success', 'Grievance filed successfully.');
+        $redirectRoute = match(Auth::user()?->role) {
+            'staff' => 'staff.grievances',
+            'osas_du' => 'osas-du.grievances', // DU can file grievances
+            default => 'staff.grievances'
+        };
+        return redirect()->route($redirectRoute)->with('success', 'Grievance filed successfully.');
     }
 
 
@@ -240,7 +262,14 @@ class GrievanceController extends Controller
 
     public function create()
     {
-        return view('staff.file-grievances');
+        $user = Auth::user();
+        $role = $user?->role;
+        $viewPath = match($role) {
+            'staff' => 'staff.file-grievances',
+            'osas_du' => 'staff.osas-du.file-grievances',
+            default => abort(403)
+        };
+        return view($viewPath);
     }
 
     /**

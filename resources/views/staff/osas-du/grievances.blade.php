@@ -14,9 +14,9 @@
     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 30 30" class="w-5 h-5 mr-2 text-gray-500">
       <path d="M3 9.75L12 3l9 6.75V21a1 1 0 0 1-1 1h-5.5a.5.5 0 0 1-.5-.5V15h-4v6.5a.5.5 0 0 1-.5.5H4a1 1 0 0 1-1-1V9.75z"/>
     </svg>
-    <a href="/staff/dashboard" class="hover:text-red-800">Dashboard</a>
+  <a href="{{ route('osas-du.dashboard') }}" class="hover:text-red-800">Dashboard</a>
     <span class="mx-2 text-gray-500">></span>
-    <a href="/staff/file-grievances" class="text-blue-600 hover">Grievances</a>
+  <a href="{{ route('osas-du.file-grievances') }}" class="text-blue-600 hover">Grievances</a>
   </nav>
 
   <!-- Header -->
@@ -39,12 +39,12 @@
   <div class="border-b border-gray-200 mb-4">
     <div class="flex items-end justify-between gap-4">
       <nav class="-mb-px flex gap-4" aria-label="Tabs">
-        <a href="{{ route('staff.grievances', array_merge(request()->except('page'), ['tab'=>'active'])) }}"
+  <a href="{{ route('osas-du.grievances', array_merge(request()->except('page'), ['tab'=>'active'])) }}"
            class="whitespace-nowrap py-3 px-4 border-b-2 text-sm font-medium {{ ($tab ?? 'active')==='active' ? 'border-red-700 text-red-800' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">Active</a>
-        <a href="{{ route('staff.grievances', array_merge(request()->except('page'), ['tab'=>'history'])) }}"
+  <a href="{{ route('osas-du.grievances', array_merge(request()->except('page'), ['tab'=>'history'])) }}"
            class="whitespace-nowrap py-3 px-4 border-b-2 text-sm font-medium {{ ($tab ?? 'active')==='history' ? 'border-red-700 text-red-800' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }}">History</a>
       </nav>
-      <form method="GET" action="{{ route('staff.grievances') }}" class="flex items-center space-x-2 pb-2">
+  <form method="GET" action="{{ route('osas-du.grievances') }}" class="flex items-center space-x-2 pb-2">
         <input type="hidden" name="tab" value="{{ $tab ?? 'active' }}" />
         <div class="relative">
           <input type="text" name="search" value="{{ request('search') }}" placeholder="Search..."
@@ -122,7 +122,7 @@
         <td class="px-5 py-3 capitalize">{{ str_replace('_', ' ', $g->grievance) }}</td>
         <td class="px-5 py-3">{{ $g->created_at->format('Y-m-d') }}</td>
         <td class="px-5 py-3">
-          <form method="POST" action="{{ route('staff.grievances.status', $g) }}" class="relative inline-flex items-center gap-1 align-middle">
+          <form method="POST" action="{{ route('osas-du.grievances.status', $g) }}" class="relative inline-flex items-center gap-1 align-middle">
             @csrf
             @method('PATCH')
             <div class="flex items-center">

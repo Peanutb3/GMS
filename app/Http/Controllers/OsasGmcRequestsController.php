@@ -25,7 +25,7 @@ class OsasGmcRequestsController extends Controller
         if ($request->filled('gm_status')) {
             $goodMoralQuery->where('status', $request->gm_status);
         }
-        $goodMoralRequests = $goodMoralQuery->latest()->paginate(10, ['*'], 'gm_page');
+        $goodMorals = $goodMoralQuery->latest()->get();
         
         // Safe Loan Requests
         $safeLoanQuery = SafeLoanRequest::with('student');
@@ -40,11 +40,11 @@ class OsasGmcRequestsController extends Controller
         if ($request->filled('sl_status')) {
             $safeLoanQuery->where('status', $request->sl_status);
         }
-        $safeLoanRequests = $safeLoanQuery->latest()->paginate(10, ['*'], 'sl_page');
+        $safeLoans = $safeLoanQuery->latest()->get();
         
         return view('staff.osas-gmc.requests', compact(
-            'goodMoralRequests',
-            'safeLoanRequests',
+            'goodMorals',
+            'safeLoans',
             'tab'
         ));
     }

@@ -6,7 +6,26 @@
   <title>Create Account | GMS</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <style> body { font-family: 'Poppins', sans-serif; } </style>
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+    input, select { background-color: transparent !important; }
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active,
+    select:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+      box-shadow: 0 0 0 1000px transparent inset !important;
+      -webkit-text-fill-color: #ffffff !important;
+      caret-color: #ffffff;
+      transition: background-color 9999s ease-in-out 0s;
+    }
+    input:-moz-autofill, select:-moz-autofill {
+      box-shadow: 0 0 0 1000px transparent inset !important;
+      -moz-text-fill-color: #ffffff !important;
+    }
+    ::placeholder { color: rgba(255,255,255,0.7); }
+  </style>
 </head>
 <body class="h-screen w-screen flex">
 
@@ -118,7 +137,7 @@
     <div class="flex-1 flex items-center justify-center">
       <img src="{{ asset('images/Login_pic.png') }}" alt="Signup Illustration" class="w-full translate-y-6">
     </div>
-    <div class="text-sm text-gray-400 pb-6">All Rights Reserved.</div>
+    <div class="text-sm text-gray-400 pb-6">© 2025 Office of Student Affairs and Services. All Rights Reserved.</div>
   </div>
 
 </body>

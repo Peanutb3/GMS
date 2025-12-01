@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,10 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Poppins', sans-serif; }
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+
     input[type="checkbox"] {
       appearance: none;
       width: 22px;
@@ -18,6 +22,7 @@
       cursor: pointer;
       position: relative;
     }
+
     /* input[type="checkbox"]:checked::after {
       content: '✔';
       position: absolute;
@@ -27,7 +32,12 @@
       color: white;
     } */
     /* Remove white/yellow background added by browser autofill or focus states */
-    input, select, textarea { background-color: transparent !important; }
+    input,
+    select,
+    textarea {
+      background-color: transparent !important;
+    }
+
     input:-webkit-autofill,
     input:-webkit-autofill:hover,
     input:-webkit-autofill:focus,
@@ -38,15 +48,20 @@
       caret-color: #ffffff;
       transition: background-color 9999s ease-in-out 0s;
     }
+
     /* Firefox (uses :-moz-autofill) */
     input:-moz-autofill {
       box-shadow: 0 0 0 1000px transparent inset !important;
       -moz-text-fill-color: #ffffff !important;
     }
+
     /* Ensure placeholder stays dim and no white flash */
-    ::placeholder { color: rgba(255,255,255,0.7); }
+    ::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
   </style>
 </head>
+
 <body class="h-screen w-screen flex">
 
   <!-- Left Panel -->
@@ -72,11 +87,11 @@
           <div>
             <div class="flex justify-center mb-4">
               <input type="text" name="email" placeholder="Email" required
-                     value="{{ old('email') }}"
-                     class="w-[380px] border-b pb-3 bg-transparent text-base mx-auto text-white placeholder-white focus:outline-none {{ $errors->has('email') ? 'border-red-500 focus:border-red-500' : 'border-white focus:border-white' }}">
+                value="{{ old('email') }}"
+                class="w-[380px] border-b pb-3 bg-transparent text-base mx-auto text-white placeholder-white focus:outline-none {{ $errors->has('email') ? 'border-red-500 focus:border-red-500' : 'border-white focus:border-white' }}">
             </div>
             @error('email')
-              <p class="text-red-300 text-xs text-left">{{ $message }}</p>
+            <p class="text-red-300 text-xs text-left">{{ $message }}</p>
             @enderror
           </div>
 
@@ -84,18 +99,18 @@
           <div>
             <div class="relative flex justify-center mb-2">
               <input type="password" id="password" name="password" placeholder="Password" required
-                     class="w-[380px] border-b pb-3 bg-transparent text-base pr-10 mx-auto text-white placeholder-white focus:outline-none {{ $errors->has('password') ? 'border-red-500 focus:border-red-500' : 'border-white focus:border-white' }}">
+                class="w-[380px] border-b pb-3 bg-transparent text-base pr-10 mx-auto text-white placeholder-white focus:outline-none {{ $errors->has('password') ? 'border-red-500 focus:border-red-500' : 'border-white focus:border-white' }}">
               <button type="button" onclick="togglePassword()" class="absolute right-[0%] top-1 text-white">
                 <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                 </svg>
               </button>
             </div>
             @error('password')
-              <p class="text-red-300 text-xs mb-2 text-left">{{ $message }}</p>
+            <p class="text-red-300 text-xs mb-2 text-left">{{ $message }}</p>
             @enderror
           </div>
 
@@ -111,13 +126,13 @@
               </div>
               <span>Remember me</span>
             </label>
-            <a href="#" class="text-blue-300 hover:underline">Forgot password?</a>
+            <a href="{{ route('password.request') }}" class="text-blue-300 hover:underline">Forgot password?</a>
           </div>
 
 
           <!-- Login Button -->
           <button type="submit"
-                  class="w-full bg-white text-black font-semibold py-3 rounded-full text-base uppercase hover:bg-gray-100 transition">
+            class="w-full bg-white text-black font-semibold py-3 rounded-full text-base uppercase hover:bg-gray-100 transition">
             LOGIN
           </button>
 
@@ -130,7 +145,7 @@
 
           <!-- Google Sign-in -->
           <button type="button" onclick="signInWithGoogle()"
-                  class="w-full bg-white text-black font-medium py-3 rounded-full text-base flex items-center justify-center gap-3 hover:bg-gray-100 transition">
+            class="w-full bg-white text-black font-medium py-3 rounded-full text-base flex items-center justify-center gap-3 hover:bg-gray-100 transition">
             <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo" class="w-6 h-6">
             Sign in with Google
           </button>
@@ -140,7 +155,7 @@
 
     <!-- Signup link -->
     <div class="text-center text-white text-sm mb-6">
-      Don't have an account? 
+      Don't have an account?
       <a href="{{ route('signup.step1') }}" class="text-blue-300 hover:underline font-semibold">Sign up</a>
     </div>
   </div>
@@ -148,9 +163,9 @@
   <!-- Right Panel -->
   <div class="w-1/2 bg-white h-full flex flex-col items-center justify-between px-12">
     <div class="flex-1 flex items-center justify-center">
-      <img src="{{ asset('images/Login_pic.png') }}" 
-           alt="Login Illustration" 
-           class="w-[100%] translate-y-6"> 
+      <img src="{{ asset('images/Login_pic.png') }}"
+        alt="Login Illustration"
+        class="w-[100%] translate-y-6">
     </div>
 
     <div class="text-sm text-gray-400 pb-6 text-center tracking-wide">
@@ -196,4 +211,5 @@
   </script>
 
 </body>
+
 </html>

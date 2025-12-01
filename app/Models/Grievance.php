@@ -11,18 +11,19 @@ class Grievance extends Model
     use HasFactory;
 
     protected $fillable = [
-    'case_id',
-    'student_record_id',
-    'student_no_snapshot',
-    'name_snapshot',
-    'program_snapshot',
-    'gender_snapshot',
-    'date',
-    'grievance',
-    'description',
-    'status',
-    'filed_by_staff_id',
-    'filed_by_name_snapshot',
+        'case_id',
+        'student_record_id',
+        'student_no_snapshot',
+        'name_snapshot',
+        'program_snapshot',
+        'date',
+        'grievance',
+        'description',
+        'remarks',
+        'attachment_path',
+        'status',
+        'filed_by_staff_id',
+        'filed_by_name_snapshot',
     ];
 
     /**

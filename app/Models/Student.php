@@ -4,10 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\EncryptsAttributes;
+use App\Traits\LogsActivity;
 
 class Student extends Model
 {
-    use HasFactory;
+    use HasFactory, EncryptsAttributes, LogsActivity;
+
+    /**
+     * Attributes that should be encrypted.
+     */
+    protected $encrypted = [
+        'student_id',
+        'phone',
+    ];
 
     protected $fillable = [
         'user_id',
@@ -19,7 +29,8 @@ class Student extends Model
         'college',
         'program',
         'year',
-        'profile_photo_path', 
+        'profile_photo_path',
+        'phone',
     ];
 
 

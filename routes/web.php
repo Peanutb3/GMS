@@ -24,12 +24,14 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OsasGmcDashboardController;
 use App\Http\Controllers\OsasDuDashboardController;
 use App\Http\Controllers\OsasGmcRequestsController;
+use App\Http\Controllers\EmailVerificationController;
 
 /*
 |--------------------------------------------------------------------------
 | Authentication Routes
 |--------------------------------------------------------------------------
 */
+
 Route::get('/signup/step1', [AuthController::class, 'showStep1'])->name('signup.step1');
 Route::post('/signup/step1', [AuthController::class, 'storeStep1'])->name('signup.step1.store');
 
@@ -50,19 +52,16 @@ Route::get('/requests/safe-loan/{requestModel}/print', [SafeLoanRequestControlle
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-/*
-|--------------------------------------------------------------------------
-| Notification Routes (Authenticated Users)
-|--------------------------------------------------------------------------
-*/
-Route::middleware(['auth'])->prefix('notifications')->group(function () {
-    Route::get('/', [NotificationController::class, 'index'])->name('notifications.index');
-    Route::get('/unread-count', [NotificationController::class, 'unreadCount'])->name('notifications.unread-count');
-    Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-read');
-    Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
-    Route::delete('/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
-    Route::get('/all', [NotificationController::class, 'all'])->name('notifications.all');
-});
+// Forgot Password Routes
+Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
+Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('/reset-password/{token}', [AuthController::class, 'showResetPasswordForm'])->name('password.reset');
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
+
+// Email Verification Routes
+Route::get('/email/verify', [EmailVerificationController::class, 'notice'])->middleware('auth')->name('verification.notice');
+Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])->middleware(['auth', 'signed'])->name('verification.verify');
+Route::post('/email/resend', [EmailVerificationController::class, 'resend'])->middleware('auth')->name('verification.send');
 
 /*
 |--------------------------------------------------------------------------
@@ -85,17 +84,20 @@ Route::middleware(['auth', 'role:staff'])->prefix('staff')->group(function () {
     // Requests (Good Moral & Safe Loan)
     Route::get('/requests', [StaffRequestsController::class, 'index'])->name('staff.requests');
     Route::patch('/requests/{type}/{id}/check', [StaffRequestsController::class, 'check'])
-        ->whereIn('type', ['goodmoral','safeloan'])
+        ->whereIn('type', ['goodmoral', 'safeloan'])
         ->name('staff.requests.check');
     Route::post('/requests/{type}/{id}/check', [StaffRequestsController::class, 'check'])->name('staff.requests.check');
 
     // Grievances
     Route::get('/grievances', [GrievanceController::class, 'index'])->name('staff.grievances');
+    Route::get('/grievances/{grievance}', [GrievanceController::class, 'show'])->name('staff.grievances.show');
+    Route::get('/grievances/{grievance}/edit', [GrievanceController::class, 'edit'])->name('staff.grievances.edit');
     Route::post('/grievances', [GrievanceController::class, 'store'])->name('staff.grievances.store');
+    Route::patch('/grievances/{grievance}', [GrievanceController::class, 'update'])->name('staff.grievances.update');
     Route::patch('/grievances/{grievance}/status', [GrievanceController::class, 'updateStatus'])->name('staff.grievances.status');
     Route::patch('/grievances/{grievance}/resolve', [GrievanceController::class, 'resolve'])->name('staff.grievances.resolve');
+    Route::post('/grievances/{grievance}/remarks', [GrievanceController::class, 'addRemarks'])->name('staff.grievances.remarks');
     Route::delete('/grievances/{grievance}', [GrievanceController::class, 'destroy'])->name('staff.grievances.destroy');
-    Route::get('/audit-logs', [\App\Http\Controllers\AuditLogController::class, 'index'])->name('staff.audit.index');
 
     // Student lookup for form autofill
     Route::get('/students/find/{studentId}', [GrievanceController::class, 'findStudent'])->name('students.find');
@@ -105,8 +107,8 @@ Route::middleware(['auth', 'role:staff'])->prefix('staff')->group(function () {
     // Profile routes (view, edit, update)
     Route::get('/profile', [StaffProfileController::class, 'show'])->name('staff.profile');
     Route::get('/profile/edit', [StaffProfileController::class, 'edit'])->name('staff.profile.edit');
-    Route::patch('/profile', [StaffProfileController::class, 'update'])->name('staff.profile.update');
-    
+    Route::post('/profile', [StaffProfileController::class, 'update'])->name('staff.profile.update');
+
     // Password change routes
     Route::get('/change-password', function () {
         return view('staff.change-password');
@@ -121,19 +123,19 @@ Route::middleware(['auth', 'role:staff'])->prefix('staff')->group(function () {
 */
 Route::middleware(['auth', 'role:osas_gmc'])->prefix('osas-gmc')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\OsasGmcDashboardController::class, 'index'])->name('osas-gmc.dashboard');
-    
+
     // Requests Management
     Route::get('/requests', [\App\Http\Controllers\OsasGmcRequestsController::class, 'index'])->name('osas-gmc.requests');
     Route::post('/requests/{type}/{id}/check', [\App\Http\Controllers\OsasGmcRequestsController::class, 'check'])->name('osas-gmc.requests.check');
-    
+
     // View-only Grievances
     Route::get('/grievances', [GrievanceController::class, 'index'])->name('osas-gmc.grievances');
-    
+
     // Profile routes
     Route::get('/profile', [StaffProfileController::class, 'show'])->name('osas-gmc.profile');
     Route::get('/profile/edit', [StaffProfileController::class, 'edit'])->name('osas-gmc.profile.edit');
-    Route::patch('/profile', [StaffProfileController::class, 'update'])->name('osas-gmc.profile.update');
-    
+    Route::post('/profile', [StaffProfileController::class, 'update'])->name('osas-gmc.profile.update');
+
     // Password change
     Route::get('/change-password', function () {
         return view('staff.osas-gmc.change-password');
@@ -148,34 +150,35 @@ Route::middleware(['auth', 'role:osas_gmc'])->prefix('osas-gmc')->group(function
 */
 Route::middleware(['auth', 'role:osas_du'])->prefix('osas-du')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\OsasDuDashboardController::class, 'index'])->name('osas-du.dashboard');
-    
+
     // Grievances (Full Access - File & View)
     Route::get('/grievances', [GrievanceController::class, 'index'])->name('osas-du.grievances');
+    Route::get('/grievances/{grievance}', [GrievanceController::class, 'show'])->name('osas-du.grievances.show');
+    Route::get('/grievances/{grievance}/edit', [GrievanceController::class, 'edit'])->name('osas-du.grievances.edit');
     Route::get('/file-grievances', [GrievanceController::class, 'create'])->name('osas-du.file-grievances');
     Route::post('/grievances', [GrievanceController::class, 'store'])->name('osas-du.grievances.store');
+    Route::patch('/grievances/{grievance}', [GrievanceController::class, 'update'])->name('osas-du.grievances.update');
     Route::patch('/grievances/{grievance}/status', [GrievanceController::class, 'updateStatus'])->name('osas-du.grievances.status');
     Route::patch('/grievances/{grievance}/resolve', [GrievanceController::class, 'resolve'])->name('osas-du.grievances.resolve');
+    Route::post('/grievances/{grievance}/remarks', [GrievanceController::class, 'addRemarks'])->name('osas-du.grievances.remarks');
     Route::delete('/grievances/{grievance}', [GrievanceController::class, 'destroy'])->name('osas-du.grievances.destroy');
-    
+
     // Student lookup
     Route::get('/students/find/{studentId}', [GrievanceController::class, 'findStudent'])->name('osas-du.students.find');
-    
+
     // View-only Requests
     Route::get('/requests', [\App\Http\Controllers\OsasGmcRequestsController::class, 'index'])->name('osas-du.requests');
-    
+
     // Profile routes
     Route::get('/profile', [StaffProfileController::class, 'show'])->name('osas-du.profile');
     Route::get('/profile/edit', [StaffProfileController::class, 'edit'])->name('osas-du.profile.edit');
-    Route::patch('/profile', [StaffProfileController::class, 'update'])->name('osas-du.profile.update');
-    
+    Route::post('/profile', [StaffProfileController::class, 'update'])->name('osas-du.profile.update');
+
     // Password change
     Route::get('/change-password', function () {
         return view('staff.osas-du.change-password');
     })->name('osas-du.change-password');
     Route::patch('/password', [StaffProfileController::class, 'updatePassword'])->name('osas-du.password.update');
-    
-    // Audit logs
-    Route::get('/audit-logs', [AuditLogController::class, 'index'])->name('osas-du.audit.index');
 });
 
 /*
@@ -190,7 +193,7 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->group(function (
     // Use controller so we can pass $user and $student into the view
     Route::get('/profile', [\App\Http\Controllers\StudentProfileController::class, 'show'])->name('student.profile');
     Route::get('/profile/edit', [\App\Http\Controllers\StudentProfileController::class, 'edit'])->name('student.profile.edit');
-    Route::patch('/profile', [\App\Http\Controllers\StudentProfileController::class, 'update'])->name('student.profile.update');
+    Route::post('/profile', [\App\Http\Controllers\StudentProfileController::class, 'update'])->name('student.profile.update');
 });
 
 Route::get('/request', function () {
@@ -292,12 +295,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     // System Settings
     Route::get('/settings', [AdminSettingsController::class, 'index'])->name('admin.settings');
     Route::post('/settings', [AdminSettingsController::class, 'update'])->name('admin.settings.update');
+    Route::post('/settings/test-email', [AdminSettingsController::class, 'testEmail'])->name('admin.settings.test-email');
 
     // Profile routes (view, edit, update)
-    Route::view('/profile', 'admin.profile')->name('admin.profile');
+    Route::get('/profile', [\App\Http\Controllers\AdminProfileController::class, 'show'])->name('admin.profile');
     Route::get('/profile/edit', [\App\Http\Controllers\AdminProfileController::class, 'edit'])->name('admin.profile.edit');
-    Route::patch('/profile', [\App\Http\Controllers\AdminProfileController::class, 'update'])->name('admin.profile.update');
-    
+    Route::post('/profile', [\App\Http\Controllers\AdminProfileController::class, 'update'])->name('admin.profile.update');
+
     // Password change routes
     Route::get('/change-password', function () {
         return view('admin.change-password');

@@ -3,7 +3,7 @@
 @section('title', 'OSAS DU Dashboard')
 
 @section('sidebar')
-    @include('partials.sidebar-osas-du')
+@include('partials.sidebar-osas-du')
 @endsection
 
 @section('content')
@@ -18,8 +18,8 @@
 
     <!-- Image Section -->
     <div class="md:w-1/3 flex justify-end items-end">
-        <img src="/images/Sticker.png" alt="Staff Illustration" 
-             class="h-full object-bottom object-contain">
+        <img src="/images/Sticker.png" alt="Staff Illustration"
+            class="h-full object-bottom object-contain">
     </div>
 </div>
 
@@ -66,51 +66,60 @@
 
         <!-- Table -->
         <div>
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-semibold">Recent Grievances</h3>
-                <a href="{{ route('osas-du.grievances') }}" class="text-sm text-blue-600 hover:underline">View all</a>
-            </div>
-
-            <div class="bg-white rounded-2xl shadow-md overflow-hidden">
-                <table class="w-full text-sm text-left text-gray-700 border border-gray-200">
-                    <thead class="bg-white text-blue-900 text-xs uppercase">
-                        <tr>
-                            <th class="px-6 py-3 font-semibold">Case ID</th>
-                            <th class="px-6 py-3 font-semibold">Name</th>
-                            <th class="px-6 py-3 font-semibold">Program</th>
-                            <th class="px-6 py-3 font-semibold">Type</th>
-                            <th class="px-6 py-3 font-semibold">Date</th>
-                            <th class="px-6 py-3 font-semibold">Status</th>
-                            <!-- <th class="px-6 py-3 font-semibold">Filed By</th> -->
-                            <!-- <th class="px-6 py-3 font-semibold text-center">Actions</th> -->
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @php
-                            $items = collect($recentGrievances ?? [])->take(2);
-                        @endphp
-
-                        @if($items->isNotEmpty())
-                            @foreach($items as $g)
-                                <tr class="{{ $loop->odd ? 'bg-[#EDEBEB]' : 'bg-white' }} hover:bg-gray-100 transition">
-                                    <td class="px-5 py-3">{{ $g->case_id }}</td>
-                                    <td class="px-5 py-3">{{ optional($g->student)->first_name ? optional($g->student)->first_name . ' ' . optional($g->student)->last_name : $g->name }}</td>
-                                    <td class="px-5 py-3">{{ optional($g->student)->program ?? $g->program }}</td>
-                                    <td class="px-5 py-3">{{ str_replace('_', ' ', $g->grievance) }}</td>
-                                    <td class="px-5 py-3">{{ optional($g->date)->format('Y-m-d') ?? $g->created_at->format('Y-m-d') }}</td>
-                                    <td class="px-5 py-3">
-                                        <x-status-badge :status="$g->status" />
-                                    </td>
-                                </tr>
-                            @endforeach
-                        @else
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800">Recent Grievances</h3>
+                    <a href="{{ route('osas-du.grievances') }}" class="text-sm text-red-800 hover:text-red-900 font-medium">View All →</a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-sm">
+                        <thead class="bg-gray-50 border-b border-gray-200">
                             <tr>
-                                <td colspan="8" class="px-5 py-4 text-center text-gray-500">No grievances found.</td>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Case ID</th>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Student</th>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Program</th>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Status</th>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Date</th>
                             </tr>
-                        @endif
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            @php
+                            $items = collect($recentGrievances ?? [])->take(3);
+                            @endphp
+
+                            @if($items->isNotEmpty())
+                            @foreach($items as $g)
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-3 text-gray-900">{{ $g->case_id }}</td>
+                                <td class="px-4 py-3">
+                                    <div class="font-medium text-gray-900">{{ optional($g->student)->first_name ? optional($g->student)->first_name . ' ' . optional($g->student)->last_name : $g->name }}</div>
+                                    @if($g->student && $g->student->student_id)
+                                    <div class="text-xs text-gray-500">{{ $g->student->student_id }}</div>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3 text-gray-700">{{ optional($g->student)->program ?? $g->program }}</td>
+                                <td class="px-4 py-3">
+                                    @if($g->status === 'pending')
+                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-800">Pending</span>
+                                    @elseif($g->status === 'resolved')
+                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Resolved</span>
+                                    @elseif($g->status === 'in_progress')
+                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">In Progress</span>
+                                    @else
+                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">{{ ucfirst($g->status) }}</span>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3 text-gray-600">{{ optional($g->date)->format('M d, Y') ?? $g->created_at->format('M d, Y') }}</td>
+                            </tr>
+                            @endforeach
+                            @else
+                            <tr>
+                                <td colspan="5" class="px-4 py-8 text-center text-gray-400">No recent grievances found.</td>
+                            </tr>
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -121,13 +130,15 @@
         <h3 class="text-xl font-semibold mb-4">Profile</h3>
         <div class="bg-white rounded-2xl shadow-lg p-6 flex flex-col">
             <div class="relative">
-                <svg xmlns="http://www.w3.org/2000/svg" 
-                    fill="currentColor" viewBox="0 0 24 24" 
-                    class="h-20 w-20 rounded-full border-4 border-pink-300 text-gray-600 mx-auto mb-4">
-                    <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 
-                            2.3-5 5 2.3 5 5 5zm0 2c-3.3 
-                            0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/>
-                </svg>
+                @if(Auth::user()->staff && !empty(Auth::user()->staff->profile_photo_path))
+                <img src="{{ asset('storage/' . Auth::user()->staff->profile_photo_path) }}"
+                    alt="Profile Avatar"
+                    class="h-20 w-20 rounded-full border-4 border-pink-300 mx-auto mb-4 object-cover">
+                @else
+                <div class="h-20 w-20 rounded-full border-4 border-pink-300 bg-gradient-to-br from-red-800 to-red-600 flex items-center justify-center mx-auto mb-4">
+                    <span class="text-2xl font-bold text-white">{{ substr(Auth::user()->name, 0, 1) }}</span>
+                </div>
+                @endif
             </div>
 
             <h4 class="font-semibold text-center text-lg mb-1">{{ Auth::user()->name }}</h4>
@@ -137,9 +148,9 @@
                 <p><span class="font-semibold">Email:</span> {{ Auth::user()->email }}</p>
                 <p><span class="font-semibold">Role:</span> {{ ucfirst(Auth::user()->role) }}</p>
             </div>
-            <button class="px-6 py-3 bg-red-900 text-white rounded-lg hover:bg-red-800 font-medium">
+            <a href="{{ route('osas-du.profile') }}" class="text-center px-6 py-3 bg-red-900 text-white rounded-lg hover:bg-red-800 font-medium">
                 Edit Profile
-            </button>
+            </a>
         </div>
     </div>
 </div>

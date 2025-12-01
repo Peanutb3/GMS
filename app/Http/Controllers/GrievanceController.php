@@ -9,6 +9,7 @@ use App\Traits\CreatesNotifications;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use App\Models\AuditLog;
 use App\Models\GrievanceHistory;
 
@@ -26,14 +27,14 @@ class GrievanceController extends Controller
         $user = Auth::user();
         // Determine view prefix based on role
         $role = $user?->role;
-        $viewBase = match($role) {
+        $viewBase = match ($role) {
             'staff' => 'staff',
             'osas_gmc' => 'staff.osas-gmc',
             'osas_du' => 'staff.osas-du',
             default => 'staff', // fallback
         };
 
-        if (in_array($role, ['staff','osas_gmc','osas_du']) && ($user->staff || $role !== 'staff')) {
+        if (in_array($role, ['staff', 'osas_gmc', 'osas_du']) && ($user->staff || $role !== 'staff')) {
             $tab = $request->query('tab', 'active');
             // GMC: view-only (their own filed grievances not relevant) -> show all pending/in_progress
             // DU: full access (all grievances)
@@ -51,30 +52,37 @@ class GrievanceController extends Controller
                 $search = $request->input('search');
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('program', 'like', "%{$search}%")
-                    ->orWhere('case_id', 'like', "%{$search}%");
+                        ->orWhere('program', 'like', "%{$search}%")
+                        ->orWhere('case_id', 'like', "%{$search}%");
                 });
             }
 
             $historyItems = collect();
             if ($tab === 'history') {
-                // Build history list: resolved items + deleted snapshots performed by this staff
-                $resolvedQ = Grievance::where('filed_by_staff_id', $user->staff->id)
-                    ->where('status', 'resolved');
+                // Build history list: resolved items + deleted snapshots
+                // For OSAS-DU: show all resolved/deleted grievances
+                // For staff: show only their own filed grievances that are resolved/deleted
+                if ($role === 'osas_du') {
+                    $resolvedQ = Grievance::where('status', 'resolved');
+                } else {
+                    $resolvedQ = Grievance::where('filed_by_staff_id', $user->staff->id)
+                        ->where('status', 'resolved');
+                }
+
                 if ($request->filled('search')) {
                     $search = $request->input('search');
                     $resolvedQ->where(function ($q) use ($search) {
                         $q->where('name', 'like', "%{$search}%")
-                          ->orWhere('program', 'like', "%{$search}%")
-                          ->orWhere('case_id', 'like', "%{$search}%")
-                          ->orWhere('grievance', 'like', "%{$search}%");
+                            ->orWhere('program', 'like', "%{$search}%")
+                            ->orWhere('case_id', 'like', "%{$search}%")
+                            ->orWhere('grievance', 'like', "%{$search}%");
                     });
                 }
-                $resolvedItems = $resolvedQ->orderByDesc('updated_at')->get()->map(function($g){
+                $resolvedItems = $resolvedQ->orderByDesc('updated_at')->get()->map(function ($g) {
                     $studentName = optional($g->student)->first_name
-                        ? trim(optional($g->student)->first_name.' '.optional($g->student)->last_name)
-                        : ($g->name ?? '');
-                    $program = optional($g->student)->program ?? $g->program;
+                        ? trim(optional($g->student)->first_name . ' ' . optional($g->student)->last_name)
+                        : ($g->name_snapshot ?? $g->name ?? '');
+                    $program = optional($g->student)->program ?? ($g->program_snapshot ?? $g->program);
                     return [
                         'id' => $g->id,
                         'case_id' => $g->case_id,
@@ -86,20 +94,26 @@ class GrievanceController extends Controller
                     ];
                 });
 
-                $deletedQ = GrievanceHistory::where('staff_id', optional($user->staff)->id)
-                    ->where('action', 'deleted');
+                // For deleted items: OSAS-DU sees all, staff sees only their own
+                if ($role === 'osas_du') {
+                    $deletedQ = GrievanceHistory::where('action', 'deleted');
+                } else {
+                    $deletedQ = GrievanceHistory::where('staff_id', optional($user->staff)->id)
+                        ->where('action', 'deleted');
+                }
+
                 if ($request->filled('search')) {
                     $search = $request->input('search');
                     // For SQLite JSON as TEXT, coarse LIKE filter
                     $deletedQ->where('snapshot', 'like', "%{$search}%");
                 }
-                $deletedItems = $deletedQ->orderByDesc('created_at')->get()->map(function($h){
+                $deletedItems = $deletedQ->orderByDesc('created_at')->get()->map(function ($h) {
                     $s = $h->snapshot ?? [];
                     return [
                         'id' => $s['id'] ?? null,
                         'case_id' => $s['case_id'] ?? '',
-                        'name' => $s['name'] ?? ($s['student_name'] ?? ''),
-                        'program' => $s['program'] ?? '',
+                        'name' => $s['name_snapshot'] ?? ($s['name'] ?? ''),
+                        'program' => $s['program_snapshot'] ?? ($s['program'] ?? ''),
                         'type' => $s['grievance'] ?? '',
                         'action' => 'deleted',
                         'date' => optional($h->created_at)->toDateTimeString(),
@@ -109,10 +123,10 @@ class GrievanceController extends Controller
                 $grievances = collect();
             } else {
                 // Active tab: limit to pending + in_progress unless specific filter provided
-                $query->whereIn('status', ['pending','in_progress']);
+                $query->whereIn('status', ['pending', 'in_progress']);
 
                 // Filter by status (optional) limited to the active set
-                if ($request->filled('status') && in_array($request->status, ['pending','in_progress'])) {
+                if ($request->filled('status') && in_array($request->status, ['pending', 'in_progress'])) {
                     $query->where('status', $request->status);
                 }
 
@@ -124,7 +138,7 @@ class GrievanceController extends Controller
             $historyItems = collect();
         }
 
-    return view("{$viewBase}.grievances", [
+        return view("{$viewBase}.grievances", [
             'grievances' => $grievances,
             'tab' => $tab,
             'historyItems' => $historyItems ?? collect(),
@@ -144,16 +158,16 @@ class GrievanceController extends Controller
             return view('student.grievances', compact('grievances'));
         }
 
-    // Use normalized FK `student_record_id` to link to students table
-    $query = Grievance::with('staff')->where('student_record_id', $student->id);
+        // Use normalized FK `student_record_id` to link to students table
+        $query = Grievance::with('staff')->where('student_record_id', $student->id);
 
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('program', 'like', "%{$search}%")
-                  ->orWhere('case_id', 'like', "%{$search}%")
-                  ->orWhere('grievance', 'like', "%{$search}%");
+                    ->orWhere('program', 'like', "%{$search}%")
+                    ->orWhere('case_id', 'like', "%{$search}%")
+                    ->orWhere('grievance', 'like', "%{$search}%");
             });
         }
 
@@ -161,9 +175,9 @@ class GrievanceController extends Controller
             $query->where('status', $request->status);
         }
 
-    $grievances = $query->orderByDesc('created_at')->paginate(10)->withQueryString();
+        $grievances = $query->orderByDesc('created_at')->paginate(10)->withQueryString();
 
-    return view('student.grievances', compact('grievances', 'student'));
+        return view('student.grievances', compact('grievances', 'student'));
     }
 
 
@@ -176,18 +190,41 @@ class GrievanceController extends Controller
             'date' => 'nullable|date',
             'grievance' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120', // 5MB max
         ]);
+
+        // Handle file upload
+        if ($request->hasFile('attachment')) {
+            $file = $request->file('attachment');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('grievances/attachments', $filename, 'public');
+            $data['attachment_path'] = $path;
+        }
 
         // Generate case ID
         $data['case_id'] = 'CASE-' . date('Y') . '-' . str_pad((Grievance::max('id') + 1), 3, '0', STR_PAD_LEFT);
         $data['status'] = 'pending';
 
-        // Try to attach student_record_id
+        // Try to attach student_record_id and populate snapshot fields
         if (!empty($data['student_id'])) {
             $student = \App\Models\Student::where('student_id', $data['student_id'])->first();
             if ($student) {
                 $data['student_record_id'] = $student->id;
+                // Populate snapshot fields from student record
+                $data['name_snapshot'] = $student->first_name . ' ' . $student->last_name;
+                $data['student_no_snapshot'] = $student->student_id;
+                $data['program_snapshot'] = $student->program;
+            } else {
+                // Student ID provided but not found - use form data for snapshots
+                $data['name_snapshot'] = $data['name'];
+                $data['student_no_snapshot'] = $data['student_id'];
+                $data['program_snapshot'] = $data['program'] ?? null;
             }
+        } else {
+            // No student ID - use form data for snapshots
+            $data['name_snapshot'] = $data['name'];
+            $data['student_no_snapshot'] = null;
+            $data['program_snapshot'] = $data['program'] ?? null;
         }
 
         // No need to set filed_by here anymore — model handles it.
@@ -208,7 +245,7 @@ class GrievanceController extends Controller
             ]
         );
 
-        $redirectRoute = match(Auth::user()?->role) {
+        $redirectRoute = match (Auth::user()?->role) {
             'staff' => 'staff.grievances',
             'osas_du' => 'osas-du.grievances', // DU can file grievances
             default => 'staff.grievances'
@@ -245,9 +282,9 @@ class GrievanceController extends Controller
 
         // Format full name properly
         $fullName = trim($student->first_name . ' ' .
-                        ($student->middle_initial ? $student->middle_initial . ' ' : '') .
-                        $student->last_name .
-                        ($student->suffix ? ' ' . $student->suffix : ''));
+            ($student->middle_initial ? $student->middle_initial . ' ' : '') .
+            $student->last_name .
+            ($student->suffix ? ' ' . $student->suffix : ''));
 
         Log::info('findStudent found', ['student_id' => $student->student_id, 'name' => $fullName]);
 
@@ -264,7 +301,7 @@ class GrievanceController extends Controller
     {
         $user = Auth::user();
         $role = $user?->role;
-        $viewPath = match($role) {
+        $viewPath = match ($role) {
             'staff' => 'staff.file-grievances',
             'osas_du' => 'staff.osas-du.file-grievances',
             default => abort(403)
@@ -278,7 +315,7 @@ class GrievanceController extends Controller
     public function updateStatus(Request $request, Grievance $grievance)
     {
         $user = Auth::user();
-        if (!$user || $user->role !== 'staff') {
+        if (!$user || !in_array($user->role, ['staff', 'osas_du'])) {
             abort(403);
         }
 
@@ -303,16 +340,117 @@ class GrievanceController extends Controller
         ]);
 
         \App\Models\GrievanceHistory::create([
-            'grievance_id'=>$grievance->id,
-            'action'=>'status_changed',
-            'snapshot'=>['old'=>$old,'new'=>['status'=>$grievance->status]],
-            'staff_id'=>optional($user->staff)->id,
+            'grievance_id' => $grievance->id,
+            'action' => 'status_changed',
+            'snapshot' => ['old' => $old, 'new' => ['status' => $grievance->status]],
+            'staff_id' => optional($user->staff)->id,
         ]);
 
         if ($request->expectsJson()) {
-            return response()->json(['ok'=>true,'action'=>'status_changed','status'=>$grievance->status,'id'=>$grievance->id]);
+            return response()->json(['ok' => true, 'action' => 'status_changed', 'status' => $grievance->status, 'id' => $grievance->id]);
         }
-        return back()->with('success', 'Status updated to ' . str_replace('_',' ', $grievance->status));
+        return back()->with('success', 'Status updated to ' . str_replace('_', ' ', $grievance->status));
+    }
+
+    /**
+     * Show a single grievance
+     */
+    public function show(Grievance $grievance)
+    {
+        $user = Auth::user();
+        if (!$user || !in_array($user->role, ['staff', 'osas_du'])) {
+            abort(403);
+        }
+
+        $viewBase = match ($user->staff->position ?? '') {
+            'OSAS - Director of University' => 'staff.osas-du',
+            'OSAS - Guidance and Counseling' => 'staff.osas-gmc',
+            default => 'staff.osas-du',
+        };
+
+        $history = \App\Models\GrievanceHistory::where('grievance_id', $grievance->id)
+            ->with('staff.user')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view("{$viewBase}.grievances-show", [
+            'grievance' => $grievance,
+            'history' => $history,
+        ]);
+    }
+
+    /**
+     * Show edit form for a grievance
+     */
+    public function edit(Grievance $grievance)
+    {
+        $user = Auth::user();
+        if (!$user || !in_array($user->role, ['staff', 'osas_du'])) {
+            abort(403);
+        }
+
+        $viewBase = match ($user->staff->position ?? '') {
+            'OSAS - Director of University' => 'staff.osas-du',
+            'OSAS - Guidance and Counseling' => 'staff.osas-gmc',
+            default => 'staff.osas-du',
+        };
+
+        return view("{$viewBase}.grievances-show", [
+            'grievance' => $grievance,
+        ]);
+    }
+
+    /**
+     * Update a grievance
+     */
+    public function update(Request $request, Grievance $grievance)
+    {
+        $user = Auth::user();
+        if (!$user || !in_array($user->role, ['staff', 'osas_du'])) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'description' => 'required|string',
+            'grievance' => 'required|string',
+            'date' => 'required|date',
+            'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+        ]);
+
+        $oldValues = $grievance->toArray();
+
+        $grievance->description = $validated['description'];
+        $grievance->grievance = $validated['grievance'];
+        $grievance->date = $validated['date'];
+
+        // Handle file upload
+        if ($request->hasFile('attachment')) {
+            // Delete old file if exists
+            if ($grievance->attachment_path && \Storage::exists('public/' . $grievance->attachment_path)) {
+                \Storage::delete('public/' . $grievance->attachment_path);
+            }
+
+            $file = $request->file('attachment');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('grievances/attachments', $filename, 'public');
+            $grievance->attachment_path = $path;
+        }
+
+        $grievance->save();
+
+        AuditLog::create([
+            'auditable_type' => Grievance::class,
+            'auditable_id' => $grievance->id,
+            'action' => 'updated',
+            'user_id' => $user->id,
+            'staff_id' => optional($user->staff)->id,
+            'old_values' => $oldValues,
+            'new_values' => $grievance->toArray(),
+            'ip_address' => $request->ip(),
+        ]);
+
+        $routeName = $user->role === 'osas_du' ? 'osas-du.grievances' : 'staff.grievances';
+        return redirect()->route($routeName)->with('success', 'Grievance updated successfully.');
     }
 
     /**
@@ -321,35 +459,47 @@ class GrievanceController extends Controller
     public function destroy(Request $request, Grievance $grievance)
     {
         $user = Auth::user();
-        if (!$user || $user->role !== 'staff') {
+        if (!$user || !in_array($user->role, ['staff', 'osas_du'])) {
             abort(403);
         }
 
-        $snapshot = $grievance->toArray();
-        $grievance->delete();
+        try {
+            $snapshot = $grievance->toArray();
 
-        AuditLog::create([
-            'auditable_type' => Grievance::class,
-            'auditable_id'   => $snapshot['id'] ?? 0,
-            'action'         => 'deleted',
-            'user_id'        => $user->id,
-            'staff_id'       => optional($user->staff)->id,
-            'old_values'     => $snapshot,
-            'new_values'     => null,
-            'ip_address'     => $request->ip(),
-        ]);
+            // Create history record before deleting
+            \App\Models\GrievanceHistory::create([
+                'grievance_id' => $grievance->id,
+                'action' => 'deleted',
+                'snapshot' => $snapshot,
+                'staff_id' => optional($user->staff)->id,
+            ]);
 
-        \App\Models\GrievanceHistory::create([
-            'grievance_id'=>$snapshot['id'] ?? null,
-            'action'=>'deleted',
-            'snapshot'=>$snapshot,
-            'staff_id'=>optional($user->staff)->id,
-        ]);
+            // Create audit log
+            AuditLog::create([
+                'auditable_type' => Grievance::class,
+                'auditable_id'   => $grievance->id,
+                'action'         => 'deleted',
+                'user_id'        => $user->id,
+                'staff_id'       => optional($user->staff)->id,
+                'old_values'     => $snapshot,
+                'new_values'     => null,
+                'ip_address'     => $request->ip(),
+            ]);
 
-        if ($request->expectsJson()) {
-            return response()->json(['ok'=>true,'action'=>'deleted','id'=>$snapshot['id'] ?? null]);
+            // Now delete the grievance
+            $grievance->delete();
+
+            if ($request->expectsJson()) {
+                return response()->json(['ok' => true, 'action' => 'deleted', 'id' => $snapshot['id'] ?? null]);
+            }
+            return back()->with('success', 'Grievance deleted.');
+        } catch (\Exception $e) {
+            \Log::error('Grievance deletion error: ' . $e->getMessage());
+            if ($request->expectsJson()) {
+                return response()->json(['ok' => false, 'error' => $e->getMessage()], 500);
+            }
+            return back()->with('error', 'Failed to delete grievance: ' . $e->getMessage());
         }
-        return back()->with('success', 'Grievance deleted.');
     }
 
     /**
@@ -358,28 +508,28 @@ class GrievanceController extends Controller
     public function resolve(Request $request, Grievance $grievance)
     {
         $user = Auth::user();
-        if (!$user || $user->role !== 'staff') {
+        if (!$user || !in_array($user->role, ['staff', 'osas_du'])) {
             abort(403);
         }
         if ($grievance->status !== 'resolved') {
-            $old = ['status'=>$grievance->status];
+            $old = ['status' => $grievance->status];
             $grievance->status = 'resolved';
             $grievance->save();
             AuditLog::create([
-                'auditable_type'=>Grievance::class,
-                'auditable_id'=>$grievance->id,
-                'action'=>'status_changed',
-                'user_id'=>$user->id,
-                'staff_id'=>optional($user->staff)->id,
-                'old_values'=>$old,
-                'new_values'=>['status'=>'resolved'],
-                'ip_address'=>$request->ip(),
+                'auditable_type' => Grievance::class,
+                'auditable_id' => $grievance->id,
+                'action' => 'status_changed',
+                'user_id' => $user->id,
+                'staff_id' => optional($user->staff)->id,
+                'old_values' => $old,
+                'new_values' => ['status' => 'resolved'],
+                'ip_address' => $request->ip(),
             ]);
             \App\Models\GrievanceHistory::create([
-                'grievance_id'=>$grievance->id,
-                'action'=>'resolved',
-                'snapshot'=>['old'=>$old,'new'=>['status'=>'resolved']],
-                'staff_id'=>optional($user->staff)->id,
+                'grievance_id' => $grievance->id,
+                'action' => 'resolved',
+                'snapshot' => ['old' => $old, 'new' => ['status' => 'resolved']],
+                'staff_id' => optional($user->staff)->id,
             ]);
 
             // Notify student about resolution
@@ -391,6 +541,51 @@ class GrievanceController extends Controller
                 );
             }
         }
-        return response()->json(['ok'=>true,'action'=>'resolved','id'=>$grievance->id]);
+        return response()->json(['ok' => true, 'action' => 'resolved', 'id' => $grievance->id]);
+    }
+
+    /**
+     * Add remarks to a grievance
+     */
+    public function addRemarks(Request $request, Grievance $grievance)
+    {
+        $user = Auth::user();
+        if (!$user || !in_array($user->role, ['staff', 'osas_du'])) {
+            abort(403);
+        }
+
+        $request->validate([
+            'remarks' => 'required|string|max:1000'
+        ]);
+
+        $oldRemarks = $grievance->remarks;
+        $newRemarks = $request->remarks;
+
+        // Append new remarks with timestamp and user
+        $timestamp = now()->format('Y-m-d H:i');
+        $userName = $user->name;
+        $formattedRemarks = "[{$timestamp}] {$userName}: {$newRemarks}";
+
+        if ($oldRemarks) {
+            $grievance->remarks = $oldRemarks . "\n\n" . $formattedRemarks;
+        } else {
+            $grievance->remarks = $formattedRemarks;
+        }
+
+        $grievance->save();
+
+        // Log the action
+        AuditLog::create([
+            'auditable_type' => Grievance::class,
+            'auditable_id' => $grievance->id,
+            'action' => 'updated',
+            'user_id' => $user->id,
+            'staff_id' => optional($user->staff)->id,
+            'old_values' => ['remarks' => $oldRemarks],
+            'new_values' => ['remarks' => $grievance->remarks],
+            'ip_address' => $request->ip(),
+        ]);
+
+        return response()->json(['ok' => true, 'message' => 'Remarks added successfully']);
     }
 }

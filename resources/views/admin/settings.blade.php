@@ -3,7 +3,7 @@
 @section('title', 'System Settings')
 
 @section('sidebar')
-    @include('partials.sidebar-admin')
+@include('partials.sidebar-admin')
 @endsection
 
 @section('content')
@@ -11,7 +11,7 @@
 <div class="px-3 -mt-2 mb-4">
     <nav class="text-sm text-gray-600 flex items-center">
         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 30 30" class="w-5 h-5 mr-2 text-gray-500">
-        <path d="M3 9.75L12 3l9 6.75V21a1 1 0 0 1-1 1h-5.5a.5.5 0 0 1-.5-.5V15h-4v6.5a.5.5 0 0 1-.5.5H4a1 1 0 0 1-1-1V9.75z"/>
+            <path d="M3 9.75L12 3l9 6.75V21a1 1 0 0 1-1 1h-5.5a.5.5 0 0 1-.5-.5V15h-4v6.5a.5.5 0 0 1-.5.5H4a1 1 0 0 1-1-1V9.75z" />
         </svg>
         <a href="{{ route('admin.dashboard') }}" class="hover:text-red-800">Dashboard</a>
         <span class="mx-2 text-gray-400">/</span>
@@ -42,7 +42,7 @@
     @csrf
 
     <!-- School Information -->
-    <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
         <div class="border-b border-gray-200 pb-4 mb-6">
             <h2 class="text-xl font-semibold text-gray-800 flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -55,14 +55,14 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">School Name</label>
-                <input type="text" name="school_name" value="{{ $settings['school_name'] }}" 
+                <input type="text" name="school_name" value="{{ $settings['school_name'] }}"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent"
                     required>
             </div>
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">OSAS Head/Director</label>
-                <input type="text" name="osas_head" value="{{ $settings['osas_head'] }}" 
+                <input type="text" name="osas_head" value="{{ $settings['osas_head'] }}"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent"
                     required>
             </div>
@@ -78,7 +78,7 @@
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Academic Year</label>
-                <input type="text" name="current_year" value="{{ $settings['current_year'] }}" 
+                <input type="text" name="current_year" value="{{ $settings['current_year'] }}"
                     placeholder="2024-2025"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent"
                     required>
@@ -87,7 +87,7 @@
     </div>
 
     <!-- Contact Information -->
-    <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
         <div class="border-b border-gray-200 pb-4 mb-6">
             <h2 class="text-xl font-semibold text-gray-800 flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -100,14 +100,14 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Contact Email</label>
-                <input type="email" name="contact_email" value="{{ $settings['contact_email'] }}" 
+                <input type="email" name="contact_email" value="{{ $settings['contact_email'] }}"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent"
                     required>
             </div>
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Contact Phone</label>
-                <input type="text" name="contact_phone" value="{{ $settings['contact_phone'] }}" 
+                <input type="text" name="contact_phone" value="{{ $settings['contact_phone'] }}"
                     placeholder="(123) 456-7890"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent">
             </div>
@@ -115,7 +115,7 @@
     </div>
 
     <!-- Signature Upload -->
-    <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
         <div class="border-b border-gray-200 pb-4 mb-6">
             <h2 class="text-xl font-semibold text-gray-800 flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -145,5 +145,61 @@
         </button>
     </div>
 </form>
+
+<!-- Email Configuration Test -->
+<div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+    <div class="border-b border-gray-200 pb-4 mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            Email Configuration Test
+        </h2>
+        <p class="text-sm text-gray-500 mt-2">Test your email configuration by sending a test email. Current mailer: <span class="font-semibold">{{ config('mail.default') }}</span></p>
+    </div>
+
+    @if(session('error'))
+    <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+        {{ session('error') }}
+    </div>
+    @endif
+
+    <form action="{{ route('admin.settings.test-email') }}" method="POST" class="space-y-4">
+        @csrf
+        <div class="flex gap-4 items-end">
+            <div class="flex-1">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Test Email Address</label>
+                <input type="email" name="test_email"
+                    placeholder="Enter email address to test"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent"
+                    required>
+                <p class="text-xs text-gray-500 mt-1">
+                    @if(config('mail.default') === 'log')
+                    ⚠️ Currently using 'log' mailer. Emails will be saved to <code class="bg-gray-100 px-1 rounded">storage/logs/laravel.log</code> instead of being sent.
+                    @else
+                    Email will be sent using {{ config('mail.default') }} mailer.
+                    @endif
+                </p>
+            </div>
+            <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+                Send Test Email
+            </button>
+        </div>
+    </form>
+
+    <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <h3 class="text-sm font-semibold text-blue-900 mb-2">📧 Email Configuration Guide</h3>
+        <ul class="text-xs text-blue-800 space-y-1">
+            <li>• For <strong>school Gmail</strong>: Use App Password (not regular password)</li>
+            <li>• For <strong>school SMTP</strong>: Contact IT department for credentials</li>
+            <li>• Update <code class="bg-blue-100 px-1 rounded">.env</code> file with MAIL_* settings</li>
+            <li>• Run <code class="bg-blue-100 px-1 rounded">php artisan config:clear</code> after changing .env</li>
+            <li>• Check <code class="bg-blue-100 px-1 rounded">EMAIL_CONFIG_GUIDE.md</code> for detailed setup instructions</li>
+        </ul>
+    </div>
+</div>
 
 @endsection

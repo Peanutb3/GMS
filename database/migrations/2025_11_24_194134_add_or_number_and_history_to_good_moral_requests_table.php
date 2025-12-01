@@ -12,10 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('good_moral_requests', function (Blueprint $table) {
-            $table->string('or_number')->nullable()->after('status');
-            $table->timestamp('or_entered_at')->nullable()->after('or_number');
-            $table->timestamp('completed_at')->nullable()->after('or_entered_at');
-            $table->string('reference_no')->nullable()->after('id');
+            if (!Schema::hasColumn('good_moral_requests', 'or_number')) {
+                $table->string('or_number')->nullable()->after('status');
+            }
+            if (!Schema::hasColumn('good_moral_requests', 'or_entered_at')) {
+                $table->timestamp('or_entered_at')->nullable()->after('or_number');
+            }
+            if (!Schema::hasColumn('good_moral_requests', 'completed_at')) {
+                $table->timestamp('completed_at')->nullable()->after('or_entered_at');
+            }
+            if (!Schema::hasColumn('good_moral_requests', 'reference_no')) {
+                $table->string('reference_no')->nullable()->after('id');
+            }
         });
     }
 

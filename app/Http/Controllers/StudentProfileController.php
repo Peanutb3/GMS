@@ -41,17 +41,41 @@ class StudentProfileController extends Controller
             'program_and_year' => 'nullable|string|max:255',
             'phone' => 'nullable|string|max:30',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
-            'password' => 'nullable|string|min:6|confirmed',
-            'profile_photo' => 'nullable|image|max:2048',
+            'password' => [
+                'nullable',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[@$!%*#?&]/'
+            ],
+            'profile_photo' => [
+                'nullable',
+                'image',
+                'mimes:jpeg,jpg,png',
+                'max:2048',
+                'dimensions:max_width=2000,max_height=2000'
+            ],
+        ], [
+            'password.min' => 'Password must be at least 8 characters.',
+            'password.regex' => 'Password must contain uppercase, lowercase, number, and special character (@$!%*#?&).'
         ]);
 
         if ($student) {
             if ($request->hasFile('profile_photo')) {
                 $file = $request->file('profile_photo');
-                $path = $file->store('profile-photos', 'public');
+
+                // Generate secure filename
+                $filename = \Illuminate\Support\Str::uuid() . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs('profile-photos', $filename, 'public');
 
                 if (!empty($student->profile_photo_path)) {
-                    try { Storage::disk('public')->delete($student->profile_photo_path); } catch (\Exception $e) {}
+                    try {
+                        Storage::disk('public')->delete($student->profile_photo_path);
+                    } catch (\Exception $e) {
+                    }
                 }
 
                 $student->profile_photo_path = $path;

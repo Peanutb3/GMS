@@ -12,6 +12,8 @@ use App\Models\Staff;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\AuditLog;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Auth\Events\PasswordReset;
 
 class AuthController extends Controller
 {
@@ -65,12 +67,24 @@ class AuthController extends Controller
 
         $data = $request->validate([
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[@$!%*#?&]/'
+            ],
+        ], [
+            'password.min' => 'Password must be at least 8 characters.',
+            'password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*#?&).'
         ]);
 
         // Create user with student role
         $user = User::create([
-            'name' => $step1['first_name'].' '.$step1['last_name'],
+            'name' => $step1['first_name'] . ' ' . $step1['last_name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
             'role' => 'student',
@@ -91,8 +105,11 @@ class AuthController extends Controller
 
         session()->forget('signup_step1');
 
+        // Send email verification notification
+        $user->sendEmailVerificationNotification();
+
         return redirect()->route('login')
-            ->with('success', 'Account created successfully!');
+            ->with('success', 'Account created! Please check your email to verify your account before logging in.');
     }
 
     /**
@@ -103,21 +120,20 @@ class AuthController extends Controller
     public function showLoginForm()
     {
         if (Auth::check()) {
-        $user = Auth::user();
+            $user = Auth::user();
 
-        // Redirect them to their dashboard if already logged in
-        return match ($user->role) {
-            'student' => redirect()->route('student.dashboard'),
-            'staff' => redirect()->route('staff.dashboard'),
-            'osas_gmc' => redirect()->route('osas-gmc.dashboard'),
-            'osas_du' => redirect()->route('osas-du.dashboard'),
-            'admin' => redirect()->route('admin.dashboard'),
-            default => redirect()->route('dashboard'),
-        };
-    }
+            // Redirect them to their dashboard if already logged in
+            return match ($user->role) {
+                'student' => redirect()->route('student.dashboard'),
+                'staff' => redirect()->route('staff.dashboard'),
+                'osas_gmc' => redirect()->route('osas-gmc.dashboard'),
+                'osas_du' => redirect()->route('osas-du.dashboard'),
+                'admin' => redirect()->route('admin.dashboard'),
+                default => redirect()->route('dashboard'),
+            };
+        }
 
-    return view('auth.login');
-
+        return view('auth.login');
     }
 
     public function login(Request $request)
@@ -134,11 +150,39 @@ class AuthController extends Controller
             return back()->withErrors(['email' => 'No account found with this email.'])->onlyInput('email');
         }
 
+        // Check if email is verified
+        if (!$user->hasVerifiedEmail()) {
+            return back()->withErrors([
+                'email' => 'Please verify your email address before logging in. Check your inbox for the verification link.'
+            ])->onlyInput('email');
+        }
+
+        // Check if account is locked
+        if ($user->locked_until && now()->lt($user->locked_until)) {
+            $minutes = now()->diffInMinutes($user->locked_until);
+            return back()->withErrors([
+                'password' => "Account locked due to multiple failed login attempts. Try again in {$minutes} minutes."
+            ])->onlyInput('email');
+        }
+
         // Setup rate limiter key
         $key = \Illuminate\Support\Str::lower($request->email) . '|' . $request->ip();
 
         // Check if too many attempts
         if (\Illuminate\Support\Facades\RateLimiter::tooManyAttempts($key, 5)) {
+            // Lock account for 30 minutes after 5 failed attempts
+            $user->update(['locked_until' => now()->addMinutes(30)]);
+
+            AuditLog::create([
+                'auditable_type' => User::class,
+                'auditable_id'   => $user->id,
+                'action'         => 'account_locked',
+                'user_id'        => $user->id,
+                'staff_id'       => optional($user->staff)->id,
+                'old_values'     => null,
+                'new_values'     => ['locked_until' => $user->locked_until],
+                'ip_address'     => $request->ip(),
+            ]);
             // log rate-limited attempt (if we can resolve a user id)
             AuditLog::create([
                 'auditable_type' => User::class,
@@ -158,11 +202,15 @@ class AuthController extends Controller
         // Attempt login
         $remember = $request->filled('remember');
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $remember)) {
-            // Clear failed attempts on successful login
+            // Clear failed attempts and unlock account on successful login
             \Illuminate\Support\Facades\RateLimiter::clear($key);
+            $user->update(['locked_until' => null]);
 
             $request->session()->regenerate();
             $user = Auth::user();
+
+            // Update last login timestamp
+            $user->update(['last_login_at' => now()]);
 
             // log successful login
             AuditLog::create([
@@ -225,5 +273,83 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/login')->with('status', 'You have been logged out.');
+    }
+
+    /**
+     * ---------------------------
+     * FORGOT PASSWORD
+     * ---------------------------
+     */
+    public function showForgotPasswordForm()
+    {
+        return view('auth.forgot-password');
+    }
+
+    public function sendResetLinkEmail(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+
+        return $status === Password::RESET_LINK_SENT
+            ? back()->with('status', __($status))
+            : back()->withErrors(['email' => __($status)]);
+    }
+
+    public function showResetPasswordForm($token)
+    {
+        return view('auth.reset-password', ['token' => $token, 'email' => request('email')]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[@$!%*#?&]/'
+            ],
+        ], [
+            'password.min' => 'Password must be at least 8 characters.',
+            'password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*#?&).'
+        ]);
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) use ($request) {
+                $user->forceFill([
+                    'password' => Hash::make($password)
+                ])->setRememberToken(Str::random(60));
+
+                $user->save();
+
+                event(new PasswordReset($user));
+
+                // Log password reset
+                AuditLog::create([
+                    'auditable_type' => User::class,
+                    'auditable_id'   => $user->id,
+                    'action'         => 'password_reset',
+                    'user_id'        => $user->id,
+                    'staff_id'       => optional($user->staff)->id,
+                    'old_values'     => null,
+                    'new_values'     => null,
+                    'ip_address'     => $request->ip(),
+                ]);
+            }
+        );
+
+        return $status === Password::PASSWORD_RESET
+            ? redirect()->route('login')->with('status', __($status))
+            : back()->withErrors(['email' => [__($status)]]);
     }
 }

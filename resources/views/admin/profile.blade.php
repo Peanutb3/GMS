@@ -3,111 +3,139 @@
 @section('title', 'Admin Profile')
 
 @section('sidebar')
-	@include('partials.sidebar-admin')
+@include('partials.sidebar-admin')
 @endsection
 
 @section('content')
 
-    <div class="max-w-4xl mx-auto py-6">
+<div class="max-w-4xl mx-auto py-6">
 
-        <!-- Breadcrumb -->
-        <div class="px-3 -mt-2 mb-4">
-            <nav class="text-sm text-gray-600 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 30 30" class="w-5 h-5 mr-2 text-gray-500">
-                <path d="M3 9.75L12 3l9 6.75V21a1 1 0 0 1-1 1h-5.5a.5.5 0 0 1-.5-.5V15h-4v6.5a.5.5 0 0 1-.5.5H4a1 1 0 0 1-1-1V9.75z"/>
-                </svg>
-                <a href="{{ route('admin.dashboard') }}" class="hover:text-red-800">Dashboard</a>
-                <span class="mx-2 text-gray-400">/</span>
-                <span class="text-blue-600">Profile</span>
-            </nav>
-        </div>
-
-        <!-- Profile header (avatar, name, position, id/email) -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 p-6">
-            <div class="flex items-center gap-6">
-                <div class="relative flex-shrink-0">
-                    <img src="/images/avatar-female.png" alt="Profile Avatar"
-                        class="h-24 w-24 md:h-28 md:w-28 rounded-full bg-white object-cover shadow-sm ring-4 ring-gray-500">
-
-                    <a href="#" title="Edit avatar" class="absolute -bottom-2 -right-2 bg-white rounded-full p-2 shadow border hover:bg-gray-50 transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 11l6 6L21 11l-6-6-6 6z" />
-                        </svg>
-                    </a>
-                </div>
-
-                <div class="flex-1">
-                    <h2 class="text-lg md:text-xl font-semibold text-gray-900">{{ Auth::user()->name }}</h2>
-                    <div class="text-sm text-gray-500 mt-1">System Administrator</div>
-
-                    <div class="mt-3 text-sm text-gray-600">
-                        <span class="font-semibold">Email:</span>
-                        <span class="text-gray-800">{{ Auth::user()->email }}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Basic info card -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 overflow-hidden">
-            <div class="px-6 py-5">
-                <h3 class="text-lg font-semibold text-gray-800">Basic info</h3>
-                <p class="text-sm text-gray-500 mt-2">Manage your account information and security settings.</p>
-            </div>
-
-            <div class="divide-y divide-gray-100">
-                <a href="{{ route('admin.profile.edit') }}" class="flex items-center justify-between gap-4 px-6 py-4 hover:bg-gray-50">
-                    <div class="text-sm text-gray-600">Name</div>
-                    <div class="flex items-center gap-3">
-                        <div class="text-sm text-gray-800">{{ Auth::user()->name }}</div>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                        </svg>
-                    </div>
-                </a>
-
-                <a href="{{ route('admin.profile.edit') }}" class="flex items-center justify-between gap-4 px-6 py-4 hover:bg-gray-50">
-                    <div class="text-sm text-gray-600">Email</div>
-                    <div class="flex items-center gap-3">
-                        <div class="text-sm text-gray-800">{{ Auth::user()->email }}</div>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                        </svg>
-                    </div>
-                </a>
-
-                <a href="{{ route('admin.change-password') }}" class="flex items-center justify-between gap-4 px-6 py-4 hover:bg-gray-50">
-                    <div class="text-sm text-gray-600">Change password</div>
-                    <div class="flex items-center gap-3">
-                        <div class="text-sm text-gray-800">********</div>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                        </svg>
-                    </div>
-                </a>
-            </div>
-        </div>
-
-        <!-- System Info card -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 overflow-hidden">
-            <div class="px-6 py-5">
-                <h3 class="text-lg font-semibold text-gray-800">System Info</h3>
-            </div>
-            <div class="divide-y divide-gray-100">
-                <div class="flex items-center justify-between px-6 py-4">
-                    <div class="text-sm text-gray-600">Role</div>
-                    <div class="text-sm text-gray-900">Admin</div>
-                </div>
-                <div class="flex items-center justify-between px-6 py-4">
-                    <div class="text-sm text-gray-600">Date Joined</div>
-                    <div class="text-sm text-gray-900">July 10, 2025 – 02:15 PM</div>
-                </div>
-                <div class="flex items-center justify-between px-6 py-4">
-                    <div class="text-sm text-gray-600">Last Login</div>
-                    <div class="text-sm text-gray-900">Aug 26, 2025 – 08:20 AM</div>
-                </div>
-            </div>
-        </div>
-
+    <!-- Breadcrumb -->
+    <div class="px-3 -mt-2 mb-4">
+        <nav class="text-sm text-gray-600 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 30 30" class="w-5 h-5 mr-2 text-gray-500">
+                <path d="M3 9.75L12 3l9 6.75V21a1 1 0 0 1-1 1h-5.5a.5.5 0 0 1-.5-.5V15h-4v6.5a.5.5 0 0 1-.5.5H4a1 1 0 0 1-1-1V9.75z" />
+            </svg>
+            <a href="{{ route('admin.dashboard') }}" class="hover:text-red-800">Dashboard</a>
+            <span class="mx-2 text-gray-400">/</span>
+            <span class="text-blue-600">Profile</span>
+        </nav>
     </div>
+
+    <!-- Profile header (avatar, name, position, id/email) -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 mb-6 p-8">
+        <div class="flex items-start gap-6">
+            <div class="relative flex-shrink-0">
+                @if(!empty($user->profile_photo_path))
+                <img src="{{ asset('storage/' . $user->profile_photo_path) }}" alt="Profile Avatar"
+                    class="h-24 w-24 md:h-28 md:w-28 rounded-full bg-white object-cover shadow-sm ring-4 ring-gray-200">
+                @else
+                <div class="h-24 w-24 md:h-28 md:w-28 rounded-full bg-gradient-to-br from-red-800 to-red-600 flex items-center justify-center ring-4 ring-gray-200">
+                    <span class="text-4xl font-bold text-white">{{ substr($user->name ?? 'A', 0, 1) }}</span>
+                </div>
+                @endif
+
+                <!-- Online Status Indicator -->
+                <div class="absolute bottom-1 right-1 w-5 h-5 bg-green-500 rounded-full border-4 border-white"></div>
+
+                <a href="{{ route('admin.profile.edit') }}" title="Edit avatar" class="absolute -bottom-1 -right-1 bg-white rounded-full p-2.5 shadow-md border-2 border-gray-200 hover:bg-gray-50 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </a>
+            </div>
+
+            <div class="flex-1 pt-2">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <div class="flex items-center gap-3">
+                            <h2 class="text-xl md:text-2xl font-bold text-gray-900">{{ $user->name }}</h2>
+                            <span class="px-3 py-1 bg-gradient-to-r from-red-100 to-red-50 text-red-800 text-xs font-semibold rounded-full border border-red-200">
+                                Admin
+                            </span>
+                        </div>
+                        <div class="text-sm text-gray-500 mt-1 mb-3">System Administrator</div>
+                    </div>
+                    <button onclick="window.location.href='{{ route('admin.profile.edit') }}'" class="px-4 py-2 bg-gradient-to-r from-red-900 to-red-800 text-white text-sm font-medium rounded-lg hover:from-red-800 hover:to-red-700 transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                        Edit Profile
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-2 text-sm text-gray-700 mt-4">
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <span class="font-semibold text-gray-900">Email:</span>
+                    <span class="text-gray-700">{{ $user->email }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Basic info card -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 overflow-hidden">
+        <div class="px-6 py-5">
+            <h3 class="text-lg font-semibold text-gray-800">Basic info</h3>
+            <p class="text-sm text-gray-500 mt-2">Manage your account information and security settings.</p>
+        </div>
+
+        <div class="divide-y divide-gray-100">
+            <a href="{{ route('admin.profile.edit') }}" class="flex items-center justify-between gap-4 px-6 py-4 hover:bg-gray-50">
+                <div class="text-sm text-gray-600">Name</div>
+                <div class="flex items-center gap-3">
+                    <div class="text-sm text-gray-800">{{ $user->name }}</div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </div>
+            </a>
+
+            <a href="{{ route('admin.profile.edit') }}" class="flex items-center justify-between gap-4 px-6 py-4 hover:bg-gray-50">
+                <div class="text-sm text-gray-600">Email</div>
+                <div class="flex items-center gap-3">
+                    <div class="text-sm text-gray-800">{{ $user->email }}</div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </div>
+            </a>
+
+            <a href="{{ route('admin.change-password') }}" class="flex items-center justify-between gap-4 px-6 py-4 hover:bg-gray-50">
+                <div class="text-sm text-gray-600">Change password</div>
+                <div class="flex items-center gap-3">
+                    <div class="text-sm text-gray-800">********</div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- System Info card -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 overflow-hidden">
+        <div class="px-6 py-5">
+            <h3 class="text-lg font-semibold text-gray-800">System Information</h3>
+        </div>
+        <div class="divide-y divide-gray-100">
+            <div class="flex items-center justify-between px-6 py-4 hover:bg-gray-50">
+                <div class="text-sm text-gray-600">Role</div>
+                <span class="text-sm text-gray-800">Admin</span>
+            </div>
+            <div class="flex items-center justify-between px-6 py-4 hover:bg-gray-50">
+                <div class="text-sm text-gray-600">Date Joined</div>
+                <div class="text-sm text-gray-800">{{ $user->created_at->format('M d, Y') }}</div>
+            </div>
+            <div class="flex items-center justify-between px-6 py-4 hover:bg-gray-50">
+                <div class="text-sm text-gray-600">Last Login</div>
+                <div class="text-sm text-gray-800">{{ optional($user->updated_at)->format('M d, Y – h:i A') ?? '—' }}</div>
+            </div>
+        </div>
+    </div>
+
+</div>
 @endsection

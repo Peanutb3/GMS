@@ -10,6 +10,12 @@ use App\Models\User;
 
 class AdminProfileController extends Controller
 {
+    public function show()
+    {
+        $user = Auth::user();
+        return view('admin.profile', compact('user'));
+    }
+
     public function edit()
     {
         $user = Auth::user();
@@ -23,14 +29,35 @@ class AdminProfileController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
-            'profile_photo' => 'nullable|image|max:2048',
-            'password' => 'nullable|string|min:8|confirmed'
+            'profile_photo' => [
+                'nullable',
+                'image',
+                'mimes:jpeg,jpg,png',
+                'max:2048',
+                'dimensions:max_width=2000,max_height=2000'
+            ],
+            'password' => [
+                'nullable',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[@$!%*#?&]/'
+            ]
+        ], [
+            'password.min' => 'Password must be at least 8 characters.',
+            'password.regex' => 'Password must contain uppercase, lowercase, number, and special character (@$!%*#?&).'
         ]);
 
         // Handle profile photo upload
         if ($request->hasFile('profile_photo')) {
             $file = $request->file('profile_photo');
-            $path = $file->store('profile-photos', 'public');
+
+            // Generate secure filename
+            $filename = \Illuminate\Support\Str::uuid() . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('profile-photos', $filename, 'public');
 
             // Delete previous photo if exists
             if ($user->profile_photo_path) {
@@ -47,12 +74,12 @@ class AdminProfileController extends Controller
         // Update user record
         $user->name = $data['name'];
         $user->email = $data['email'];
-        
+
         // Only update password if provided
         if (!empty($data['password'])) {
             $user->password = Hash::make($data['password']);
         }
-        
+
         $user->save();
 
         return redirect()->route('admin.profile')->with('success', 'Profile updated successfully.');
@@ -64,7 +91,19 @@ class AdminProfileController extends Controller
 
         $data = $request->validate([
             'current_password' => 'required|string',
-            'password' => 'required|string|min:8|confirmed'
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[@$!%*#?&]/'
+            ]
+        ], [
+            'password.min' => 'Password must be at least 8 characters.',
+            'password.regex' => 'Password must contain uppercase, lowercase, number, and special character (@$!%*#?&).'
         ]);
 
         // Verify current password

@@ -3,7 +3,7 @@
 @section('title', 'Audit Logs')
 
 @section('sidebar')
-    @include('partials.sidebar-admin')
+@include('partials.sidebar-admin')
 @endsection
 
 @section('content')
@@ -11,7 +11,7 @@
 <div class="px-3 -mt-2 mb-4">
     <nav class="text-sm text-gray-600 flex items-center">
         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 30 30" class="w-5 h-5 mr-2 text-gray-500">
-        <path d="M3 9.75L12 3l9 6.75V21a1 1 0 0 1-1 1h-5.5a.5.5 0 0 1-.5-.5V15h-4v6.5a.5.5 0 0 1-.5.5H4a1 1 0 0 1-1-1V9.75z"/>
+            <path d="M3 9.75L12 3l9 6.75V21a1 1 0 0 1-1 1h-5.5a.5.5 0 0 1-.5-.5V15h-4v6.5a.5.5 0 0 1-.5.5H4a1 1 0 0 1-1-1V9.75z" />
         </svg>
         <a href="{{ route('admin.dashboard') }}" class="hover:text-red-800">Dashboard</a>
         <span class="mx-2 text-gray-400">/</span>
@@ -28,21 +28,21 @@
         </div>
         <div class="hidden md:block">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 opacity-50" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M21 11.11V5a2 2 0 0 0-2-2h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14a2 2 0 0 0 2 2h6.11c1.26 1.24 2.98 2 4.89 2c3.87 0 7-3.13 7-7c0-1.91-.76-3.63-2-4.89M12 3c.55 0 1 .45 1 1s-.45 1-1 1s-1-.45-1-1s.45-1 1-1M6 7h12v2H6zm3.08 10H6v-2h3.08c-.05.33-.08.66-.08 1s.03.67.08 1M6 13v-2h5.11c-.61.57-1.07 1.25-1.43 2zm10 8c-2.76 0-5-2.24-5-5s2.24-5 5-5s5 2.24 5 5s-2.24 5-5 5m.5-4.75l2.86 1.69l-.75 1.22L15 17v-5h1.5z"/>
+                <path d="M21 11.11V5a2 2 0 0 0-2-2h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14a2 2 0 0 0 2 2h6.11c1.26 1.24 2.98 2 4.89 2c3.87 0 7-3.13 7-7c0-1.91-.76-3.63-2-4.89M12 3c.55 0 1 .45 1 1s-.45 1-1 1s-1-.45-1-1s.45-1 1-1M6 7h12v2H6zm3.08 10H6v-2h3.08c-.05.33-.08.66-.08 1s.03.67.08 1M6 13v-2h5.11c-.61.57-1.07 1.25-1.43 2zm10 8c-2.76 0-5-2.24-5-5s2.24-5 5-5s5 2.24 5 5s-2.24 5-5 5m.5-4.75l2.86 1.69l-.75 1.22L15 17v-5h1.5z" />
             </svg>
         </div>
     </div>
 </div>
 
 <!-- Filters Section -->
-<div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+<div class="bg-white rounded-xl shadow-sm p-6 mb-6">
     <form method="GET" action="{{ route('admin.audit-logs') }}" class="space-y-4">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <!-- Search -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
-                <input type="text" name="search" value="{{ request('search') }}" 
-                    placeholder="Action, details, user..." 
+                <input type="text" name="search" value="{{ request('search') }}"
+                    placeholder="Action, details, user..."
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent">
             </div>
 
@@ -52,9 +52,9 @@
                 <select name="action" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent">
                     <option value="">All Actions</option>
                     @foreach($actions as $action)
-                        <option value="{{ $action }}" {{ request('action') === $action ? 'selected' : '' }}>
-                            {{ ucfirst($action) }}
-                        </option>
+                    <option value="{{ $action }}" {{ request('action') === $action ? 'selected' : '' }}>
+                        {{ ucfirst($action) }}
+                    </option>
                     @endforeach
                 </select>
             </div>
@@ -62,14 +62,14 @@
             <!-- Date From -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">From Date</label>
-                <input type="date" name="date_from" value="{{ request('date_from') }}" 
+                <input type="date" name="date_from" value="{{ request('date_from') }}"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent">
             </div>
 
             <!-- Date To -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">To Date</label>
-                <input type="date" name="date_to" value="{{ request('date_to') }}" 
+                <input type="date" name="date_to" value="{{ request('date_to') }}"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent">
             </div>
         </div>

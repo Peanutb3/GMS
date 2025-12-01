@@ -1,80 +1,100 @@
 @extends('layouts.app')
 
-@section('title', 'Profile')
+@section('title', 'Staff Profile')
 
 @section('sidebar')
-    @include('partials.sidebar-osas-gmc')
+@include('partials.sidebar-osas-gmc')
 @endsection
 
 @section('content')
 <!-- <div class="flex flex-col min-h-screen"> -->
 
-    <div class="max-w-4xl mx-auto py-6">
+<div class="max-w-4xl mx-auto py-6">
 
-        <!-- Breadcrumb -->
-        <div class="px-3 -mt-2 mb-4">
-            <nav class="text-sm text-gray-600 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 30 30" class="w-5 h-5 mr-2 text-gray-500">
-                <path d="M3 9.75L12 3l9 6.75V21a1 1 0 0 1-1 1h-5.5a.5.5 0 0 1-.5-.5V15h-4v6.5a.5.5 0 0 1-.5.5H4a1 1 0 0 1-1-1V9.75z"/>
-                </svg>
-                <a href="{{ route('staff.dashboard') }}" class="hover:text-red-800">Dashboard</a>
-                <span class="mx-2 text-gray-400">/</span>
-                <span class="text-blue-600">Profile</span>
-            </nav>
-        </div>
+    <!-- Breadcrumb -->
+    <div class="px-3 -mt-2 mb-4">
+        <nav class="text-sm text-gray-600 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 30 30" class="w-5 h-5 mr-2 text-gray-500">
+                <path d="M3 9.75L12 3l9 6.75V21a1 1 0 0 1-1 1h-5.5a.5.5 0 0 1-.5-.5V15h-4v6.5a.5.5 0 0 1-.5.5H4a1 1 0 0 1-1-1V9.75z" />
+            </svg>
+            <a href="{{ route('osas-gmc.dashboard') }}" class="hover:text-red-800">Dashboard</a>
+            <span class="mx-2 text-gray-400">/</span>
+            <span class="text-blue-600">Profile</span>
+        </nav>
+    </div>
 
-        <!-- Profile header (avatar, name, position, id/email) -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 p-6">
-            <div class="flex items-center gap-6">
-                <div class="relative flex-shrink-0">
-                    @if(!empty($staff->profile_photo_path))
-                    <img src="{{ asset('storage/' . $staff->profile_photo_path) }}" alt="Profile Avatar"
-                        class="h-24 w-24 md:h-28 md:w-28 rounded-full bg-white object-cover shadow-sm ring-4 ring-gray-500">
-                    @else
-                        <div class="h-24 w-24 md:h-28 md:w-28 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center shadow-sm ring-4 ring-gray-500">
-                            <!-- Default SVG avatar (fills the circle) -->
-                            <svg class="h-full w-full text-gray-500" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
-                                <g fill="currentColor">
-                                    <!-- head -->
-                                    <circle cx="12" cy="8" r="4" opacity="0.95" />
-                                    <!-- body (fills remaining) -->
-                                    <path d="M3 20c0-3.314 4.029-6 9-6s9 2.686 9 6v1H3v-1z" opacity="0.9"/>
-                                </g>
-                            </svg>
+    <!-- Profile header (avatar, name, position, id/email) -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 mb-6 p-8">
+        <div class="flex items-start gap-6">
+            <div class="relative flex-shrink-0">
+                @if(!empty($staff->profile_photo_path))
+                <img src="{{ asset('storage/' . $staff->profile_photo_path) }}" alt="Profile Avatar"
+                    class="h-24 w-24 md:h-28 md:w-28 rounded-full bg-white object-cover shadow-sm ring-4 ring-gray-200">
+                @else
+                <div class="h-24 w-24 md:h-28 md:w-28 rounded-full bg-gradient-to-br from-red-800 to-red-600 flex items-center justify-center ring-4 ring-gray-200">
+                    <span class="text-4xl font-bold text-white">{{ substr($user->name ?? 'S', 0, 1) }}</span>
+                </div>
+                @endif
+
+                <!-- Online Status Indicator -->
+                <div class="absolute bottom-1 right-1 w-5 h-5 bg-green-500 rounded-full border-4 border-white"></div>
+
+                <a href="{{ route('osas-gmc.profile.edit') }}" title="Edit avatar" class="absolute -bottom-1 -right-1 bg-white rounded-full p-2.5 shadow-md border-2 border-gray-200 hover:bg-gray-50 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </a>
+            </div>
+
+            <div class="flex-1 pt-2">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <div class="flex items-center gap-3">
+                            <h2 class="text-xl md:text-2xl font-bold text-gray-900">{{ $user->name }}</h2>
+                            <span class="px-3 py-1 bg-gradient-to-r from-red-100 to-red-50 text-red-800 text-xs font-semibold rounded-full border border-red-200">
+                                OSAS-GMC
+                            </span>
                         </div>
-                    @endif
-
-                    <a href="{{ route('staff.profile.edit') }}" title="Edit avatar" class="absolute -bottom-2 -right-2 bg-white rounded-full p-2 shadow border hover:bg-gray-50 transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 11l6 6L21 11l-6-6-6 6z" />
+                        <div class="text-sm text-gray-500 mt-1 mb-3">{{ $staff->position ?? 'OSAS Officer' }}</div>
+                    </div>
+                    <button onclick="window.location.href='{{ route('osas-gmc.profile.edit') }}'" class="px-4 py-2 bg-gradient-to-r from-red-900 to-red-800 text-white text-sm font-medium rounded-lg hover:from-red-800 hover:to-red-700 transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
-                    </a>
+                        Edit Profile
+                    </button>
                 </div>
 
-                <div class="flex-1">
-                    <h2 class="text-lg md:text-xl font-semibold text-gray-900">{{ $user->name }}</h2>
-                    <div class="text-sm text-gray-500 mt-1">OSAS GMC</div>
-
-                    <div class="mt-3 text-sm text-gray-600">
-                        <span class="font-semibold">Staff ID:</span>
-                        <span class="text-gray-800">{{ $staff->employee_id ?? 'ST-001' }}</span>
-                        <span class="mx-3 text-gray-300">|</span>
-                        <span class="font-semibold">Email:</span>
-                        <span class="text-gray-800">{{ $user->email }}</span>
+                <div class="flex flex-col gap-2 mt-4">
+                    <div class="flex items-center gap-2 text-sm text-gray-700">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                        </svg>
+                        <span class="font-semibold text-gray-900">Employee ID:</span>
+                        <span class="text-gray-700">{{ $staff->employee_id ?? 'ST-001' }}</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-gray-700">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        <span class="font-semibold text-gray-900">Email:</span>
+                        <span class="text-gray-700">{{ $user->email }}</span>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Basic info card (with avatar to the right) -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 overflow-hidden">
-            <div class="px-6 py-5 flex items-start justify-between">
-                <div>
-                    <h3 class="text-lg font-semibold text-gray-800">Basic info</h3>
-                    <p class="text-sm text-gray-500 mt-2">Some information may be visible to other users of this system. Manage visibility in your profile settings.</p>
-                </div>
+    <!-- Basic info card (with avatar to the right) -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 overflow-hidden">
+        <div class="px-6 py-5 flex items-start justify-between">
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800">Basic info</h3>
+                <p class="text-sm text-gray-500 mt-2">Some information may be visible to other users of this system. Manage visibility in your profile settings.</p>
+            </div>
 
-                <!-- <div class="flex-shrink-0 ml-6 text-right">
+            <!-- <div class="flex-shrink-0 ml-6 text-right">
                     <div class="relative inline-block">
                         <img src="{{ !empty($staff->profile_photo_path) ? asset('storage/' . $staff->profile_photo_path) : asset('/images/avatar-female.png') }}" alt="Profile Avatar"
                              class="h-20 w-20 rounded-full border bg-white object-cover shadow-sm">
@@ -85,67 +105,64 @@
                         </a>
                     </div>
                 </div> -->
-            </div>
-
-            
-
-            <div class="divide-y divide-gray-100">
-                <a href="{{ route('staff.profile.edit') }}" class="flex items-center justify-between gap-4 px-6 py-4 hover:bg-gray-50">
-                    <div class="text-sm text-gray-600">Name</div>
-                    <div class="flex items-center gap-3">
-                        <div class="text-sm text-gray-800">{{ $user->name }}</div>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                        </svg>
-                    </div>
-                </a>
-
-                <a href="{{ route('staff.profile.edit') }}" class="flex items-center justify-between gap-4 px-6 py-4 hover:bg-gray-50">
-                    <div class="text-sm text-gray-600">Office</div>
-                    <div class="flex items-center gap-3">
-                        <div class="text-sm text-gray-800">{{ $staff->department ?? 'OSAS' }}</div>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                        </svg>
-                    </div>
-                </a>
-
-                <a href="{{ route('staff.profile.edit') }}" class="flex items-center justify-between gap-4 px-6 py-4 hover:bg-gray-50">
-                    <div class="text-sm text-gray-600">Position</div>
-                    <div class="flex items-center gap-3">
-                        <div class="text-sm text-gray-800">{{ $staff->position ?? '-' }}</div>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                        </svg>
-                    </div>
-                </a>
-
-                
-
-                <a href="{{ route('staff.profile.edit') }}" class="flex items-center justify-between gap-4 px-6 py-4 hover:bg-gray-50">
-                    <div class="text-sm text-gray-600">Phone</div>
-                    <div class="flex items-center gap-3">
-                        <div class="text-sm text-gray-800">{{ $staff->phone ?? '-' }}</div>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                        </svg>
-                    </div>
-                </a>
-
-                <a href="{{ route('staff.profile.edit') }}" class="flex items-center justify-between gap-4 px-6 py-4 hover:bg-gray-50">
-                    <div class="text-sm text-gray-600">Email</div>
-                    <div class="flex items-center gap-3">
-                        <div class="text-sm text-gray-800">{{ $user->email }}</div>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                        </svg>
-                    </div>
-                </a>
-
-                <!-- Office, Position, Phone removed per request -->
-                </div>
-            </div>
         </div>
 
+
+
+        <div class="divide-y divide-gray-100">
+            <a href="{{ route('osas-gmc.profile.edit') }}" class="flex items-center justify-between gap-4 px-6 py-4 hover:bg-gray-50">
+                <div class="text-sm text-gray-600">Name</div>
+                <div class="flex items-center gap-3">
+                    <div class="text-sm text-gray-800">{{ $user->name }}</div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </div>
+            </a>
+
+
+            <a href="{{ route('osas-gmc.profile.edit') }}" class="flex items-center justify-between gap-4 px-6 py-4 hover:bg-gray-50">
+                <div class="text-sm text-gray-600">Email</div>
+                <div class="flex items-center gap-3">
+                    <div class="text-sm text-gray-800">{{ $user->email }}</div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </div>
+            </a>
+
+            <a href="{{ route('osas-gmc.change-password') }}" class="flex items-center justify-between gap-4 px-6 py-4 hover:bg-gray-50">
+                <div class="text-sm text-gray-600">Change password</div>
+                <div class="flex items-center gap-3">
+                    <div class="text-sm text-gray-800">********</div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </div>
+            </a>
+        </div>
     </div>
+
+    <!-- System Info card -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-6 overflow-hidden">
+        <div class="px-6 py-5">
+            <h3 class="text-lg font-semibold text-gray-800">System Info</h3>
+        </div>
+        <div class="divide-y divide-gray-100">
+            <div class="flex items-center justify-between px-6 py-4">
+                <div class="text-sm text-gray-600">Role</div>
+                <div class="text-sm text-gray-900">{{ $user->role ?? ($staff->role ?? 'Staff') }}</div>
+            </div>
+            <div class="flex items-center justify-between px-6 py-4">
+                <div class="text-sm text-gray-600">Date Joined</div>
+                <div class="text-sm text-gray-900">{{ optional($user->created_at)->format('M d, Y – h:i A') ?? '—' }}</div>
+            </div>
+            <div class="flex items-center justify-between px-6 py-4">
+                <div class="text-sm text-gray-600">Last Login</div>
+                <div class="text-sm text-gray-900">{{ optional($user->updated_at)->format('M d, Y – h:i A') ?? '—' }}</div>
+            </div>
+        </div>
+    </div>
+
+</div>
 @endsection

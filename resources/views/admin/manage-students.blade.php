@@ -3,7 +3,7 @@
 @section('title', 'Manage Students')
 
 @section('sidebar')
-    @include('partials.sidebar-admin')
+@include('partials.sidebar-admin')
 @endsection
 
 @section('content')
@@ -11,7 +11,7 @@
 <div class="px-3 -mt-2 mb-4">
     <nav class="text-sm text-gray-600 flex items-center">
         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 30 30" class="w-5 h-5 mr-2 text-gray-500">
-        <path d="M3 9.75L12 3l9 6.75V21a1 1 0 0 1-1 1h-5.5a.5.5 0 0 1-.5-.5V15h-4v6.5a.5.5 0 0 1-.5.5H4a1 1 0 0 1-1-1V9.75z"/>
+            <path d="M3 9.75L12 3l9 6.75V21a1 1 0 0 1-1 1h-5.5a.5.5 0 0 1-.5-.5V15h-4v6.5a.5.5 0 0 1-.5.5H4a1 1 0 0 1-1-1V9.75z" />
         </svg>
         <a href="{{ route('admin.dashboard') }}" class="hover:text-red-800">Dashboard</a>
         <span class="mx-2 text-gray-400">/</span>
@@ -28,8 +28,8 @@
             <h1 class="text-3xl font-bold mb-2">Student Management</h1>
             <p class="text-gray-100">Manage student accounts and information</p>
         </div>
-        <a href="{{ route('admin.students.create') }}" 
-           class="bg-white text-red-800 px-6 py-3 rounded-lg hover:bg-gray-100 font-medium transition-colors flex items-center gap-2">
+        <a href="{{ route('admin.students.create') }}"
+            class="bg-white text-red-800 px-6 py-3 rounded-lg hover:bg-gray-100 font-medium transition-colors flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
@@ -55,8 +55,8 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
-                <input type="text" name="search" value="{{ request('search') }}" 
-                    placeholder="Name, Student No, Email..." 
+                <input type="text" name="search" value="{{ request('search') }}"
+                    placeholder="Name, Student No, Email..."
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent">
             </div>
             <div>
@@ -64,9 +64,9 @@
                 <select name="program" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent">
                     <option value="">All Programs</option>
                     @foreach($programs as $program)
-                        <option value="{{ $program }}" {{ request('program') === $program ? 'selected' : '' }}>
-                            {{ $program }}
-                        </option>
+                    <option value="{{ $program }}" {{ request('program') === $program ? 'selected' : '' }}>
+                        {{ $program }}
+                    </option>
                     @endforeach
                 </select>
             </div>
@@ -94,7 +94,7 @@
 </div>
 
 <!-- Students Table -->
-<div class="bg-white rounded-xl shadow-lg overflow-hidden">
+<div class="bg-white rounded-xl shadow-sm overflow-hidden">
     <div class="p-6 border-b border-gray-200">
         <h2 class="text-xl font-semibold text-gray-800">All Students ({{ $students->total() }})</h2>
     </div>
@@ -128,16 +128,16 @@
                     </td>
                     <td class="px-6 py-3 text-sm text-gray-700">
                         @php
-                            $collegeAbbr = match($student->college) {
-                                'College of Information and Computing' => 'CIC',
-                                'College of Engineering' => 'COE',
-                                'College of Education' => 'CED',
-                                'College of Business Administration' => 'CBA',
-                                'College of Arts and Sciences' => 'CAS',
-                                'College of Applied Economics' => 'CAEC',
-                                'College of Technology' => 'CT',
-                                default => $student->college
-                            };
+                        $collegeAbbr = match($student->college) {
+                        'College of Information and Computing' => 'CIC',
+                        'College of Engineering' => 'COE',
+                        'College of Education' => 'CED',
+                        'College of Business Administration' => 'CBA',
+                        'College of Arts and Sciences' => 'CAS',
+                        'College of Applied Economics' => 'CAEC',
+                        'College of Technology' => 'CT',
+                        default => $student->college
+                        };
                         @endphp
                         <span title="{{ $student->college }}">{{ $collegeAbbr }}</span>
                     </td>
@@ -149,14 +149,14 @@
                     </td>
                     <td class="px-6 py-3 whitespace-nowrap text-sm font-medium">
                         <div class="flex gap-2">
-                            <a href="{{ route('admin.students.edit', $student->id) }}" 
-                               class="text-blue-600 hover:text-blue-900" title="Edit">
+                            <a href="{{ route('admin.students.edit', $student->id) }}"
+                                class="text-blue-600 hover:text-blue-900" title="Edit">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                 </svg>
                             </a>
-                            <button onclick="deleteStudent('{{ $student->id }}')" 
-                                    class="text-red-600 hover:text-red-900" title="Delete">
+                            <button onclick="deleteStudent('{{ $student->id }}')"
+                                class="text-red-600 hover:text-red-900" title="Delete">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                 </svg>
@@ -193,49 +193,50 @@
 
 @push('scripts')
 <script>
-// Show success message on page load if it exists
-@if(session('success'))
-document.addEventListener('DOMContentLoaded', function() {
-    showToast('{{ session('success') }}', 'success');
-});
-@endif
+    // Show success message on page load if it exists
+    @if(session('success'))
+    document.addEventListener('DOMContentLoaded', function() {
+        showToast('{{ session('
+            success ') }}', 'success');
+    });
+    @endif
 
-function deleteStudent(id) {
-    if (!confirm('Are you sure you want to delete this student? This will also delete their user account.')) {
-        return;
+    function deleteStudent(id) {
+        if (!confirm('Are you sure you want to delete this student? This will also delete their user account.')) {
+            return;
+        }
+
+        fetch(`/admin/students/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    document.getElementById(`student-row-${id}`).remove();
+                } else {
+                    showToast('Failed to delete student', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('An error occurred', 'error');
+            });
     }
 
-    fetch(`/admin/students/${id}`, {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showToast(data.message, 'success');
-            document.getElementById(`student-row-${id}`).remove();
-        } else {
-            showToast('Failed to delete student', 'error');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showToast('An error occurred', 'error');
-    });
-}
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
 
-function showToast(message, type = 'success') {
-    const toast = document.getElementById('toast');
-    const toastMessage = document.getElementById('toast-message');
-    
-    toastMessage.textContent = message;
-    toast.classList.remove('hidden', 'bg-green-500', 'bg-red-500');
-    toast.classList.add(type === 'success' ? 'bg-green-500' : 'bg-red-500');
-    
-    setTimeout(() => toast.classList.add('hidden'), 3000);
-}
+        toastMessage.textContent = message;
+        toast.classList.remove('hidden', 'bg-green-500', 'bg-red-500');
+        toast.classList.add(type === 'success' ? 'bg-green-500' : 'bg-red-500');
+
+        setTimeout(() => toast.classList.add('hidden'), 3000);
+    }
 </script>
 @endpush

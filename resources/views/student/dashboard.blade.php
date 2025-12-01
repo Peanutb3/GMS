@@ -5,11 +5,11 @@
 @section('title', 'Dashboard')
 
 @section('sidebar')
-    @include('partials.sidebar-student')
+@include('partials.sidebar-student')
 @endsection
 
 @section('content')
-  <!-- <div class="max-w-4l mx-auto px-1 overflow-x-hidden"> -->
+<!-- <div class="max-w-4l mx-auto px-1 overflow-x-hidden"> -->
 
 <!-- TOP CARD -->
 <div class="bg-gradient-to-r from-[#760000] to-[#D62F26] text-white rounded-xl flex flex-col md:flex-row justify-between items-stretch px-8 mb-8 shadow-lg h-40">
@@ -22,8 +22,8 @@
 
     <!-- Image Section -->
     <div class="md:w-1/3 flex justify-end items-end">
-        <img src="/images/Sticker.png" alt="Staff Illustration" 
-             class="h-full object-bottom object-contain">
+        <img src="/images/Sticker.png" alt="Staff Illustration"
+            class="h-full object-bottom object-contain">
     </div>
 </div>
 
@@ -62,58 +62,68 @@
         </div>
 
         <!-- Table -->
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold">Recent Grievances</h3>
-            <a href="{{ route('student.grievances') }}" class="text-sm text-blue-600 hover:underline">View all</a>
-        </div>
-
-        <div class="bg-white rounded-2xl shadow-md overflow-hidden">
-            <table class="w-full text-sm text-left text-gray-700 border border-gray-200">
-                <thead class="bg-white text-blue-900 text-xs uppercase">
-                    <tr>
-                        <th class="px-6 py-3 font-semibold text-gray-700">Case ID</th>
-                        <th class="px-6 py-3 font-semibold text-gray-700">Name</th>
-                        <th class="px-6 py-3 font-semibold text-gray-700">Program</th>
-                        <th class="px-6 py-3 font-semibold text-gray-700">Type</th>
-                        <th class="px-6 py-3 font-semibold text-gray-700">Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php $items = collect($myGrievances ?? [])->take(2); @endphp
-
-                    @if($items->isNotEmpty())
-                        @foreach($items as $g)
-                            <tr class="{{ $loop->odd ? 'bg-[#EDEBEB]' : 'bg-white' }} hover:bg-gray-100 transition">
-                                <td class="px-5 py-3">{{ $g->case_id }}</td>
-                                <td class="px-5 py-3">{{ optional($g->student)->first_name ? optional($g->student)->first_name . ' ' . optional($g->student)->last_name : ($g->name_snapshot ?? $g->name ?? '-') }}</td>
-                                <td class="px-5 py-3">{{ optional($g->student)->program ?? ($g->program_snapshot ?? $g->program ?? '-') }}</td>
-                                <td class="px-5 py-3">{{ Str::limit($g->grievance ?? $g->description, 80) }}</td>
-                                <td class="px-5 py-3">{{ optional($g->date)->format('Y-m-d') ?? optional($g->created_at)->format('Y-m-d') }}</td>
-                                <!-- <td class="px-5 py-3">
-                                    <div class="text-sm text-gray-700">{{ ucfirst($g->status ?? 'pending') }}</div>
-                                    @if($g->filed_by_staff_id && $g->staff)
-                                        <div class="text-xs text-gray-500 mt-1">Filed by staff: {{ $g->staff->first_name }} {{ $g->staff->last_name }}</div>
-                                    @elseif(!empty($g->filed_by))
-                                        <div class="text-xs text-gray-500 mt-1">Filed by: {{ $g->filed_by }}</div>
-                                    @endif
-                                </td> -->
+        <div>
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800">Recent Grievances</h3>
+                    <a href="{{ route('student.grievances') }}" class="text-sm text-red-800 hover:text-red-900 font-medium">View All →</a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-sm">
+                        <thead class="bg-gray-50 border-b border-gray-200">
+                            <tr>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Case ID</th>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Type</th>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Status</th>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Date</th>
                             </tr>
-                        @endforeach
-                    @else
-                        <tr>
-                            <td colspan="6" class="px-5 py-4 text-center text-gray-500">No grievances found.</td>
-                        </tr>
-                    @endif
-                </tbody>
-            </table>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            @php $items = collect($myGrievances ?? [])->take(3); @endphp
+
+                            @if($items->isNotEmpty())
+                            @foreach($items as $g)
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-3 text-gray-900">{{ $g->case_id }}</td>
+                                <td class="px-4 py-3 text-gray-700">{{ Str::limit($g->grievance ?? $g->description, 50) }}</td>
+                                <td class="px-4 py-3">
+                                    @if($g->status === 'pending')
+                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-800">Pending</span>
+                                    @elseif($g->status === 'resolved')
+                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Resolved</span>
+                                    @elseif($g->status === 'in_progress')
+                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">In Progress</span>
+                                    @else
+                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">{{ ucfirst($g->status ?? 'pending') }}</span>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3 text-gray-600">{{ optional($g->date)->format('M d, Y') ?? optional($g->created_at)->format('M d, Y') }}</td>
+                            </tr>
+                            @endforeach
+                            @else
+                            <tr>
+                                <td colspan="4" class="px-4 py-8 text-center text-gray-400">No recent grievances found.</td>
+                            </tr>
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Right side: Profile card -->
     <div class="bg-white rounded-2xl shadow-lg p-6 flex flex-col">
         <div class="relative">
-            <img src="{{ isset($student->profile_photo_path) ? asset('storage/' . $student->profile_photo_path) : asset('/images/default-avatar.png') }}"
-                 alt="Profile Avatar" class="h-20 w-20 rounded-full border-4 border-pink-300 mx-auto mb-4 object-cover">
+            @if($student && !empty($student->profile_photo_path))
+            <img src="{{ asset('storage/' . $student->profile_photo_path) }}"
+                alt="Profile Avatar"
+                class="h-20 w-20 rounded-full border-4 border-pink-300 mx-auto mb-4 object-cover">
+            @else
+            <div class="h-20 w-20 rounded-full border-4 border-pink-300 bg-gradient-to-br from-blue-800 to-blue-600 flex items-center justify-center mx-auto mb-4">
+                <span class="text-2xl font-bold text-white">{{ substr($user->name ?? 'S', 0, 1) }}</span>
+            </div>
+            @endif
         </div>
 
         <h4 class="font-semibold text-center text-lg mb-1">{{ $user->name ?? ($student->first_name . ' ' . $student->last_name) ?? 'Student' }}</h4>
@@ -123,8 +133,7 @@
             <p><span class="font-semibold">Email:</span> {{ Auth::user()->email }}</p>
             <p><span class="font-semibold">Program:</span> {{ $student->program ?? '—' }}@if(!empty($student->year)) | {{ $student->year }}@endif</p>
         </div>
-        @php $editRoute = \Illuminate\Support\Facades\Route::has('student.profile.edit') ? route('student.profile.edit') : '#'; @endphp
-        <a href="{{ $editRoute }}" class="text-center px-6 py-3 bg-red-900 text-white rounded-lg hover:bg-red-800 font-medium">
+        <a href="{{ route('student.profile') }}" class="text-center px-6 py-3 bg-red-900 text-white rounded-lg hover:bg-red-800 font-medium">
             Edit Profile
         </a>
     </div>

@@ -1,23 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>OSAS Request System</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
   @vite('resources/css/app.css')
   <style>
     /* Maroon theme colors */
     .focus-maroon:focus {
       border-color: #8B0000 !important;
     }
+
     .radio-maroon:checked {
       background-color: #8B0000;
       border-color: #8B0000;
     }
+
     .hover-maroon:hover {
       color: #8B0000;
     }
+
     /* Hide date input placeholder - keep it blank until date is selected */
     input[type="date"]::-webkit-calendar-picker-indicator {
       opacity: 0;
@@ -26,23 +31,23 @@
       height: 100%;
       cursor: pointer;
     }
-    
+
     input[type="date"]::-webkit-datetime-edit-text,
     input[type="date"]::-webkit-datetime-edit-month-field,
     input[type="date"]::-webkit-datetime-edit-day-field,
     input[type="date"]::-webkit-datetime-edit-year-field {
       display: none;
     }
-    
+
     input[type="date"]::-webkit-datetime-edit {
       display: none;
     }
-    
+
     /* Show date value when it has been selected */
     input[type="date"]:valid::-webkit-datetime-edit {
       display: block;
     }
-    
+
     input[type="date"]:valid::-webkit-datetime-edit-text,
     input[type="date"]:valid::-webkit-datetime-edit-month-field,
     input[type="date"]:valid::-webkit-datetime-edit-day-field,
@@ -50,1023 +55,1042 @@
       display: inline;
       color: #111827;
     }
+
     /* Smooth floating label transitions */
-    input.peer, textarea.peer {
+    input.peer,
+    textarea.peer {
       transition: border-color 300ms cubic-bezier(0.4, 0, 0.2, 1);
     }
-    
+
     label {
       transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
     }
-  .error-border { border-color:#dc2626 !important; }
-  .error-msg { font-size:12px; color:#dc2626; margin-top:4px; display:none; }
-  .btn-disabled { opacity:0.5; pointer-events:none; }
+
+    .error-border {
+      border-color: #dc2626 !important;
+    }
+
+    .error-msg {
+      font-size: 12px;
+      color: #dc2626;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .btn-disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
   </style>
 </head>
+
 <body class="bg-gray-50 min-h-screen flex flex-col">
 
-<header class="px-4 sm:px-6 bg-gray-50 border-b border-gray-300 flex flex-col sm:flex-row items-center justify-center sm:justify-between cursor-default gap-2 sm:gap-4 py-2">
-  <img src="{{ asset('images/osas_logo.png') }}" alt="OSAS Logo" class="h-10 sm:h-14">
-  <span class="text-gray-700 font-semibold text-base sm:text-lg text-center sm:text-left">
-    Office of Student Affairs and Services
-  </span>
-</header>
+  <header class="px-4 sm:px-6 bg-gray-50 border-b border-gray-300 flex flex-col sm:flex-row items-center justify-center sm:justify-between cursor-default gap-2 sm:gap-4 py-2">
+    <img src="{{ asset('images/osas_logo.png') }}" alt="OSAS Logo" class="h-10 sm:h-14">
+    <span class="text-gray-700 font-semibold text-base sm:text-lg text-center sm:text-left">
+      Office of Student Affairs and Services
+    </span>
+  </header>
 
-<main class="flex-1 mt-12 mb-48 px-6">
-  <!-- Removed container wrapper to place cards directly on the page background -->
+  <main class="flex-1 mt-12 mb-48 px-6">
+    <!-- Removed container wrapper to place cards directly on the page background -->
     <div class="mb-9 text-center">
       <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-800">Welcome to OSAS Request System</h1>
       <p class="mt-2 text-sm sm:text-base text-gray-600">Streamline your requests for certificates and loans with our easy-to-use platform. Choose your option below to get started.</p>
     </div>
 
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pb-4 max-w-4xl mx-auto">
-  <!-- Good Moral -->
-  <div class="option-card w-full p-6 rounded-xl text-center cursor-pointer transition transform bg-red-50 shadow hover:-translate-y-1 hover:shadow-lg hover:bg-red-100"
-       style="border:2px solid #8B0000;" data-option="good-moral" tabindex="0" role="button" aria-pressed="false">
-    <i class="fas fa-award text-5xl mb-3" style="color:#8B0000;"></i>
-  <h3 class="text-xl font-bold mb-2" style="color:#8B0000;">Good Moral Certificate</h3>
-  <p class="text-sm text-gray-600">Obtain an official certificate of good conduct for your academic or professional needs.</p>
-  <span class="inline-block mt-4 px-2 py-0.5 text-xs font-semibold text-white rounded-full" style="background-color:#8B0000;">Quick Process</span>
-  </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pb-4 max-w-4xl mx-auto">
+      <!-- Good Moral -->
+      <div class="option-card w-full p-6 rounded-xl text-center cursor-pointer transition transform bg-red-50 shadow hover:-translate-y-1 hover:shadow-lg hover:bg-red-100"
+        style="border:2px solid #8B0000;" data-option="good-moral" tabindex="0" role="button" aria-pressed="false">
+        <i class="fas fa-award text-5xl mb-3" style="color:#8B0000;"></i>
+        <h3 class="text-xl font-bold mb-2" style="color:#8B0000;">Good Moral Certificate</h3>
+        <p class="text-sm text-gray-600">Obtain an official certificate of good conduct for your academic or professional needs.</p>
+        <span class="inline-block mt-4 px-2 py-0.5 text-xs font-semibold text-white rounded-full" style="background-color:#8B0000;">Quick Process</span>
+      </div>
 
-  <!-- Safe Loan -->
-  <div class="option-card w-full p-6 rounded-xl text-center cursor-pointer transition transform bg-red-50 shadow hover:-translate-y-1 hover:shadow-lg hover:bg-red-100"
-       style="border:2px solid #8B0000;" data-option="safe-loan-form" tabindex="0" role="button" aria-pressed="false">
-    <i class="fas fa-hand-holding-usd text-5xl mb-3" style="color:#8B0000;"></i>
-  <h3 class="text-xl font-bold mb-2" style="color:#8B0000;">Safe Loan Payment</h3>
-  <p class="text-sm text-gray-600">Apply for a student loan with flexible terms and easy approval process.</p>
-  <span class="inline-block mt-4 px-2 py-0.5 text-xs font-semibold text-white rounded-full" style="background-color:#8B0000;">Financial Aid</span>
-  </div>
-</div>
-<footer class="fixed bottom-0 left-0 w-full bg-gray-100 text-center py-3 border-t border-gray-300 text-sm text-gray-600 z-50">
-  <p>© 2025 Office of the Student Affairs and Services. All rights reserved.</p>
-  <p>For inquiries, contact: <span style="color:#8B0000;">osas@usep.edu.ph</span></p>
-</footer>
+      <!-- Safe Loan -->
+      <div class="option-card w-full p-6 rounded-xl text-center cursor-pointer transition transform bg-red-50 shadow hover:-translate-y-1 hover:shadow-lg hover:bg-red-100"
+        style="border:2px solid #8B0000;" data-option="safe-loan-form" tabindex="0" role="button" aria-pressed="false">
+        <i class="fas fa-hand-holding-usd text-5xl mb-3" style="color:#8B0000;"></i>
+        <h3 class="text-xl font-bold mb-2" style="color:#8B0000;">Safe Loan Payment</h3>
+        <p class="text-sm text-gray-600">Apply for a student loan with flexible terms and easy approval process.</p>
+        <span class="inline-block mt-4 px-2 py-0.5 text-xs font-semibold text-white rounded-full" style="background-color:#8B0000;">Financial Aid</span>
+      </div>
+    </div>
+    <footer class="fixed bottom-0 left-0 w-full bg-gray-100 text-center py-3 border-t border-gray-300 text-sm text-gray-600 z-50">
+      <p>© 2025 Office of the Student Affairs and Services. All rights reserved.</p>
+      <p>For inquiries, contact: <span style="color:#8B0000;">osas@usep.edu.ph</span></p>
+    </footer>
 
-<!-- Form Modal (Multi-Step) -->
-<div id="good-moral-modal" class="modal fixed inset-0 hidden bg-black/50 z-50 items-center justify-center p-4">
-  <div class="modal-content bg-white rounded-2xl p-8 shadow-2xl max-w-2xl w-full relative overflow-y-auto max-h-[90vh]">
-    <button class="close-btn absolute top-4 right-4 text-2xl text-gray-400 hover:text-gray-600">&times;</button>
-    
-    <!-- Step Progress Indicator -->
-    <div class="mb-8">
-      <div class="flex items-center justify-between max-w-md mx-auto">
-        <div class="step-indicator flex flex-col items-center" data-step="1">
-          <div class="step-circle w-10 h-10 rounded-full text-white flex items-center justify-center text-sm font-semibold mb-2" style="background-color: #8B0000;">1</div>
-          <span class="text-xs font-medium" style="color: #8B0000;">Step 1</span>
+    <!-- Form Modal (Multi-Step) -->
+    <div id="good-moral-modal" class="modal fixed inset-0 hidden bg-black/50 z-50 items-center justify-center p-4">
+      <div class="modal-content bg-white rounded-2xl p-8 shadow-2xl max-w-2xl w-full relative overflow-y-auto max-h-[90vh]">
+        <button class="close-btn absolute top-4 right-4 text-2xl text-gray-400 hover:text-gray-600">&times;</button>
+
+        <!-- Step Progress Indicator -->
+        <div class="mb-8">
+          <div class="flex items-center justify-between max-w-md mx-auto">
+            <div class="step-indicator flex flex-col items-center" data-step="1">
+              <div class="step-circle w-10 h-10 rounded-full text-white flex items-center justify-center text-sm font-semibold mb-2" style="background-color: #8B0000;">1</div>
+              <span class="text-xs font-medium" style="color: #8B0000;">Step 1</span>
+            </div>
+            <div class="step-line flex-1 h-1 bg-gray-300 mx-2"></div>
+            <div class="step-indicator flex flex-col items-center" data-step="2">
+              <div class="step-circle w-10 h-10 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center text-sm font-semibold mb-2 text-gray-400">2</div>
+              <span class="text-xs font-medium text-gray-400">Step 2</span>
+            </div>
+            <div class="step-line flex-1 h-1 bg-gray-300 mx-2"></div>
+            <div class="step-indicator flex flex-col items-center" data-step="3">
+              <div class="step-circle w-10 h-10 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center text-sm font-semibold mb-2 text-gray-400">3</div>
+              <span class="text-xs font-medium text-gray-400">Step 3</span>
+            </div>
+          </div>
         </div>
-        <div class="step-line flex-1 h-1 bg-gray-300 mx-2"></div>
-        <div class="step-indicator flex flex-col items-center" data-step="2">
-          <div class="step-circle w-10 h-10 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center text-sm font-semibold mb-2 text-gray-400">2</div>
-          <span class="text-xs font-medium text-gray-400">Step 2</span>
-        </div>
-        <div class="step-line flex-1 h-1 bg-gray-300 mx-2"></div>
-        <div class="step-indicator flex flex-col items-center" data-step="3">
-          <div class="step-circle w-10 h-10 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center text-sm font-semibold mb-2 text-gray-400">3</div>
-          <span class="text-xs font-medium text-gray-400">Step 3</span>
-        </div>
+
+        <form id="moral-form" class="space-y-6">
+          <!-- Step 1: Personal Information -->
+          <div class="form-step" data-step="1">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Personal Information</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-3">
+              <div class="relative">
+                <input type="text" id="lastName" name="lastName" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Last name" required>
+                <label for="lastName" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Last name</label>
+              </div>
+
+              <div class="relative">
+                <input type="text" id="firstName" name="firstName" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="First name" required>
+                <label for="firstName" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">First name</label>
+              </div>
+
+              <div class="relative">
+                <input type="text" id="middleName" name="middleName" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Middle name">
+                <label for="middleName" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Middle name</label>
+              </div>
+
+              <div class="relative">
+                <input type="text" id="contact" name="contact" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Contact number" required>
+                <label for="contact" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Contact number</label>
+              </div>
+
+              <div class="md:col-span-2">
+                <label class="block mb-3 text-sm text-gray-600">Gender</label>
+                <div class="flex gap-x-6">
+                  <div class="flex">
+                    <input type="radio" name="gender" value="Female" class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 checked:border-blue-500 disabled:opacity-50 disabled:pointer-events-none" id="hs-radio-group-1" checked>
+                    <label for="hs-radio-group-1" class="text-sm text-gray-500 ms-2">Female</label>
+                  </div>
+
+                  <div class="flex">
+                    <input type="radio" name="gender" value="Male" class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 checked:border-blue-500 disabled:opacity-50 disabled:pointer-events-none" id="hs-radio-group-2">
+                    <label for="hs-radio-group-2" class="text-sm text-gray-500 ms-2">Male</label>
+                  </div>
+
+                  <div class="flex">
+                    <input type="radio" name="gender" value="Prefer not to say" class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 checked:border-blue-500 disabled:opacity-50 disabled:pointer-events-none" id="hs-radio-group-3">
+                    <label for="hs-radio-group-3" class="text-sm text-gray-500 ms-2">Prefer not to Say</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Academic Information -->
+          <div class="form-step hidden" data-step="2">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Academic Information</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-x-3 gap-y-3">
+
+              <div class="relative">
+                <!-- <input type="date" id="date" name="date" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 peer-valid:pt-6 peer-valid:pb-2 cursor-pointer" required> -->
+                <input type="date" id="date" name="date" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Select date">
+                <label for="date" class="absolute top-0 start-0 p-4 h-full text-sm text-gray-500 truncate pointer-events-none transition ease-in-out duration-100 origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-400 peer-valid:scale-90 peer-valid:translate-x-0.5 peer-valid:-translate-y-1.5 peer-valid:text-gray-400">Select date</label>
+                <div class="absolute inset-y-0 end-0 flex items-center pe-4 pointer-events-none">
+                  <svg class="w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 10h16m-8-3V4M7 7V4m10 3V4M5 20h14a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Zm3-7h.01v.01H8V13Zm4 0h.01v.01H12V13Zm4 0h.01v.01H16V13Zm-8 4h.01v.01H8V17Zm4 0h.01v.01H12V17Zm4 0h.01v.01H16V17Z" />
+                  </svg>
+                </div>
+              </div>
+
+              <div class="md:col-span-2 relative">
+                <select id="studentStatus" name="studentStatus" class="peer p-4 pe-9 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2 peer-valid:text-gray-900" onchange="toggleLastSemInput(this.value === 'not-enrolled')" required>
+                  <option value=""></option>
+                  <option value="currently-enrolled">Currently Enrolled</option>
+                  <option value="not-enrolled">Not Enrolled</option>
+                </select>
+                <label for="studentStatus" class="absolute top-0 start-0 p-4 h-full text-sm text-gray-500 truncate pointer-events-none transition ease-in-out duration-100 origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-400 peer-valid:scale-90 peer-valid:translate-x-0.5 peer-valid:-translate-y-1.5 peer-valid:text-gray-400">Student's Status</label>
+              </div>
+
+              <div id="lastSemContainer" class="md:col-span-3 relative hidden">
+                <input type="text" id="lastSem" name="lastSem" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Last Sem & SY">
+                <label for="lastSem" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Last Sem & SY</label>
+              </div>
+
+              <div class="relative md:col-span-2">
+                <input type="text" id="program" name="program" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Program & Year" required>
+                <label for="program" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Program & Year</label>
+              </div>
+
+              <div class="relative">
+                <input type="text" id="yearGraduated" name="yearGraduated" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Year Graduated">
+                <label for="yearGraduated" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Year Graduated</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Contact & Purpose -->
+          <div class="form-step hidden" data-step="3">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Additional Information</h2>
+            <div class="space-y-3">
+              <div class="relative">
+                <input type="email" id="email" name="email" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Email address" required>
+                <label for="email" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Email address</label>
+              </div>
+
+              <div class="relative">
+                <textarea id="purpose" name="purpose" rows="4" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2 resize-none" placeholder="Purpose of request"></textarea>
+                <label for="purpose" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Purpose of request</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Navigation Buttons -->
+          <div class="flex justify-between mt-6 pt-3">
+            <button type="button" id="prev-btn" class="px-8 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-lg transition-all duration-200 hidden">
+              Back
+            </button>
+            <button type="button" id="next-btn" class="ml-auto px-16 py-3 text-white font-semibold rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105" style="background-color: #8B0000;">
+              Continue
+            </button>
+          </div>
+        </form>
       </div>
     </div>
 
-    <form id="moral-form" class="space-y-6">
-      <!-- Step 1: Personal Information -->
-      <div class="form-step" data-step="1">
-        <h2 class="text-2xl font-bold mb-6 text-gray-800">Personal Information</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-3">
-        <div class="relative">
-          <input type="text" id="lastName" name="lastName" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Last name" required>
-          <label for="lastName" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Last name</label>
-        </div>
 
-        <div class="relative">
-          <input type="text" id="firstName" name="firstName" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="First name" required>
-          <label for="firstName" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">First name</label>
-        </div>
-
-        <div class="relative">
-          <input type="text" id="middleName" name="middleName" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Middle name">
-          <label for="middleName" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Middle name</label>
-        </div>
-
-        <div class="relative">
-          <input type="text" id="contact" name="contact" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Contact number" required>
-          <label for="contact" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Contact number</label>
-        </div>
-
-    <div class="md:col-span-2">
-          <label class="block mb-3 text-sm text-gray-600">Gender</label>
-          <div class="flex gap-x-6">
-            <div class="flex">
-      <input type="radio" name="gender" value="Female" class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 checked:border-blue-500 disabled:opacity-50 disabled:pointer-events-none" id="hs-radio-group-1" checked>
-              <label for="hs-radio-group-1" class="text-sm text-gray-500 ms-2">Female</label>
-            </div>
-
-            <div class="flex">
-      <input type="radio" name="gender" value="Male" class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 checked:border-blue-500 disabled:opacity-50 disabled:pointer-events-none" id="hs-radio-group-2">
-              <label for="hs-radio-group-2" class="text-sm text-gray-500 ms-2">Male</label>
-            </div>
-
-            <div class="flex">
-      <input type="radio" name="gender" value="Prefer not to say" class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 checked:border-blue-500 disabled:opacity-50 disabled:pointer-events-none" id="hs-radio-group-3">
-      <label for="hs-radio-group-3" class="text-sm text-gray-500 ms-2">Prefer not to Say</label>
-            </div>
+    <!-- Payment Slip Modal (Good Moral) -->
+    <div id="payment-slip-modal" class="modal fixed inset-0 hidden bg-black/50 z-50 items-center justify-center p-4">
+      <div class="modal-content bg-gray-50 rounded-xl p-6 shadow-xl max-w-lg w-2/3 relative overflow-y-auto max-h-[80vh]">
+        <button class="close-btn absolute top-3 right-3 text-xl text-gray-400 hover:text-red-600">&times;</button>
+        <h2 class="text-lg font-bold mb-4 text-center" style="color:#8B0000;">Payment Slip</h2>
+        <form id="payment-form" class="text-sm space-y-4">
+          <table class="w-full border border-gray-300 text-center text-sm">
+            <thead class="bg-gray-200">
+              <tr>
+                <th class="border px-2 py-1">Description</th>
+                <th class="border px-2 py-1">Quantity</th>
+                <th class="border px-2 py-1">Cost</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="border px-2 py-1">Certificate of Good Moral Character (₱70.00/copy)</td>
+                <td class="border px-2 py-1">
+                  <input type="number" id="gm-qty" name="gm_qty" min="1" value="1" class="w-16 text-center border rounded">
+                </td>
+                <td class="border px-2 py-1" id="gm-cost">₱70.00</td>
+              </tr>
+              <tr>
+                <td class="border px-2 py-1">Safe Loan</td>
+                <td class="border px-2 py-1">-</td>
+                <td class="border px-2 py-1">₱0.00</td>
+              </tr>
+              <tr>
+                <td class="border px-2 py-1 font-semibold" colspan="2">Total Amount</td>
+                <td class="border px-2 py-1 font-bold" id="total-amount">₱70.00</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="flex justify-between mt-6">
+            <button type="button" id="back-btn" class="px-4 py-2 border font-semibold rounded-md shadow hover:bg-red-800 transition">
+              Back
+            </button>
+            <button type="submit" class="px-4 py-2 border font-semibold rounded-md shadow hover:bg-red-800 transition">
+              Submit
+            </button>
           </div>
-        </div>
+        </form>
       </div>
-      </div>
+    </div>
 
-      <!-- Step 2: Academic Information -->
-      <div class="form-step hidden" data-step="2">
-        <h2 class="text-2xl font-bold mb-6 text-gray-800">Academic Information</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-x-3 gap-y-3">
-
-        <div class="relative">
-          <!-- <input type="date" id="date" name="date" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 peer-valid:pt-6 peer-valid:pb-2 cursor-pointer" required> -->
-          <input type="date" id="date" name="date" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Select date">
-          <label for="date" class="absolute top-0 start-0 p-4 h-full text-sm text-gray-500 truncate pointer-events-none transition ease-in-out duration-100 origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-400 peer-valid:scale-90 peer-valid:translate-x-0.5 peer-valid:-translate-y-1.5 peer-valid:text-gray-400">Select date</label>
-          <div class="absolute inset-y-0 end-0 flex items-center pe-4 pointer-events-none">
-            <svg class="w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 10h16m-8-3V4M7 7V4m10 3V4M5 20h14a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Zm3-7h.01v.01H8V13Zm4 0h.01v.01H12V13Zm4 0h.01v.01H16V13Zm-8 4h.01v.01H8V17Zm4 0h.01v.01H12V17Zm4 0h.01v.01H16V17Z"/>
-            </svg>
-          </div>
-        </div>
-
-        <div class="md:col-span-2 relative">
-          <select id="studentStatus" name="studentStatus" class="peer p-4 pe-9 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2 peer-valid:text-gray-900" onchange="toggleLastSemInput(this.value === 'not-enrolled')" required>
-            <option value=""></option>
-            <option value="currently-enrolled">Currently Enrolled</option>
-            <option value="not-enrolled">Not Enrolled</option>
-          </select>
-          <label for="studentStatus" class="absolute top-0 start-0 p-4 h-full text-sm text-gray-500 truncate pointer-events-none transition ease-in-out duration-100 origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-400 peer-valid:scale-90 peer-valid:translate-x-0.5 peer-valid:-translate-y-1.5 peer-valid:text-gray-400">Student's Status</label>
-        </div>
-
-        <div id="lastSemContainer" class="md:col-span-3 relative hidden">
-          <input type="text" id="lastSem" name="lastSem" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Last Sem & SY">
-          <label for="lastSem" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Last Sem & SY</label>
-        </div>
-
-         <div class="relative md:col-span-2">
-          <input type="text" id="program" name="program" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Program & Year" required>
-          <label for="program" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Program & Year</label>
-        </div>
-
-        <div class="relative">
-          <input type="text" id="yearGraduated" name="yearGraduated" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Year Graduated">
-          <label for="yearGraduated" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Year Graduated</label>
-        </div>
-      </div>
-      </div>
-
-      <!-- Step 3: Contact & Purpose -->
-      <div class="form-step hidden" data-step="3">
-        <h2 class="text-2xl font-bold mb-6 text-gray-800">Additional Information</h2>
-        <div class="space-y-3">
-          <div class="relative">
-            <input type="email" id="email" name="email" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Email address" required>
-            <label for="email" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Email address</label>
-          </div>
-
-          <div class="relative">
-            <textarea id="purpose" name="purpose" rows="4" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2 resize-none" placeholder="Purpose of request"></textarea>
-            <label for="purpose" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Purpose of request</label>
-          </div>
-        </div>
-      </div>
-
-      <!-- Navigation Buttons -->
-      <div class="flex justify-between mt-6 pt-3">
-        <button type="button" id="prev-btn" class="px-8 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-lg transition-all duration-200 hidden">
-          Back
-        </button>
-        <button type="button" id="next-btn" class="ml-auto px-16 py-3 text-white font-semibold rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105" style="background-color: #8B0000;">
-          Continue
-        </button>
-      </div>
+    <!-- Hidden form to POST Good Moral request to backend -->
+    <form id="gm-submit-form" action="{{ route('good-moral.store') }}" method="POST" class="hidden">
+      @csrf
+      <input type="hidden" name="date_needed" id="gm-date_needed">
+      <input type="hidden" name="email" id="gm-email">
+      <input type="hidden" name="contact" id="gm-contact">
+      <input type="hidden" name="first_name" id="gm-first_name">
+      <input type="hidden" name="middle_name" id="gm-middle_name">
+      <input type="hidden" name="last_name" id="gm-last_name">
+      <input type="hidden" name="gender" id="gm-gender">
+      <input type="hidden" name="program_year" id="gm-program_year">
+      <input type="hidden" name="student_status" id="gm-student_status">
+      <input type="hidden" name="last_semester" id="gm-last_semester">
+      <input type="hidden" name="year_graduated" id="gm-year_graduated">
+      <input type="hidden" name="purpose" id="gm-purpose">
+      <input type="hidden" name="copies" id="gm-copies" value="1">
     </form>
-  </div>
-</div>
 
-
-<!-- Payment Slip Modal (Good Moral) -->
-<div id="payment-slip-modal" class="modal fixed inset-0 hidden bg-black/50 z-50 items-center justify-center p-4">
-  <div class="modal-content bg-gray-50 rounded-xl p-6 shadow-xl max-w-lg w-2/3 relative overflow-y-auto max-h-[80vh]">
-    <button class="close-btn absolute top-3 right-3 text-xl text-gray-400 hover:text-red-600">&times;</button>
-    <h2 class="text-lg font-bold mb-4 text-center" style="color:#8B0000;">Payment Slip</h2>
-  <form id="payment-form" class="text-sm space-y-4">
-      <table class="w-full border border-gray-300 text-center text-sm">
-        <thead class="bg-gray-200">
-          <tr>
-            <th class="border px-2 py-1">Description</th>
-            <th class="border px-2 py-1">Quantity</th>
-            <th class="border px-2 py-1">Cost</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="border px-2 py-1">Certificate of Good Moral Character (₱70.00/copy)</td>
-            <td class="border px-2 py-1">
-              <input type="number" id="gm-qty" name="gm_qty" min="1" value="1" class="w-16 text-center border rounded">
-            </td>
-            <td class="border px-2 py-1" id="gm-cost">₱70.00</td>
-          </tr>
-          <tr>
-            <td class="border px-2 py-1">Safe Loan</td>
-            <td class="border px-2 py-1">-</td>
-            <td class="border px-2 py-1">₱0.00</td>
-          </tr>
-          <tr>
-            <td class="border px-2 py-1 font-semibold" colspan="2">Total Amount</td>
-            <td class="border px-2 py-1 font-bold" id="total-amount">₱70.00</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="flex justify-between mt-6">
-        <button type="button" id="back-btn" class="px-4 py-2 border font-semibold rounded-md shadow hover:bg-red-800 transition">
-          Back
-        </button>
-        <button type="submit" class="px-4 py-2 border font-semibold rounded-md shadow hover:bg-red-800 transition">
-          Submit
-        </button>
-      </div>
+    <!-- Hidden form to POST Safe Loan request -->
+    <form id="loan-submit-form" action="{{ route('safe-loan.store') }}" method="POST" class="hidden">
+      @csrf
+      <input type="hidden" name="date_needed" id="loan-date_needed">
+      <input type="hidden" name="email" id="loan-email_hidden">
+      <input type="hidden" name="contact" id="loan-contact_hidden">
+      <input type="hidden" name="first_name" id="loan-first_name_hidden">
+      <input type="hidden" name="middle_name" id="loan-middle_name_hidden">
+      <input type="hidden" name="last_name" id="loan-last_name_hidden">
+      <input type="hidden" name="gender" id="loan-gender_hidden">
+      <input type="hidden" name="program_year" id="loan-program_year_hidden">
+      <input type="hidden" name="student_status" id="loan-student_status_hidden">
+      <input type="hidden" name="last_semester" id="loan-last_semester_hidden">
+      <input type="hidden" name="year_graduated" id="loan-year_graduated_hidden">
+      <input type="hidden" name="purpose" id="loan-purpose_hidden">
+      <input type="hidden" name="loan_amount" id="loan-loan_amount_hidden" value="0">
     </form>
-  </div>
-</div>
 
-<!-- Hidden form to POST Good Moral request to backend -->
-<form id="gm-submit-form" action="{{ route('good-moral.store') }}" method="POST" class="hidden">
-  @csrf
-  <input type="hidden" name="date_needed" id="gm-date_needed">
-  <input type="hidden" name="email" id="gm-email">
-  <input type="hidden" name="contact" id="gm-contact">
-  <input type="hidden" name="first_name" id="gm-first_name">
-  <input type="hidden" name="middle_name" id="gm-middle_name">
-  <input type="hidden" name="last_name" id="gm-last_name">
-  <input type="hidden" name="gender" id="gm-gender">
-  <input type="hidden" name="program_year" id="gm-program_year">
-  <input type="hidden" name="student_status" id="gm-student_status">
-  <input type="hidden" name="last_semester" id="gm-last_semester">
-  <input type="hidden" name="year_graduated" id="gm-year_graduated">
-  <input type="hidden" name="purpose" id="gm-purpose">
-  <input type="hidden" name="copies" id="gm-copies" value="1">
-</form>
-
-<!-- Hidden form to POST Safe Loan request -->
-<form id="loan-submit-form" action="{{ route('safe-loan.store') }}" method="POST" class="hidden">
-  @csrf
-  <input type="hidden" name="date_needed" id="loan-date_needed">
-  <input type="hidden" name="email" id="loan-email_hidden">
-  <input type="hidden" name="contact" id="loan-contact_hidden">
-  <input type="hidden" name="first_name" id="loan-first_name_hidden">
-  <input type="hidden" name="middle_name" id="loan-middle_name_hidden">
-  <input type="hidden" name="last_name" id="loan-last_name_hidden">
-  <input type="hidden" name="gender" id="loan-gender_hidden">
-  <input type="hidden" name="program_year" id="loan-program_year_hidden">
-  <input type="hidden" name="student_status" id="loan-student_status_hidden">
-  <input type="hidden" name="last_semester" id="loan-last_semester_hidden">
-  <input type="hidden" name="year_graduated" id="loan-year_graduated_hidden">
-  <input type="hidden" name="purpose" id="loan-purpose_hidden">
-  <input type="hidden" name="loan_amount" id="loan-loan_amount_hidden" value="0">
-</form>
-
-<!-- Payment Slip Modal (Safe Loan) -->
-<div id="payment-slip-loan-modal" class="modal fixed inset-0 hidden bg-black/50 z-50 items-center justify-center p-4">
-  <div class="modal-content bg-gray-50 rounded-xl p-6 shadow-xl max-w-lg w-2/3 relative overflow-y-auto max-h-[80vh]">
-    <button class="close-btn absolute top-3 right-3 text-xl text-gray-400 hover:text-red-600">&times;</button>
-    <h2 class="text-lg font-bold mb-4 text-center" style="color:#8B0000;">Payment Slip</h2>
-    <form id="payment-loan-form" class="text-sm space-y-4">
-      <table class="w-full border border-gray-300 text-center text-sm">
-        <thead class="bg-gray-200">
-          <tr>
-            <th class="border px-2 py-1">Description</th>
-            <th class="border px-2 py-1">Quantity</th>
-            <th class="border px-2 py-1">Cost</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="border px-2 py-1">Certificate of Good Moral Character (₱70.00/copy)</td>
-            <td class="border px-2 py-1">-</td>
-            <td class="border px-2 py-1">₱0.00</td>
-          </tr>
-          <tr>
-            <td class="border px-2 py-1">Safe Loan</td>
-            <td class="border px-2 py-1">-</td>
-            <td class="border px-2 py-1">
-              <input type="number" id="loan-amount" name="loan_amount" min="0" value="0" class="w-24 text-center border rounded" step="0.01">
-            </td>
-          </tr>
-          <tr>
-            <td class="border px-2 py-1 font-semibold" colspan="2">Total Amount</td>
-            <td class="border px-2 py-1 font-bold" id="loan-total-amount">₱0.00</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="flex justify-between mt-6">
-        <button type="button" id="loan-back-btn" class="px-4 py-2 border font-semibold rounded-md shadow hover:bg-red-800 transition">
-          Back
-        </button>
-        <button type="submit" class="px-4 py-2 border font-semibold rounded-md shadow hover:bg-red-800 transition">
-          Submit
-        </button>
+    <!-- Payment Slip Modal (Safe Loan) -->
+    <div id="payment-slip-loan-modal" class="modal fixed inset-0 hidden bg-black/50 z-50 items-center justify-center p-4">
+      <div class="modal-content bg-gray-50 rounded-xl p-6 shadow-xl max-w-lg w-2/3 relative overflow-y-auto max-h-[80vh]">
+        <button class="close-btn absolute top-3 right-3 text-xl text-gray-400 hover:text-red-600">&times;</button>
+        <h2 class="text-lg font-bold mb-4 text-center" style="color:#8B0000;">Payment Slip</h2>
+        <form id="payment-loan-form" class="text-sm space-y-4">
+          <table class="w-full border border-gray-300 text-center text-sm">
+            <thead class="bg-gray-200">
+              <tr>
+                <th class="border px-2 py-1">Description</th>
+                <th class="border px-2 py-1">Quantity</th>
+                <th class="border px-2 py-1">Cost</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="border px-2 py-1">Certificate of Good Moral Character (₱70.00/copy)</td>
+                <td class="border px-2 py-1">-</td>
+                <td class="border px-2 py-1">₱0.00</td>
+              </tr>
+              <tr>
+                <td class="border px-2 py-1">Safe Loan</td>
+                <td class="border px-2 py-1">-</td>
+                <td class="border px-2 py-1">
+                  <input type="number" id="loan-amount" name="loan_amount" min="0" value="0" class="w-24 text-center border rounded" step="0.01">
+                </td>
+              </tr>
+              <tr>
+                <td class="border px-2 py-1 font-semibold" colspan="2">Total Amount</td>
+                <td class="border px-2 py-1 font-bold" id="loan-total-amount">₱0.00</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="flex justify-between mt-6">
+            <button type="button" id="loan-back-btn" class="px-4 py-2 border font-semibold rounded-md shadow hover:bg-red-800 transition">
+              Back
+            </button>
+            <button type="submit" class="px-4 py-2 border font-semibold rounded-md shadow hover:bg-red-800 transition">
+              Submit
+            </button>
+          </div>
+        </form>
       </div>
-    </form>
-  </div>
-</div>
+    </div>
 
 
 
-<!-- Safe Loan Instructions Modal -->
-<div id="safe-loan-instructions-modal" class="modal fixed inset-0 hidden bg-black/50 z-50 items-center justify-center p-4">
-  <div class="modal-content bg-gray-50 rounded-xl p-6 shadow-xl max-w-2xl w-2/3 relative overflow-y-auto max-h-[80vh]">
-    <button class="close-btn absolute top-3 right-3 text-xl text-gray-400 hover:text-red-600">&times;</button>
-    <h2 class="text-lg font-bold mb-6 text-center" style="color:#8B0000;">Loan Instructions</h2>
-    <div class="text-sm text-gray-700 px-2 sm:px-6">
-      <p class="text-center font-medium mb-6">
-        Please be advised that the Safe Loan Application is processed through the OSAS office. Kindly follow the steps below:
-      </p>
-      <ol class="list-decimal list-inside space-y-4">
-        <li>The applicant/student should apply directly to the Office of Student Services (Obrero Campus).</li>
-        <li>The applicant must submit a formal letter to the Screening and Scholarship Committee, which will assess eligibility and grant the loan if qualified.</li>
-        <li>
-            The Screening and Scholarship Committee shall consider the following documents to be submitted by the applicant/student:
-          <ul class="list-disc list-inside ml-6 mt-3 space-y-2">
-            <li>Medical Certificate</li>
-            <li>Grades of the previous semester</li>
-            <li>Income Tax return of Parents / Affidavit of No Income</li>
-            <li>Recommendation from the adviser/teacher</li>
-            <li>Recommendation from the guidance counselor</li>
-            <li style="color:#8B0000;">
-              Reminder: APPLICANTS WITH INCOMPLETE REQUIREMENTS CAN'T PROCEED WITH THE APPLICATION.
+    <!-- Safe Loan Instructions Modal -->
+    <div id="safe-loan-instructions-modal" class="modal fixed inset-0 hidden bg-black/50 z-50 items-center justify-center p-4">
+      <div class="modal-content bg-gray-50 rounded-xl p-6 shadow-xl max-w-2xl w-2/3 relative overflow-y-auto max-h-[80vh]">
+        <button class="close-btn absolute top-3 right-3 text-xl text-gray-400 hover:text-red-600">&times;</button>
+        <h2 class="text-lg font-bold mb-6 text-center" style="color:#8B0000;">Loan Instructions</h2>
+        <div class="text-sm text-gray-700 px-2 sm:px-6">
+          <p class="text-center font-medium mb-6">
+            Please be advised that the Safe Loan Application is processed through the OSAS office. Kindly follow the steps below:
+          </p>
+          <ol class="list-decimal list-inside space-y-4">
+            <li>The applicant/student should apply directly to the Office of Student Services (Obrero Campus).</li>
+            <li>The applicant must submit a formal letter to the Screening and Scholarship Committee, which will assess eligibility and grant the loan if qualified.</li>
+            <li>
+              The Screening and Scholarship Committee shall consider the following documents to be submitted by the applicant/student:
+              <ul class="list-disc list-inside ml-6 mt-3 space-y-2">
+                <li>Medical Certificate</li>
+                <li>Grades of the previous semester</li>
+                <li>Income Tax return of Parents / Affidavit of No Income</li>
+                <li>Recommendation from the adviser/teacher</li>
+                <li>Recommendation from the guidance counselor</li>
+                <li style="color:#8B0000;">
+                  Reminder: APPLICANTS WITH INCOMPLETE REQUIREMENTS CAN'T PROCEED WITH THE APPLICATION.
+                </li>
+              </ul>
             </li>
-          </ul>
-        </li>
-      </ol>
-    </div>
-    <div class="flex justify-end mt-8">
-      <button type="button" id="open-loan-form-btn" class="px-6 py-2 border font-semibold rounded-md shadow hover:bg-red-800 transition" style="background-color:#8B0000; color:white; border-color:#8B0000;">
-        Proceed to Form
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- Safe Loan Modal (Form) -->
-<div id="safe-loan-form-modal" class="modal fixed inset-0 hidden bg-black/50 z-50 items-center justify-center p-4">
-  <div class="modal-content bg-gray-50 rounded-xl p-6 shadow-xl max-w-2xl w-2/3 relative overflow-y-auto max-h-[80vh]">
-    <button class="close-btn absolute top-3 right-3 text-xl text-gray-400 hover:text-red-600">&times;</button>
-    <h2 class="text-lg font-bold mb-4 text-center" style="color:#8B0000;">Safe Loan Payment</h2>
-    <!-- Step Progress Indicator (Loan) -->
-    <div class="mb-8">
-      <div class="flex items-center justify-between max-w-md mx-auto">
-        <div class="loan-step-indicator flex flex-col items-center" data-step="1">
-          <div class="loan-step-circle w-10 h-10 rounded-full text-white flex items-center justify-center text-sm font-semibold mb-2" style="background-color: #8B0000;">1</div>
-          <span class="text-xs font-medium" style="color: #8B0000;">Step 1</span>
+          </ol>
         </div>
-        <div class="loan-step-line flex-1 h-1 bg-gray-300 mx-2"></div>
-        <div class="loan-step-indicator flex flex-col items-center" data-step="2">
-          <div class="loan-step-circle w-10 h-10 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center text-sm font-semibold mb-2 text-gray-400">2</div>
-          <span class="text-xs font-medium text-gray-400">Step 2</span>
-        </div>
-        <div class="loan-step-line flex-1 h-1 bg-gray-300 mx-2"></div>
-        <div class="loan-step-indicator flex flex-col items-center" data-step="3">
-          <div class="loan-step-circle w-10 h-10 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center text-sm font-semibold mb-2 text-gray-400">3</div>
-          <span class="text-xs font-medium text-gray-400">Step 3</span>
+        <div class="flex justify-end mt-8">
+          <button type="button" id="open-loan-form-btn" class="px-6 py-2 border font-semibold rounded-md shadow hover:bg-red-800 transition" style="background-color:#8B0000; color:white; border-color:#8B0000;">
+            Proceed to Form
+          </button>
         </div>
       </div>
     </div>
 
-    <form id="safe-loan-form" class="space-y-6">
-      <!-- Loan Step 1: Personal Information -->
-      <div class="loan-form-step" data-step="1">
-        <h2 class="text-2xl font-bold mb-6 text-gray-800">Personal Information</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-3">
-          <div class="relative">
-            <input type="text" id="loanLastName" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Last name" required>
-            <label for="loanLastName" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Last name</label>
-          </div>
-          <div class="relative">
-            <input type="text" id="loanFirstName" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="First name" required>
-            <label for="loanFirstName" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">First name</label>
-          </div>
-          <div class="relative">
-            <input type="text" id="loanMiddleName" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Middle name">
-            <label for="loanMiddleName" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Middle name</label>
-          </div>
-          <div class="relative">
-            <input type="text" id="loanContact" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Contact number" required>
-            <label for="loanContact" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Contact number</label>
-          </div>
-          <div class="md:col-span-2">
-            <label class="block mb-3 text-sm text-gray-600">Gender</label>
-            <div class="flex gap-x-6">
-              <div class="flex">
-                <input type="radio" name="loanGender" value="Female" class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 checked:border-blue-500" id="loan-radio-group-1" checked>
-                <label for="loan-radio-group-1" class="text-sm text-gray-500 ms-2">Female</label>
-              </div>
-              <div class="flex">
-                <input type="radio" name="loanGender" value="Male" class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 checked:border-blue-500" id="loan-radio-group-2">
-                <label for="loan-radio-group-2" class="text-sm text-gray-500 ms-2">Male</label>
-              </div>
-              <div class="flex">
-                <input type="radio" name="loanGender" value="Prefer not to say" class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 checked:border-blue-500" id="loan-radio-group-3">
-                <label for="loan-radio-group-3" class="text-sm text-gray-500 ms-2">Prefer not to Say</label>
-              </div>
+    <!-- Safe Loan Modal (Form) -->
+    <div id="safe-loan-form-modal" class="modal fixed inset-0 hidden bg-black/50 z-50 items-center justify-center p-4">
+      <div class="modal-content bg-gray-50 rounded-xl p-6 shadow-xl max-w-2xl w-2/3 relative overflow-y-auto max-h-[80vh]">
+        <button class="close-btn absolute top-3 right-3 text-xl text-gray-400 hover:text-red-600">&times;</button>
+        <h2 class="text-lg font-bold mb-4 text-center" style="color:#8B0000;">Safe Loan Payment</h2>
+        <!-- Step Progress Indicator (Loan) -->
+        <div class="mb-8">
+          <div class="flex items-center justify-between max-w-md mx-auto">
+            <div class="loan-step-indicator flex flex-col items-center" data-step="1">
+              <div class="loan-step-circle w-10 h-10 rounded-full text-white flex items-center justify-center text-sm font-semibold mb-2" style="background-color: #8B0000;">1</div>
+              <span class="text-xs font-medium" style="color: #8B0000;">Step 1</span>
+            </div>
+            <div class="loan-step-line flex-1 h-1 bg-gray-300 mx-2"></div>
+            <div class="loan-step-indicator flex flex-col items-center" data-step="2">
+              <div class="loan-step-circle w-10 h-10 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center text-sm font-semibold mb-2 text-gray-400">2</div>
+              <span class="text-xs font-medium text-gray-400">Step 2</span>
+            </div>
+            <div class="loan-step-line flex-1 h-1 bg-gray-300 mx-2"></div>
+            <div class="loan-step-indicator flex flex-col items-center" data-step="3">
+              <div class="loan-step-circle w-10 h-10 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center text-sm font-semibold mb-2 text-gray-400">3</div>
+              <span class="text-xs font-medium text-gray-400">Step 3</span>
             </div>
           </div>
         </div>
-      </div>
-      <!-- Loan Step 2: Academic Information -->
-      <div class="loan-form-step hidden" data-step="2">
-        <h2 class="text-2xl font-bold mb-6 text-gray-800">Academic Information</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-x-3 gap-y-3">
-          <div class="relative">
-            <input type="date" id="loanDate" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Select date">
-            <label for="loanDate" class="absolute top-0 start-0 p-4 h-full text-sm text-gray-500 truncate pointer-events-none transition ease-in-out duration-100 origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-400 peer-valid:scale-90 peer-valid:translate-x-0.5 peer-valid:-translate-y-1.5 peer-valid:text-gray-400">Select date</label>
-            <div class="absolute inset-y-0 end-0 flex items-center pe-4 pointer-events-none">
-              <svg class="w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 10h16m-8-3V4M7 7V4m10 3V4M5 20h14a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Zm3-7h.01v.01H8V13Zm4 0h.01v.01H12V13Zm4 0h.01v.01H16V13Zm-8 4h.01v.01H8V17Zm4 0h.01v.01H12V17Zm4 0h.01v.01H16V17Z"/>
-              </svg>
+
+        <form id="safe-loan-form" class="space-y-6">
+          <!-- Loan Step 1: Personal Information -->
+          <div class="loan-form-step" data-step="1">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Personal Information</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-3">
+              <div class="relative">
+                <input type="text" id="loanLastName" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Last name" required>
+                <label for="loanLastName" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Last name</label>
+              </div>
+              <div class="relative">
+                <input type="text" id="loanFirstName" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="First name" required>
+                <label for="loanFirstName" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">First name</label>
+              </div>
+              <div class="relative">
+                <input type="text" id="loanMiddleName" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Middle name">
+                <label for="loanMiddleName" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Middle name</label>
+              </div>
+              <div class="relative">
+                <input type="text" id="loanContact" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Contact number" required>
+                <label for="loanContact" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Contact number</label>
+              </div>
+              <div class="md:col-span-2">
+                <label class="block mb-3 text-sm text-gray-600">Gender</label>
+                <div class="flex gap-x-6">
+                  <div class="flex">
+                    <input type="radio" name="loanGender" value="Female" class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 checked:border-blue-500" id="loan-radio-group-1" checked>
+                    <label for="loan-radio-group-1" class="text-sm text-gray-500 ms-2">Female</label>
+                  </div>
+                  <div class="flex">
+                    <input type="radio" name="loanGender" value="Male" class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 checked:border-blue-500" id="loan-radio-group-2">
+                    <label for="loan-radio-group-2" class="text-sm text-gray-500 ms-2">Male</label>
+                  </div>
+                  <div class="flex">
+                    <input type="radio" name="loanGender" value="Prefer not to say" class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 checked:border-blue-500" id="loan-radio-group-3">
+                    <label for="loan-radio-group-3" class="text-sm text-gray-500 ms-2">Prefer not to Say</label>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="md:col-span-2 relative">
-            <select id="loanStudentStatus" class="peer p-4 pe-9 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2 peer-valid:text-gray-900" onchange="toggleLoanLastSemInput(this.value === 'not-enrolled')">
-              <option value=""></option>
-              <option value="currently-enrolled">Currently Enrolled</option>
-              <option value="not-enrolled">Not Enrolled</option>
-            </select>
-            <label for="loanStudentStatus" class="absolute top-0 start-0 p-4 h-full text-sm text-gray-500 truncate pointer-events-none transition ease-in-out duration-100 origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-400 peer-valid:scale-90 peer-valid:translate-x-0.5 peer-valid:-translate-y-1.5 peer-valid:text-gray-400">Student's Status</label>
+          <!-- Loan Step 2: Academic Information -->
+          <div class="loan-form-step hidden" data-step="2">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Academic Information</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-x-3 gap-y-3">
+              <div class="relative">
+                <input type="date" id="loanDate" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Select date">
+                <label for="loanDate" class="absolute top-0 start-0 p-4 h-full text-sm text-gray-500 truncate pointer-events-none transition ease-in-out duration-100 origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-400 peer-valid:scale-90 peer-valid:translate-x-0.5 peer-valid:-translate-y-1.5 peer-valid:text-gray-400">Select date</label>
+                <div class="absolute inset-y-0 end-0 flex items-center pe-4 pointer-events-none">
+                  <svg class="w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 10h16m-8-3V4M7 7V4m10 3V4M5 20h14a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Zm3-7h.01v.01H8V13Zm4 0h.01v.01H12V13Zm4 0h.01v.01H16V13Zm-8 4h.01v.01H8V17Zm4 0h.01v.01H12V17Zm4 0h.01v.01H16V17Z" />
+                  </svg>
+                </div>
+              </div>
+              <div class="md:col-span-2 relative">
+                <select id="loanStudentStatus" class="peer p-4 pe-9 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2 peer-valid:text-gray-900" onchange="toggleLoanLastSemInput(this.value === 'not-enrolled')">
+                  <option value=""></option>
+                  <option value="currently-enrolled">Currently Enrolled</option>
+                  <option value="not-enrolled">Not Enrolled</option>
+                </select>
+                <label for="loanStudentStatus" class="absolute top-0 start-0 p-4 h-full text-sm text-gray-500 truncate pointer-events-none transition ease-in-out duration-100 origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-400 peer-valid:scale-90 peer-valid:translate-x-0.5 peer-valid:-translate-y-1.5 peer-valid:text-gray-400">Student's Status</label>
+              </div>
+              <div id="loanLastSemContainer" class="md:col-span-3 relative hidden">
+                <input type="text" id="loanLastSem" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Last Sem & SY">
+                <label for="loanLastSem" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Last Sem & SY</label>
+              </div>
+              <div class="relative md:col-span-2">
+                <input type="text" id="loanProgram" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Program & Year" required>
+                <label for="loanProgram" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Program & Year</label>
+              </div>
+              <div class="relative">
+                <input type="text" id="loanYearGraduated" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Year Graduated">
+                <label for="loanYearGraduated" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Year Graduated</label>
+              </div>
+            </div>
           </div>
-          <div id="loanLastSemContainer" class="md:col-span-3 relative hidden">
-            <input type="text" id="loanLastSem" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Last Sem & SY">
-            <label for="loanLastSem" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Last Sem & SY</label>
+          <!-- Loan Step 3: Additional Information -->
+          <div class="loan-form-step hidden" data-step="3">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Additional Information</h2>
+            <div class="space-y-3">
+              <div class="relative">
+                <input type="email" id="loanEmail" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Email address" required>
+                <label for="loanEmail" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Email address</label>
+              </div>
+              <div class="relative">
+                <textarea id="loanPurpose" rows="4" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2 resize-none" placeholder="Purpose of request"></textarea>
+                <label for="loanPurpose" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Purpose of request</label>
+              </div>
+            </div>
           </div>
-          <div class="relative md:col-span-2">
-            <input type="text" id="loanProgram" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Program & Year" required>
-            <label for="loanProgram" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Program & Year</label>
+          <!-- Loan Navigation Buttons -->
+          <div class="flex justify-between mt-6 pt-3">
+            <button type="button" id="loan-prev-btn" class="px-8 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-lg transition-all duration-200 hidden">Back</button>
+            <button type="button" id="loan-next-btn" class="ml-auto px-16 py-3 text-white font-semibold rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105" style="background-color: #8B0000;">Continue</button>
           </div>
-          <div class="relative">
-            <input type="text" id="loanYearGraduated" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Year Graduated">
-            <label for="loanYearGraduated" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Year Graduated</label>
-          </div>
-        </div>
+        </form>
       </div>
-      <!-- Loan Step 3: Additional Information -->
-      <div class="loan-form-step hidden" data-step="3">
-        <h2 class="text-2xl font-bold mb-6 text-gray-800">Additional Information</h2>
-        <div class="space-y-3">
-          <div class="relative">
-            <input type="email" id="loanEmail" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Email address" required>
-            <label for="loanEmail" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Email address</label>
-          </div>
-          <div class="relative">
-            <textarea id="loanPurpose" rows="4" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2 resize-none" placeholder="Purpose of request"></textarea>
-            <label for="loanPurpose" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Purpose of request</label>
-          </div>
-        </div>
-      </div>
-      <!-- Loan Navigation Buttons -->
-      <div class="flex justify-between mt-6 pt-3">
-        <button type="button" id="loan-prev-btn" class="px-8 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-lg transition-all duration-200 hidden">Back</button>
-        <button type="button" id="loan-next-btn" class="ml-auto px-16 py-3 text-white font-semibold rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105" style="background-color: #8B0000;">Continue</button>
-      </div>
-    </form>
-  </div>
-</div>
+    </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const optionCards = document.querySelectorAll('.option-card');
-  const modals = {
-    'good-moral': document.getElementById('good-moral-modal'),
-    'safe-loan-instructions': document.getElementById('safe-loan-instructions-modal'),
-    'safe-loan-form': document.getElementById('safe-loan-form-modal'),
-    'payment-slip': document.getElementById('payment-slip-modal'),
-    'payment-slip-loan': document.getElementById('payment-slip-loan-modal')
-  };
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const optionCards = document.querySelectorAll('.option-card');
+        const modals = {
+          'good-moral': document.getElementById('good-moral-modal'),
+          'safe-loan-instructions': document.getElementById('safe-loan-instructions-modal'),
+          'safe-loan-form': document.getElementById('safe-loan-form-modal'),
+          'payment-slip': document.getElementById('payment-slip-modal'),
+          'payment-slip-loan': document.getElementById('payment-slip-loan-modal')
+        };
 
-  // Toggle Last Sem input based on student status
-  window.toggleLastSemInput = function(show) {
-    const container = document.getElementById('lastSemContainer');
-    const input = document.getElementById('lastSem');
-    if (show) {
-      container.classList.remove('hidden');
-      input.required = true;
-    } else {
-      container.classList.add('hidden');
-      input.required = false;
-      input.value = '';
-    }
-  };
+        // Toggle Last Sem input based on student status
+        window.toggleLastSemInput = function(show) {
+          const container = document.getElementById('lastSemContainer');
+          const input = document.getElementById('lastSem');
+          if (show) {
+            container.classList.remove('hidden');
+            input.required = true;
+          } else {
+            container.classList.add('hidden');
+            input.required = false;
+            input.value = '';
+          }
+        };
 
-  // Multi-step form navigation
-  let currentStep = 1;
-  const totalSteps = 3;
-  
-  function updateStepDisplay() {
-    // Hide all steps
-    document.querySelectorAll('.form-step').forEach(step => {
-      step.classList.add('hidden');
-    });
-    
-    // Show current step
-    const currentStepEl = document.querySelector(`.form-step[data-step="${currentStep}"]`);
-    if (currentStepEl) {
-      currentStepEl.classList.remove('hidden');
-    }
-    
-    // Update progress indicators
-    document.querySelectorAll('.step-indicator').forEach((indicator, index) => {
-      const stepNum = index + 1;
-      const circle = indicator.querySelector('.step-circle');
-      const label = indicator.querySelector('span');
-      const line = indicator.nextElementSibling;
-      
-      if (stepNum < currentStep) {
-        // Completed step
-        circle.classList.remove('border-2', 'border-gray-300', 'bg-white', 'text-gray-400');
-        circle.classList.add('text-white');
-        circle.style.backgroundColor = '#8B0000';
-        circle.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
-        label.classList.remove('text-gray-400');
-        label.style.color = '#8B0000';
-        if (line && line.classList.contains('step-line')) {
-          line.style.backgroundColor = '#8B0000';
+        // Multi-step form navigation
+        let currentStep = 1;
+        const totalSteps = 3;
+
+        function updateStepDisplay() {
+          // Hide all steps
+          document.querySelectorAll('.form-step').forEach(step => {
+            step.classList.add('hidden');
+          });
+
+          // Show current step
+          const currentStepEl = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+          if (currentStepEl) {
+            currentStepEl.classList.remove('hidden');
+          }
+
+          // Update progress indicators
+          document.querySelectorAll('.step-indicator').forEach((indicator, index) => {
+            const stepNum = index + 1;
+            const circle = indicator.querySelector('.step-circle');
+            const label = indicator.querySelector('span');
+            const line = indicator.nextElementSibling;
+
+            if (stepNum < currentStep) {
+              // Completed step
+              circle.classList.remove('border-2', 'border-gray-300', 'bg-white', 'text-gray-400');
+              circle.classList.add('text-white');
+              circle.style.backgroundColor = '#8B0000';
+              circle.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+              label.classList.remove('text-gray-400');
+              label.style.color = '#8B0000';
+              if (line && line.classList.contains('step-line')) {
+                line.style.backgroundColor = '#8B0000';
+              }
+            } else if (stepNum === currentStep) {
+              // Current step
+              circle.classList.remove('border-gray-300', 'text-gray-400');
+              circle.classList.add('text-white');
+              circle.style.backgroundColor = '#8B0000';
+              circle.style.borderColor = '#8B0000';
+              circle.textContent = stepNum;
+              label.classList.remove('text-gray-400');
+              label.style.color = '#8B0000';
+            } else {
+              // Future step
+              circle.classList.remove('text-white');
+              circle.classList.add('border-2', 'border-gray-300', 'bg-white', 'text-gray-400');
+              circle.style.backgroundColor = '';
+              circle.style.borderColor = '';
+              circle.textContent = stepNum;
+              label.classList.add('text-gray-400');
+              label.style.color = '';
+              if (line && line.classList.contains('step-line')) {
+                line.style.backgroundColor = '';
+              }
+            }
+          });
+
+          // Update buttons
+          const prevBtn = document.getElementById('prev-btn');
+          const nextBtn = document.getElementById('next-btn');
+
+          if (currentStep === 1) {
+            prevBtn.classList.add('hidden');
+          } else {
+            prevBtn.classList.remove('hidden');
+          }
+
+          if (currentStep === totalSteps) {
+            nextBtn.textContent = 'Submit';
+          } else {
+            nextBtn.textContent = 'Continue';
+          }
+
+          // Revalidate to toggle button state
+          nextBtn.classList.toggle('btn-disabled', !validateCurrentStep());
+          attachStepFieldListeners();
         }
-      } else if (stepNum === currentStep) {
-        // Current step
-        circle.classList.remove('border-gray-300', 'text-gray-400');
-        circle.classList.add('text-white');
-        circle.style.backgroundColor = '#8B0000';
-        circle.style.borderColor = '#8B0000';
-        circle.textContent = stepNum;
-        label.classList.remove('text-gray-400');
-        label.style.color = '#8B0000';
-      } else {
-        // Future step
-        circle.classList.remove('text-white');
-        circle.classList.add('border-2', 'border-gray-300', 'bg-white', 'text-gray-400');
-        circle.style.backgroundColor = '';
-        circle.style.borderColor = '';
-        circle.textContent = stepNum;
-        label.classList.add('text-gray-400');
-        label.style.color = '';
-        if (line && line.classList.contains('step-line')) {
-          line.style.backgroundColor = '';
-        }
-      }
-    });
-    
-    // Update buttons
-    const prevBtn = document.getElementById('prev-btn');
-    const nextBtn = document.getElementById('next-btn');
-    
-    if (currentStep === 1) {
-      prevBtn.classList.add('hidden');
-    } else {
-      prevBtn.classList.remove('hidden');
-    }
-    
-    if (currentStep === totalSteps) {
-      nextBtn.textContent = 'Submit';
-    } else {
-      nextBtn.textContent = 'Continue';
-    }
 
-    // Revalidate to toggle button state
-    nextBtn.classList.toggle('btn-disabled', !validateCurrentStep());
-  attachStepFieldListeners();
-  }
-
-  function showFieldError(input, msg) {
-    input.classList.add('error-border');
-    let em = input.parentElement.querySelector('.error-msg');
-    if (!em) {
-      em = document.createElement('div');
-      em.className = 'error-msg';
-      input.parentElement.appendChild(em);
-    }
-    em.textContent = msg;
-    em.style.display = 'block';
-  }
-
-  function clearFieldError(input) {
-    input.classList.remove('error-border');
-    const em = input.parentElement.querySelector('.error-msg');
-    if (em) em.style.display = 'none';
-  }
-
-  function validateCurrentStep() {
-    let valid = true;
-    const stepEl = document.querySelector(`.form-step[data-step="${currentStep}"]`);
-    if (!stepEl) return true;
-    const requiredInputs = stepEl.querySelectorAll('input[required], select[required], textarea[required]');
-    requiredInputs.forEach(inp => {
-      clearFieldError(inp);
-      if (!inp.value || (inp.type === 'radio' && !stepEl.querySelector(`input[name="${inp.name}"]:checked`))) {
-        showFieldError(inp, 'Required');
-        valid = false;
-      }
-    });
-    // Special case: if student status is not-enrolled ensure lastSem when step 2
-    if (currentStep === 2) {
-      const status = document.getElementById('studentStatus').value;
-      if (status === 'not-enrolled') {
-        const lastSem = document.getElementById('lastSem');
-        clearFieldError(lastSem);
-        if (!lastSem.value.trim()) {
-          showFieldError(lastSem, 'Provide last semester & SY');
-          valid = false;
-        }
-      }
-    }
-    return valid;
-  }
-
-  function attachStepFieldListeners() {
-    const stepEl = document.querySelector(`.form-step[data-step="${currentStep}"]`);
-    if (!stepEl) return;
-    const requiredInputs = stepEl.querySelectorAll('input[required], select[required], textarea[required]');
-    requiredInputs.forEach(inp => {
-      if (!inp.dataset.listenerAttached) {
-        const evt = inp.tagName === 'SELECT' ? 'change' : 'input';
-        inp.addEventListener(evt, () => {
-          clearFieldError(inp); // remove previous error
-          // Revalidate only current step to update button state
-          validateCurrentStep();
-          document.getElementById('next-btn').classList.toggle('btn-disabled', !validateCurrentStep());
-        });
-        inp.dataset.listenerAttached = '1';
-      }
-    });
-  }
-  
-  // Next button
-  document.getElementById('next-btn').addEventListener('click', function() {
-  if (!validateCurrentStep()) return; // block advance if invalid
-    if (currentStep < totalSteps) {
-      currentStep++;
-      updateStepDisplay();
-    } else {
-      // On last step, proceed to payment
-      closeModal(modals['good-moral']);
-      openModal('payment-slip');
-    }
-  });
-  
-  // Previous button
-  document.getElementById('prev-btn').addEventListener('click', function() {
-    if (currentStep > 1) {
-      currentStep--;
-      updateStepDisplay();
-    }
-  });
-  
-  // Reset step when modal opens
-  optionCards.forEach(card => {
-    if (card.dataset.option === 'safe-loan-form') {
-      card.addEventListener('click', () => openModal('safe-loan-instructions'));
-    } else if (card.dataset.option === 'good-moral') {
-      card.addEventListener('click', () => {
-        currentStep = 1;
-        updateStepDisplay();
-        openModal('good-moral');
-      });
-    } else {
-      card.addEventListener('click', () => openModal(card.dataset.option));
-    }
-  });
-
-  // Safe Loan: Proceed to Application button
-  document.getElementById('open-loan-form-btn').addEventListener('click', () => {
-    closeModal(modals['safe-loan-instructions']);
-  currentLoanStep = 1;
-  updateLoanStepDisplay();
-  openModal('safe-loan-form');
-  });
-
-  document.querySelectorAll('.close-btn').forEach(btn => {
-    btn.addEventListener('click', () => closeModal(btn.closest('.modal')));
-  });
-
-  document.querySelectorAll('.ok-btn').forEach(btn => {
-    btn.addEventListener('click', () => closeModal(btn.closest('.modal')));
-  });
-
-  document.querySelectorAll('.modal').forEach(modal => {
-    modal.addEventListener('click', e => {
-      if (e.target === modal) closeModal(modal);
-    });
-  });
-
-  // Good Moral Payment Slip: Back button
-  document.getElementById('back-btn').addEventListener('click', () => {
-    closeModal(modals['payment-slip']);
-    currentStep = totalSteps; // Return to last step of form
-    updateStepDisplay();
-    openModal('good-moral');
-  });
-
-  // Safe Loan: Proceed to Payment Slip after form
-  // Loan multi-step navigation
-  let currentLoanStep = 1;
-  const totalLoanSteps = 3;
-
-  function updateLoanStepDisplay() {
-    document.querySelectorAll('.loan-form-step').forEach(step => step.classList.add('hidden'));
-    const currentLoanStepEl = document.querySelector(`.loan-form-step[data-step="${currentLoanStep}"]`);
-    if (currentLoanStepEl) currentLoanStepEl.classList.remove('hidden');
-
-    document.querySelectorAll('.loan-step-indicator').forEach((indicator, index) => {
-      const stepNum = index + 1;
-      const circle = indicator.querySelector('.loan-step-circle');
-      const label = indicator.querySelector('span');
-      const line = indicator.nextElementSibling;
-      if (stepNum < currentLoanStep) {
-        circle.classList.remove('border-2', 'border-gray-300', 'bg-white', 'text-gray-400');
-        circle.classList.add('text-white');
-        circle.style.backgroundColor = '#8B0000';
-        circle.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
-        label.classList.remove('text-gray-400');
-        label.style.color = '#8B0000';
-        if (line && line.classList.contains('loan-step-line')) line.style.backgroundColor = '#8B0000';
-      } else if (stepNum === currentLoanStep) {
-        circle.classList.remove('border-gray-300', 'text-gray-400');
-        circle.classList.add('text-white');
-        circle.style.backgroundColor = '#8B0000';
-        circle.style.borderColor = '#8B0000';
-        circle.textContent = stepNum;
-        label.classList.remove('text-gray-400');
-        label.style.color = '#8B0000';
-      } else {
-        circle.classList.remove('text-white');
-        circle.classList.add('border-2', 'border-gray-300', 'bg-white', 'text-gray-400');
-        circle.style.backgroundColor = '';
-        circle.style.borderColor = '';
-        circle.textContent = stepNum;
-        label.classList.add('text-gray-400');
-        label.style.color = '';
-        if (line && line.classList.contains('loan-step-line')) line.style.backgroundColor = '';
-      }
-    });
-
-    const loanPrevBtn = document.getElementById('loan-prev-btn');
-    const loanNextBtn = document.getElementById('loan-next-btn');
-    if (currentLoanStep === 1) loanPrevBtn.classList.add('hidden'); else loanPrevBtn.classList.remove('hidden');
-    loanNextBtn.textContent = currentLoanStep === totalLoanSteps ? 'Submit' : 'Continue';
-    loanNextBtn.classList.toggle('btn-disabled', !validateLoanCurrentStep());
-  attachLoanStepFieldListeners();
-  }
-
-  function validateLoanCurrentStep() {
-    let valid = true;
-    const stepEl = document.querySelector(`.loan-form-step[data-step="${currentLoanStep}"]`);
-    if (!stepEl) return true;
-    const requiredInputs = stepEl.querySelectorAll('input[required], select[required], textarea[required]');
-    requiredInputs.forEach(inp => {
-      inp.classList.remove('error-border');
-      let em = inp.parentElement.querySelector('.error-msg');
-      if (em) em.style.display='none';
-      if (!inp.value) {
-        valid = false;
-        inp.classList.add('error-border');
-        if (!em) {
-          em = document.createElement('div');
-          em.className='error-msg';
-          inp.parentElement.appendChild(em);
-        }
-        em.textContent='Required';
-        em.style.display='block';
-      }
-    });
-    if (currentLoanStep === 2) {
-      const status = document.getElementById('loanStudentStatus').value;
-      if (status === 'not-enrolled') {
-        const lastSem = document.getElementById('loanLastSem');
-        lastSem.classList.remove('error-border');
-        let em = lastSem.parentElement.querySelector('.error-msg');
-        if (em) em.style.display='none';
-        if (!lastSem.value.trim()) {
-          valid = false;
-          lastSem.classList.add('error-border');
+        function showFieldError(input, msg) {
+          input.classList.add('error-border');
+          let em = input.parentElement.querySelector('.error-msg');
           if (!em) {
             em = document.createElement('div');
-            em.className='error-msg';
-            lastSem.parentElement.appendChild(em);
+            em.className = 'error-msg';
+            input.parentElement.appendChild(em);
           }
-          em.textContent='Provide last semester & SY';
-          em.style.display='block';
+          em.textContent = msg;
+          em.style.display = 'block';
         }
-      }
-    }
-    return valid;
-  }
 
-  function attachLoanStepFieldListeners() {
-    const stepEl = document.querySelector(`.loan-form-step[data-step="${currentLoanStep}"]`);
-    if (!stepEl) return;
-    const requiredInputs = stepEl.querySelectorAll('input[required], select[required], textarea[required]');
-    requiredInputs.forEach(inp => {
-      if (!inp.dataset.listenerAttached) {
-        const evt = inp.tagName === 'SELECT' ? 'change' : 'input';
-        inp.addEventListener(evt, () => {
-          // clear and revalidate
-          inp.classList.remove('error-border');
-          const em = inp.parentElement.querySelector('.error-msg');
-          if (em) em.style.display='none';
-          validateLoanCurrentStep();
-          document.getElementById('loan-next-btn').classList.toggle('btn-disabled', !validateLoanCurrentStep());
+        function clearFieldError(input) {
+          input.classList.remove('error-border');
+          const em = input.parentElement.querySelector('.error-msg');
+          if (em) em.style.display = 'none';
+        }
+
+        function validateCurrentStep() {
+          let valid = true;
+          const stepEl = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+          if (!stepEl) return true;
+          const requiredInputs = stepEl.querySelectorAll('input[required], select[required], textarea[required]');
+          requiredInputs.forEach(inp => {
+            clearFieldError(inp);
+            if (!inp.value || (inp.type === 'radio' && !stepEl.querySelector(`input[name="${inp.name}"]:checked`))) {
+              showFieldError(inp, 'Required');
+              valid = false;
+            }
+          });
+          // Special case: if student status is not-enrolled ensure lastSem when step 2
+          if (currentStep === 2) {
+            const status = document.getElementById('studentStatus').value;
+            if (status === 'not-enrolled') {
+              const lastSem = document.getElementById('lastSem');
+              clearFieldError(lastSem);
+              if (!lastSem.value.trim()) {
+                showFieldError(lastSem, 'Provide last semester & SY');
+                valid = false;
+              }
+            }
+          }
+          return valid;
+        }
+
+        function attachStepFieldListeners() {
+          const stepEl = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+          if (!stepEl) return;
+          const requiredInputs = stepEl.querySelectorAll('input[required], select[required], textarea[required]');
+          requiredInputs.forEach(inp => {
+            if (!inp.dataset.listenerAttached) {
+              const evt = inp.tagName === 'SELECT' ? 'change' : 'input';
+              inp.addEventListener(evt, () => {
+                clearFieldError(inp); // remove previous error
+                // Revalidate only current step to update button state
+                validateCurrentStep();
+                document.getElementById('next-btn').classList.toggle('btn-disabled', !validateCurrentStep());
+              });
+              inp.dataset.listenerAttached = '1';
+            }
+          });
+        }
+
+        // Next button
+        document.getElementById('next-btn').addEventListener('click', function() {
+          if (!validateCurrentStep()) return; // block advance if invalid
+          if (currentStep < totalSteps) {
+            currentStep++;
+            updateStepDisplay();
+          } else {
+            // On last step, proceed to payment
+            closeModal(modals['good-moral']);
+            openModal('payment-slip');
+          }
         });
-        inp.dataset.listenerAttached = '1';
-      }
-    });
-  }
 
-  document.getElementById('loan-next-btn').addEventListener('click', () => {
-  if (!validateLoanCurrentStep()) return;
-    if (currentLoanStep < totalLoanSteps) {
-      currentLoanStep++;
-      updateLoanStepDisplay();
-    } else {
-      // On submit open payment slip
-      closeModal(modals['safe-loan-form']);
-      openModal('payment-slip-loan');
-    }
-  });
+        // Previous button
+        document.getElementById('prev-btn').addEventListener('click', function() {
+          if (currentStep > 1) {
+            currentStep--;
+            updateStepDisplay();
+          }
+        });
 
-  document.getElementById('loan-prev-btn').addEventListener('click', () => {
-    if (currentLoanStep > 1) {
-      currentLoanStep--;
-      updateLoanStepDisplay();
-    }
-  });
+        // Reset step when modal opens
+        optionCards.forEach(card => {
+          if (card.dataset.option === 'safe-loan-form') {
+            card.addEventListener('click', () => openModal('safe-loan-instructions'));
+          } else if (card.dataset.option === 'good-moral') {
+            card.addEventListener('click', () => {
+              currentStep = 1;
+              updateStepDisplay();
+              openModal('good-moral');
+            });
+          } else {
+            card.addEventListener('click', () => openModal(card.dataset.option));
+          }
+        });
 
-  // Toggle Last Sem for loan
-  window.toggleLoanLastSemInput = function(show) {
-    const container = document.getElementById('loanLastSemContainer');
-    const input = document.getElementById('loanLastSem');
-    if (show) {
-      container.classList.remove('hidden');
-      input.required = true;
-    } else {
-      container.classList.add('hidden');
-      input.required = false;
-      input.value = '';
-    }
-  };
+        // Safe Loan: Proceed to Application button
+        document.getElementById('open-loan-form-btn').addEventListener('click', () => {
+          closeModal(modals['safe-loan-instructions']);
+          currentLoanStep = 1;
+          updateLoanStepDisplay();
+          openModal('safe-loan-form');
+        });
 
-  // Loan Payment Slip: Back button
-  document.getElementById('loan-back-btn').addEventListener('click', () => {
-    closeModal(modals['payment-slip-loan']);
-    openModal('safe-loan-form');
-  });
+        document.querySelectorAll('.close-btn').forEach(btn => {
+          btn.addEventListener('click', () => closeModal(btn.closest('.modal')));
+        });
 
-  // Loan Payment Slip: Update total when amount changes
-  const loanAmountInput = document.getElementById('loan-amount');
-  const loanTotalAmount = document.getElementById('loan-total-amount');
-  function updateLoanTotal() {
-    const amt = parseFloat(loanAmountInput.value) || 0;
-    loanTotalAmount.textContent = `₱${amt.toFixed(2)}`;
-  }
-  loanAmountInput.addEventListener('input', updateLoanTotal);
-  updateLoanTotal();
+        document.querySelectorAll('.ok-btn').forEach(btn => {
+          btn.addEventListener('click', () => closeModal(btn.closest('.modal')));
+        });
 
-  loanAmountInput.addEventListener('input', updateLoanTotal);
-  updateLoanTotal();
+        document.querySelectorAll('.modal').forEach(modal => {
+          modal.addEventListener('click', e => {
+            if (e.target === modal) closeModal(modal);
+          });
+        });
 
-  // Good Moral quantity update
-  const gmQty = document.getElementById('gm-qty');
-  const gmCost = document.getElementById('gm-cost');
-  const totalAmount = document.getElementById('total-amount');
+        // Good Moral Payment Slip: Back button
+        document.getElementById('back-btn').addEventListener('click', () => {
+          closeModal(modals['payment-slip']);
+          currentStep = totalSteps; // Return to last step of form
+          updateStepDisplay();
+          openModal('good-moral');
+        });
 
-  function updateCost() {
-    const qty = parseInt(gmQty.value) || 1;
-    const cost = qty * 70;
-    gmCost.textContent = `₱${cost.toFixed(2)}`;
-    totalAmount.textContent = `₱${cost.toFixed(2)}`;
-  }
+        // Safe Loan: Proceed to Payment Slip after form
+        // Loan multi-step navigation
+        let currentLoanStep = 1;
+        const totalLoanSteps = 3;
 
-  gmQty.addEventListener('input', updateCost);
-  updateCost();
+        function updateLoanStepDisplay() {
+          document.querySelectorAll('.loan-form-step').forEach(step => step.classList.add('hidden'));
+          const currentLoanStepEl = document.querySelector(`.loan-form-step[data-step="${currentLoanStep}"]`);
+          if (currentLoanStepEl) currentLoanStepEl.classList.remove('hidden');
 
-  // Submit payment form -> map fields -> submit hidden POST form
-  const paymentForm = document.getElementById('payment-form');
-  paymentForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-  const submitBtn = paymentForm.querySelector('button[type="submit"]');
-  if (submitBtn.dataset.loading==='1') return; // prevent double submit
-  submitBtn.dataset.loading='1';
-  submitBtn.textContent='Submitting...';
-  submitBtn.classList.add('btn-disabled');
-    // Gather values from wizard
-    const firstName = document.getElementById('firstName').value.trim();
-    const lastName = document.getElementById('lastName').value.trim();
-    const middleName = document.getElementById('middleName').value.trim();
-    const contact = document.getElementById('contact').value.trim();
-    const dateNeeded = document.getElementById('date').value; // yyyy-mm-dd
-    const statusRaw = document.getElementById('studentStatus').value; // currently-enrolled | not-enrolled
-    const lastSem = document.getElementById('lastSem').value.trim();
-    const program = document.getElementById('program').value.trim();
-    const yearGraduated = document.getElementById('yearGraduated').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const purpose = document.getElementById('purpose').value.trim();
-    const genderEl = document.querySelector('input[name="gender"]:checked');
-    const gender = genderEl ? genderEl.value : '';
-    const copies = parseInt(gmQty.value) || 1;
+          document.querySelectorAll('.loan-step-indicator').forEach((indicator, index) => {
+            const stepNum = index + 1;
+            const circle = indicator.querySelector('.loan-step-circle');
+            const label = indicator.querySelector('span');
+            const line = indicator.nextElementSibling;
+            if (stepNum < currentLoanStep) {
+              circle.classList.remove('border-2', 'border-gray-300', 'bg-white', 'text-gray-400');
+              circle.classList.add('text-white');
+              circle.style.backgroundColor = '#8B0000';
+              circle.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
+              label.classList.remove('text-gray-400');
+              label.style.color = '#8B0000';
+              if (line && line.classList.contains('loan-step-line')) line.style.backgroundColor = '#8B0000';
+            } else if (stepNum === currentLoanStep) {
+              circle.classList.remove('border-gray-300', 'text-gray-400');
+              circle.classList.add('text-white');
+              circle.style.backgroundColor = '#8B0000';
+              circle.style.borderColor = '#8B0000';
+              circle.textContent = stepNum;
+              label.classList.remove('text-gray-400');
+              label.style.color = '#8B0000';
+            } else {
+              circle.classList.remove('text-white');
+              circle.classList.add('border-2', 'border-gray-300', 'bg-white', 'text-gray-400');
+              circle.style.backgroundColor = '';
+              circle.style.borderColor = '';
+              circle.textContent = stepNum;
+              label.classList.add('text-gray-400');
+              label.style.color = '';
+              if (line && line.classList.contains('loan-step-line')) line.style.backgroundColor = '';
+            }
+          });
 
-    // Map to hidden form fields
-    document.getElementById('gm-first_name').value = firstName;
-    document.getElementById('gm-last_name').value = lastName;
-    document.getElementById('gm-middle_name').value = middleName;
-    document.getElementById('gm-contact').value = contact;
-    document.getElementById('gm-date_needed').value = dateNeeded;
-    document.getElementById('gm-student_status').value = statusRaw.replace('-', '_');
-    document.getElementById('gm-last_semester').value = lastSem;
-    document.getElementById('gm-program_year').value = program;
-    document.getElementById('gm-year_graduated').value = yearGraduated;
-    document.getElementById('gm-email').value = email;
-    document.getElementById('gm-purpose').value = purpose;
-    document.getElementById('gm-gender').value = gender;
-    document.getElementById('gm-copies').value = copies;
+          const loanPrevBtn = document.getElementById('loan-prev-btn');
+          const loanNextBtn = document.getElementById('loan-next-btn');
+          if (currentLoanStep === 1) loanPrevBtn.classList.add('hidden');
+          else loanPrevBtn.classList.remove('hidden');
+          loanNextBtn.textContent = currentLoanStep === totalLoanSteps ? 'Submit' : 'Continue';
+          loanNextBtn.classList.toggle('btn-disabled', !validateLoanCurrentStep());
+          attachLoanStepFieldListeners();
+        }
 
-    // Submit hidden form
-    document.getElementById('gm-submit-form').submit();
-  });
+        function validateLoanCurrentStep() {
+          let valid = true;
+          const stepEl = document.querySelector(`.loan-form-step[data-step="${currentLoanStep}"]`);
+          if (!stepEl) return true;
+          const requiredInputs = stepEl.querySelectorAll('input[required], select[required], textarea[required]');
+          requiredInputs.forEach(inp => {
+            inp.classList.remove('error-border');
+            let em = inp.parentElement.querySelector('.error-msg');
+            if (em) em.style.display = 'none';
+            if (!inp.value) {
+              valid = false;
+              inp.classList.add('error-border');
+              if (!em) {
+                em = document.createElement('div');
+                em.className = 'error-msg';
+                inp.parentElement.appendChild(em);
+              }
+              em.textContent = 'Required';
+              em.style.display = 'block';
+            }
+          });
+          if (currentLoanStep === 2) {
+            const status = document.getElementById('loanStudentStatus').value;
+            if (status === 'not-enrolled') {
+              const lastSem = document.getElementById('loanLastSem');
+              lastSem.classList.remove('error-border');
+              let em = lastSem.parentElement.querySelector('.error-msg');
+              if (em) em.style.display = 'none';
+              if (!lastSem.value.trim()) {
+                valid = false;
+                lastSem.classList.add('error-border');
+                if (!em) {
+                  em = document.createElement('div');
+                  em.className = 'error-msg';
+                  lastSem.parentElement.appendChild(em);
+                }
+                em.textContent = 'Provide last semester & SY';
+                em.style.display = 'block';
+              }
+            }
+          }
+          return valid;
+        }
 
-  // Safe Loan payment slip submit mapping
-  const paymentLoanForm = document.getElementById('payment-loan-form');
-  paymentLoanForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-  const submitBtn = paymentLoanForm.querySelector('button[type="submit"]');
-  if (submitBtn.dataset.loading==='1') return;
-  submitBtn.dataset.loading='1';
-  submitBtn.textContent='Submitting...';
-  submitBtn.classList.add('btn-disabled');
-    // Gather from loan wizard
-    const firstName = document.getElementById('loanFirstName').value.trim();
-    const lastName = document.getElementById('loanLastName').value.trim();
-    const middleName = document.getElementById('loanMiddleName').value.trim();
-    const contact = document.getElementById('loanContact').value.trim();
-    const dateNeeded = document.getElementById('loanDate').value;
-    const studentStatusRaw = document.getElementById('loanStudentStatus').value; // currently-enrolled | not-enrolled
-    const lastSem = document.getElementById('loanLastSem').value.trim();
-    const programYear = document.getElementById('loanProgram').value.trim();
-    const yearGraduated = document.getElementById('loanYearGraduated').value.trim();
-    const email = document.getElementById('loanEmail').value.trim();
-    const purpose = document.getElementById('loanPurpose').value.trim();
-    const genderEl = document.querySelector('input[name="loanGender"]:checked');
-    const gender = genderEl ? genderEl.value : '';
-    const loanAmt = parseFloat(document.getElementById('loan-amount').value) || 0;
+        function attachLoanStepFieldListeners() {
+          const stepEl = document.querySelector(`.loan-form-step[data-step="${currentLoanStep}"]`);
+          if (!stepEl) return;
+          const requiredInputs = stepEl.querySelectorAll('input[required], select[required], textarea[required]');
+          requiredInputs.forEach(inp => {
+            if (!inp.dataset.listenerAttached) {
+              const evt = inp.tagName === 'SELECT' ? 'change' : 'input';
+              inp.addEventListener(evt, () => {
+                // clear and revalidate
+                inp.classList.remove('error-border');
+                const em = inp.parentElement.querySelector('.error-msg');
+                if (em) em.style.display = 'none';
+                validateLoanCurrentStep();
+                document.getElementById('loan-next-btn').classList.toggle('btn-disabled', !validateLoanCurrentStep());
+              });
+              inp.dataset.listenerAttached = '1';
+            }
+          });
+        }
 
-    // Map
-    document.getElementById('loan-first_name_hidden').value = firstName;
-    document.getElementById('loan-last_name_hidden').value = lastName;
-    document.getElementById('loan-middle_name_hidden').value = middleName;
-    document.getElementById('loan-contact_hidden').value = contact;
-    document.getElementById('loan-date_needed').value = dateNeeded;
-    document.getElementById('loan-student_status_hidden').value = studentStatusRaw.replace('-', '_');
-    document.getElementById('loan-last_semester_hidden').value = lastSem;
-    document.getElementById('loan-program_year_hidden').value = programYear;
-    document.getElementById('loan-year_graduated_hidden').value = yearGraduated;
-    document.getElementById('loan-email_hidden').value = email;
-    document.getElementById('loan-purpose_hidden').value = purpose;
-    document.getElementById('loan-gender_hidden').value = gender;
-    document.getElementById('loan-loan_amount_hidden').value = loanAmt.toFixed(2);
+        document.getElementById('loan-next-btn').addEventListener('click', () => {
+          if (!validateLoanCurrentStep()) return;
+          if (currentLoanStep < totalLoanSteps) {
+            currentLoanStep++;
+            updateLoanStepDisplay();
+          } else {
+            // On submit open payment slip
+            closeModal(modals['safe-loan-form']);
+            openModal('payment-slip-loan');
+          }
+        });
 
-    document.getElementById('loan-submit-form').submit();
-  });
+        document.getElementById('loan-prev-btn').addEventListener('click', () => {
+          if (currentLoanStep > 1) {
+            currentLoanStep--;
+            updateLoanStepDisplay();
+          }
+        });
 
-  // Helper functions
-  function openModal(option) {
-    if (modals[option]) {
-      modals[option].classList.remove('hidden');
-      modals[option].classList.add('flex');
-  // focus first input for accessibility
-  const firstInput = modals[option].querySelector('input, select, textarea, button');
-  if (firstInput) firstInput.focus();
-    }
-  }
+        // Toggle Last Sem for loan
+        window.toggleLoanLastSemInput = function(show) {
+          const container = document.getElementById('loanLastSemContainer');
+          const input = document.getElementById('loanLastSem');
+          if (show) {
+            container.classList.remove('hidden');
+            input.required = true;
+          } else {
+            container.classList.add('hidden');
+            input.required = false;
+            input.value = '';
+          }
+        };
 
-  function closeModal(modal) {
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-  }
+        // Loan Payment Slip: Back button
+        document.getElementById('loan-back-btn').addEventListener('click', () => {
+          closeModal(modals['payment-slip-loan']);
+          openModal('safe-loan-form');
+        });
 
-  // Flowbite-style floating labels use the peer classes on inputs and no JS is required.
+        // Loan Payment Slip: Update total when amount changes
+        const loanAmountInput = document.getElementById('loan-amount');
+        const loanTotalAmount = document.getElementById('loan-total-amount');
 
-  // ESC key closes top-most open modal
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      const open = Array.from(document.querySelectorAll('.modal.flex'));
-      if (open.length) {
-        closeModal(open[open.length-1]);
-      }
-    }
-  });
+        function updateLoanTotal() {
+          const amt = parseFloat(loanAmountInput.value) || 0;
+          loanTotalAmount.textContent = `₱${amt.toFixed(2)}`;
+        }
+        loanAmountInput.addEventListener('input', updateLoanTotal);
+        updateLoanTotal();
 
-  // Initial validation state
-  updateStepDisplay();
-  updateLoanStepDisplay();
-});
-</script>
+        loanAmountInput.addEventListener('input', updateLoanTotal);
+        updateLoanTotal();
+
+        // Good Moral quantity update
+        const gmQty = document.getElementById('gm-qty');
+        const gmCost = document.getElementById('gm-cost');
+        const totalAmount = document.getElementById('total-amount');
+
+        function updateCost() {
+          const qty = parseInt(gmQty.value) || 1;
+          const cost = qty * 70;
+          gmCost.textContent = `₱${cost.toFixed(2)}`;
+          totalAmount.textContent = `₱${cost.toFixed(2)}`;
+        }
+
+        gmQty.addEventListener('input', updateCost);
+        updateCost();
+
+        // Submit payment form -> map fields -> submit hidden POST form
+        const paymentForm = document.getElementById('payment-form');
+        paymentForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const submitBtn = paymentForm.querySelector('button[type="submit"]');
+          if (submitBtn.dataset.loading === '1') return; // prevent double submit
+          submitBtn.dataset.loading = '1';
+          submitBtn.textContent = 'Submitting...';
+          submitBtn.classList.add('btn-disabled');
+          // Gather values from wizard
+          const firstName = document.getElementById('firstName').value.trim();
+          const lastName = document.getElementById('lastName').value.trim();
+          const middleName = document.getElementById('middleName').value.trim();
+          const contact = document.getElementById('contact').value.trim();
+          const dateNeeded = document.getElementById('date').value; // yyyy-mm-dd
+          const statusRaw = document.getElementById('studentStatus').value; // currently-enrolled | not-enrolled
+          const lastSem = document.getElementById('lastSem').value.trim();
+          const program = document.getElementById('program').value.trim();
+          const yearGraduated = document.getElementById('yearGraduated').value.trim();
+          const email = document.getElementById('email').value.trim();
+          const purpose = document.getElementById('purpose').value.trim();
+          const genderEl = document.querySelector('input[name="gender"]:checked');
+          const gender = genderEl ? genderEl.value : '';
+          const copies = parseInt(gmQty.value) || 1;
+
+          // Map to hidden form fields
+          document.getElementById('gm-first_name').value = firstName;
+          document.getElementById('gm-last_name').value = lastName;
+          document.getElementById('gm-middle_name').value = middleName;
+          document.getElementById('gm-contact').value = contact;
+          document.getElementById('gm-date_needed').value = dateNeeded;
+          document.getElementById('gm-student_status').value = statusRaw.replace('-', '_');
+          document.getElementById('gm-last_semester').value = lastSem;
+          document.getElementById('gm-program_year').value = program;
+          document.getElementById('gm-year_graduated').value = yearGraduated;
+          document.getElementById('gm-email').value = email;
+          document.getElementById('gm-purpose').value = purpose;
+          document.getElementById('gm-gender').value = gender;
+          document.getElementById('gm-copies').value = copies;
+
+          // Submit hidden form
+          document.getElementById('gm-submit-form').submit();
+        });
+
+        // Safe Loan payment slip submit mapping
+        const paymentLoanForm = document.getElementById('payment-loan-form');
+        paymentLoanForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const submitBtn = paymentLoanForm.querySelector('button[type="submit"]');
+          if (submitBtn.dataset.loading === '1') return;
+          submitBtn.dataset.loading = '1';
+          submitBtn.textContent = 'Submitting...';
+          submitBtn.classList.add('btn-disabled');
+          // Gather from loan wizard
+          const firstName = document.getElementById('loanFirstName').value.trim();
+          const lastName = document.getElementById('loanLastName').value.trim();
+          const middleName = document.getElementById('loanMiddleName').value.trim();
+          const contact = document.getElementById('loanContact').value.trim();
+          const dateNeeded = document.getElementById('loanDate').value;
+          const studentStatusRaw = document.getElementById('loanStudentStatus').value; // currently-enrolled | not-enrolled
+          const lastSem = document.getElementById('loanLastSem').value.trim();
+          const programYear = document.getElementById('loanProgram').value.trim();
+          const yearGraduated = document.getElementById('loanYearGraduated').value.trim();
+          const email = document.getElementById('loanEmail').value.trim();
+          const purpose = document.getElementById('loanPurpose').value.trim();
+          const genderEl = document.querySelector('input[name="loanGender"]:checked');
+          const gender = genderEl ? genderEl.value : '';
+          const loanAmt = parseFloat(document.getElementById('loan-amount').value) || 0;
+
+          // Map
+          document.getElementById('loan-first_name_hidden').value = firstName;
+          document.getElementById('loan-last_name_hidden').value = lastName;
+          document.getElementById('loan-middle_name_hidden').value = middleName;
+          document.getElementById('loan-contact_hidden').value = contact;
+          document.getElementById('loan-date_needed').value = dateNeeded;
+          document.getElementById('loan-student_status_hidden').value = studentStatusRaw.replace('-', '_');
+          document.getElementById('loan-last_semester_hidden').value = lastSem;
+          document.getElementById('loan-program_year_hidden').value = programYear;
+          document.getElementById('loan-year_graduated_hidden').value = yearGraduated;
+          document.getElementById('loan-email_hidden').value = email;
+          document.getElementById('loan-purpose_hidden').value = purpose;
+          document.getElementById('loan-gender_hidden').value = gender;
+          document.getElementById('loan-loan_amount_hidden').value = loanAmt.toFixed(2);
+
+          document.getElementById('loan-submit-form').submit();
+        });
+
+        // Helper functions
+        function openModal(option) {
+          if (modals[option]) {
+            modals[option].classList.remove('hidden');
+            modals[option].classList.add('flex');
+            // focus first input for accessibility
+            const firstInput = modals[option].querySelector('input, select, textarea, button');
+            if (firstInput) firstInput.focus();
+          }
+        }
+
+        function closeModal(modal) {
+          modal.classList.add('hidden');
+          modal.classList.remove('flex');
+        }
+
+        // Flowbite-style floating labels use the peer classes on inputs and no JS is required.
+
+        // ESC key closes top-most open modal
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            const open = Array.from(document.querySelectorAll('.modal.flex'));
+            if (open.length) {
+              closeModal(open[open.length - 1]);
+            }
+          }
+        });
+
+        // Initial validation state
+        updateStepDisplay();
+        updateLoanStepDisplay();
+      });
+    </script>
 </body>
+
 </html>

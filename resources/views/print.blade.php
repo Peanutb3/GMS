@@ -1,199 +1,975 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Certificate Request Form</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-    body {
-      font-family: 'Times New Roman', serif;
-      font-size: 13px;
-      margin: 40px;
-      color: #000;
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Certificate Request Form</title>
+  <style>
+    @page {
+      size: 8.5in 6.5in;
+      margin: 0.4in;
     }
-  /* Font specification classes */
-  .font-calibri-8 { font-family: Calibri, Arial, sans-serif; font-size:8pt; font-weight:normal; }
-  .font-calibri-8-bold { font-family: Calibri, Arial, sans-serif; font-size:8pt; font-weight:bold; }
-  .font-oldenglish-10 { font-family: 'Old English Text MT', 'Times New Roman', serif; font-size:10pt; font-weight:normal; }
-  .font-arial-8 { font-family: Arial, Calibri, sans-serif; font-size:8pt; font-weight:normal; }
-  .font-arial-12-bold { font-family: Arial, Calibri, sans-serif; font-size:12pt; font-weight:bold; }
-  .form-label { font-family: Arial, Calibri, sans-serif; font-size:10pt; font-weight:bold; }
-        .note {
-        font-size: 12px;
-        margin: 6px 0;
-        font-style: italic;
-        color: #a11616;
-        padding: 4px 2px;
-      }
-      
-      .cutline { position: relative; margin: 6px 0 10px; border-top: 2px dotted #000; }
-      .cutline .scissors { position:absolute; top:-12px; left:-2px; font-size:14px; }
-    </style>
-  </head>
-  <body class="bg-white p-4">
-    @php
-      $student = $req->student ?? null;
-    @endphp
-    <table class="w-full border-collapse border border-gray-400 font-sans text-base">
-      <tr>
-        <td class="w-60 border border-gray-400 bg-white p-3 align-top text-black">
-          <img src="{{ asset('images/osas_logo.png') }}" alt="OSAS Logo" class="mx-auto h-16 w-16 object-contain" />
-        </td>
-        <td colspan="2" class="w-128 border border-gray-400 bg-white p-3 text-center text-black">
-          <span class="font-calibri-8">Republic of the Philippines</span><br />
-          <span class="font-oldenglish-10">University of Southeastern Philippines</span><br />
-          <span class="font-calibri-8-bold">Office of Student Affairs and Services</span><br />
-          <span class="font-calibri-8">Iñigo St., Bo. Obrero Davao City</span>
-        </td>
-        <td class="border border-gray-400 bg-white p-3 text-black font-arial-8">Reference No. {{ $req->reference_no ?? '__________' }}</td>
-      </tr>
-      <tr style="background-color: yellow;">
-        <td colspan="4" class="border border-gray-400 p-3 text-center text-black font-arial-12-bold">REQUEST FOR CERTIFICATE OF GOOD MORAL CHARACTER / SAFE LOAN</td>
-      </tr>
-      <tr>
-        <td colspan="4" class="h-2 border border-gray-400 bg-white p-3"></td>
-      </tr>
-      <tr style="border-bottom: dashed 1px gray;">
-  <td class="border border-gray-400 bg-white p-3 text-black form-label">Date</td>
-        <td class="w-4 border border-gray-400 bg-white p-3 text-black">:</td>
-  <td colspan="2" class="border border-gray-400 bg-white p-3 text-black">{{ now()->format('F d, Y') }}</td>
-      </tr>
-      <tr style="border-bottom: dashed 1px gray;">
-  <td class="border border-gray-400 bg-white p-3 text-black form-label">Email</td>
-        <td class="w-4 border border-gray-400 bg-white p-3 text-black">:</td>
-  <td colspan="2" class="border border-gray-400 bg-white p-3 text-black">{{ $student->email ?? ($req->email ?? '') }}</td>
-      </tr>
-      <tr style="border-bottom: dashed 1px gray;">
-  <td class="border border-gray-400 bg-white p-3 text-black form-label">Contact</td>
-        <td class="w-4 border border-gray-400 bg-white p-3 text-black">:</td>
-  <td colspan="2" class="border border-gray-400 bg-white p-3 text-black">{{ $student->contact ?? ($req->contact ?? '') }}</td>
-      </tr>
-      <tr style="border-bottom: dashed 1px gray;">
-  <td class="border border-gray-400 bg-white p-3 text-black form-label">Student's Name</td>
-        <td class="w-4 border border-gray-400 bg-white p-3 text-black">:</td>
-        <td colspan="2" class="border border-gray-400 bg-white p-3 text-black">
-          {{ $student->last_name ?? ($req->last_name ?? '') }} {{ $student->first_name ?? ($req->first_name ?? '') }} {{ $student->middle_name ?? ($req->middle_name ?? '') }}
-        </td>
-      </tr>
-      <tr style="height: 5px; font-size: 10px; border-bottom: dashed 1px gray;">
-        <td class="border border-gray-400 bg-white p-3 text-black"></td>
-        <td class="w-4 border border-gray-400 bg-white p-3 text-black"></td>
-        <td colspan="2" class="border border-gray-400 bg-white p-1 text-black">(Last Name) (First Name) (Middle Name).</td>
-      </tr>
-      <tr style="border-bottom: dashed 1px gray;">
-  <td class="border border-gray-400 bg-white p-3 text-black form-label">Gender</td>
-        <td class="w-4 border border-gray-400 bg-white p-3 text-black">:</td>
-        <td colspan="2" class="border border-gray-400 bg-white p-3 text-black">
-          ({{ (($student->gender ?? $req->gender ?? '') === 'Female') ? '✔' : ' ' }}) Female
-          ({{ (($student->gender ?? $req->gender ?? '') === 'Male') ? '✔' : ' ' }}) Male
-          ({{ (($student->gender ?? $req->gender ?? '') === 'Prefer not to say') ? '✔' : ' ' }}) Prefer not to Say
-        </td>
-      </tr>
-      <tr style="border-bottom: dashed 1px gray;">
-  <td class="border border-gray-400 bg-white p-3 text-black form-label">Course and Year</td>
-        <td class="w-4 border border-gray-400 bg-white p-3 text-black">:</td>
-  <td colspan="2" class="border border-gray-400 bg-white p-3 text-black">{{ $student->program ?? ($req->program_year ?? '') }}</td>
-      </tr>
-      <tr style="border-bottom: dashed 1px gray;">
-  <td class="border border-gray-400 bg-white p-3 text-black form-label">Student's Status</td>
-        <td class="w-4 border border-gray-400 bg-white p-3 text-black">:</td>
-        <td colspan="2" class="border border-gray-400 bg-white p-3 text-black">
-          ({{ (($student->status ?? null) === 'Currently Enrolled' || ($req->student_status ?? null) === 'currently_enrolled') ? '✔' : ' ' }}) Currently Enrolled<br />
-          ({{ (($student->status ?? null) === 'Not Enrolled' || ($req->student_status ?? null) === 'not_enrolled') ? '✔' : ' ' }}) Not Enrolled (pls. specify last Sem. &amp; SY) {{ $req->last_sem_sy ?? '________________' }}
-        </td>
-      </tr>
-      <tr style="border-bottom: dashed 1px gray;">
-  <td class="border border-gray-400 bg-white p-3 text-black form-label">Year Graduated (If Applicable)</td>
-        <td class="w-4 border border-gray-400 bg-white p-3 text-black">:</td>
-  <td colspan="2" class="border border-gray-400 bg-white p-3 text-black">{{ $student->year_graduated ?? ($req->year_graduated ?? '') }}</td>
-      </tr>
-      <tr style="border-bottom: dashed 1px gray;">
-  <td class="border border-gray-400 bg-white p-3 text-black form-label">Purpose</td>
-        <td class="w-4 border border-gray-400 bg-white p-3 text-black">:</td>
-  <td colspan="2" class="border border-gray-400 bg-white p-3 text-black">{{ $req->purpose ?? '' }}</td>
-      </tr>
+
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    .ritz .waffle a {
+      color: inherit;
+    }
+
+    .ritz .waffle .s49 {
+      border-bottom: 2px SOLID #7f7f7f;
+      border-right: 2px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: center;
+      color: #000000;
+      font-family: Arial;
+      font-size: 9pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s25 {
+      border-bottom: 1px DASHED #aeabab;
+      border-right: 2px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: center;
+      color: #000000;
+      font-family: Arial;
+      font-size: 9pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s1 {
+      border-right: 1px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: center;
+      color: #000000;
+      font-family: Calibri, Arial;
+      font-size: 8pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s23 {
+      border-bottom: 1px DASHED #aeabab;
+      border-right: 2px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: left;
+      color: #000000;
+      font-family: Arial;
+      font-size: 8pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s8 {
+      border-bottom: 1px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: center;
+      color: #000000;
+      font-family: Calibri, Arial;
+      font-size: 10pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s10 {
+      border-bottom: 1px DASHED #aeabab;
+      border-right: 1px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: left;
+      font-weight: bold;
+      color: #000000;
+      font-family: Arial;
+      font-size: 10pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s24 {
+      border-bottom: 1px DASHED #aeabab;
+      border-right: 1px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: center;
+      font-weight: bold;
+      color: #000000;
+      font-family: Arial;
+      font-size: 9pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s29 {
+      border-bottom: 1px DASHED #7f7f7f;
+      background-color: #ffffff;
+      text-align: left;
+      font-weight: bold;
+      font-style: italic;
+      color: #ff0000;
+      font-family: Arial;
+      font-size: 8pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s15 {
+      border-bottom: 1px DASHED #aeabab;
+      background-color: #ffffff;
+      text-align: left;
+      font-style: italic;
+      color: #000000;
+      font-family: Arial;
+      font-size: 7pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s32 {
+      border-bottom: 1px SOLID #7f7f7f;
+      border-right: 2px SOLID #7f7f7f;
+      background-color: #c00000;
+      text-align: center;
+      font-weight: bold;
+      color: #ffffff;
+      font-family: Arial;
+      font-size: 12pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s47 {
+      background-color: #ffffff;
+      text-align: right;
+      color: #000000;
+      font-family: Arial;
+      font-size: 10pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s33 {
+      border-bottom: 1px SOLID #7f7f7f;
+      border-right: 1px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: left;
+      font-weight: bold;
+      color: #000000;
+      font-family: Arial;
+      font-size: 10pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s9 {
+      border-bottom: 1px SOLID #7f7f7f;
+      border-right: 2px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: center;
+      color: #000000;
+      font-family: Calibri, Arial;
+      font-size: 10pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s31 {
+      border-right: 1px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: center;
+      color: #c00000;
+      font-family: 'Old English Text MT', Arial;
+      font-size: 10pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s37 {
+      border-right: 1px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: left;
+      color: #000000;
+      font-family: Arial;
+      font-size: 10pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s3 {
+      border-right: 1px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: center;
+      color: #c00000;
+      font-family: Arial;
+      font-size: 10pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s13 {
+      border-bottom: 1px DASHED #aeabab;
+      border-right: 2px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: center;
+      color: #000000;
+      font-family: Arial;
+      font-size: 10pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s45 {
+      border-bottom: 1px SOLID #7f7f7f;
+      border-right: 1px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: left;
+      color: #000000;
+      font-family: Arial;
+      font-size: 10pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s39 {
+      border-bottom: 1px SOLID #7f7f7f;
+      border-right: 1px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: center;
+      font-weight: bold;
+      color: #000000;
+      font-family: Arial;
+      font-size: 9pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s4 {
+      border-right: 1px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: center;
+      font-weight: bold;
+      color: #000000;
+      font-family: Calibri, Arial;
+      font-size: 8pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s16 {
+      border-bottom: 1px DASHED #aeabab;
+      border-right: 2px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: left;
+      color: #000000;
+      font-family: Arial;
+      font-size: 7pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s7 {
+      border-right: 2px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: center;
+      color: #000000;
+      font-family: Calibri, Arial;
+      font-size: 10pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s20 {
+      border-left: none;
+      border-bottom: 1px DASHED #aeabab;
+      background-color: #ffffff;
+      text-align: left;
+      color: #000000;
+      font-family: Arial;
+      font-size: 7pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s26 {
+      border-bottom: 2px SOLID #7f7f7f;
+      border-right: 1px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: left;
+      font-weight: bold;
+      color: #000000;
+      font-family: Arial;
+      font-size: 10pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s41 {
+      border-bottom: 1px SOLID #7f7f7f;
+      border-right: 1px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: right;
+      color: #000000;
+      font-family: Arial;
+      font-size: 8pt;
+      vertical-align: middle;
+      white-space: normal;
+      overflow: hidden;
+      word-wrap: break-word;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s17 {
+      border-bottom: 1px DASHED #aeabab;
+      background-color: #ffffff;
+      text-align: left;
+      color: #000000;
+      font-family: Arial;
+      font-size: 9pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s19 {
+      border-left: none;
+      border-bottom: 1px DASHED #aeabab;
+      background-color: #ffffff;
+      text-align: left;
+      color: #000000;
+      font-family: Arial;
+      font-size: 9pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s22 {
+      border-right: 2px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: left;
+      color: #000000;
+      font-family: Arial;
+      font-size: 8pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s2 {
+      border-bottom: 1px SOLID #7f7f7f;
+      border-right: 2px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: center;
+      color: #000000;
+      font-family: Arial;
+      font-size: 8pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s6 {
+      border-bottom: 1px SOLID #7f7f7f;
+      border-right: 2px SOLID #7f7f7f;
+      background-color: #ffc000;
+      text-align: center;
+      font-weight: bold;
+      color: #000000;
+      font-family: Arial;
+      font-size: 12pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s11 {
+      border-bottom: 1px DASHED #aeabab;
+      border-right: 1px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: center;
+      font-weight: bold;
+      color: #000000;
+      font-family: Arial;
+      font-size: 10pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s35 {
+      border-bottom: 1px SOLID #7f7f7f;
+      border-right: 2px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: center;
+      color: #000000;
+      font-family: Arial;
+      font-size: 10pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s21 {
+      border-bottom: 1px DASHED #aeabab;
+      border-right: 1px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: center;
+      font-weight: bold;
+      color: #000000;
+      font-family: Arial;
+      font-size: 8pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s46 {
+      border-bottom: 1px SOLID #7f7f7f;
+      border-right: 2px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: right;
+      color: #000000;
+      font-family: Arial;
+      font-size: 12pt;
+      vertical-align: bottom;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s5 {
+      border-bottom: 1px SOLID #7f7f7f;
+      border-right: 1px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: center;
+      color: #000000;
+      font-family: Calibri, Arial;
+      font-size: 8pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s43 {
+      border-bottom: 1px SOLID #7f7f7f;
+      border-right: 1px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: right;
+      color: #000000;
+      font-family: Arial;
+      font-size: 10pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s14 {
+      border-bottom: 1px DASHED #aeabab;
+      border-right: 1px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: center;
+      font-weight: bold;
+      color: #000000;
+      font-family: Arial;
+      font-size: 7pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s27 {
+      border-bottom: 2px SOLID #7f7f7f;
+      border-right: 1px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: center;
+      font-weight: bold;
+      color: #000000;
+      font-family: Arial;
+      font-size: 10pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s34 {
+      border-bottom: 1px SOLID #7f7f7f;
+      border-right: 1px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: center;
+      font-weight: bold;
+      color: #000000;
+      font-family: Arial;
+      font-size: 10pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s30 {
+      border-bottom: 2px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: left;
+      color: #000000;
+      font-family: Calibri, Arial;
+      font-size: 10pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s48 {
+      border-right: 2px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: left;
+      color: #000000;
+      font-family: Arial;
+      font-size: 10pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s44 {
+      border-bottom: 1px SOLID #7f7f7f;
+      border-right: 2px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: left;
+      color: #000000;
+      font-family: Arial;
+      font-size: 10pt;
+      vertical-align: bottom;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s36 {
+      background-color: #ffffff;
+      text-align: left;
+      color: #000000;
+      font-family: Arial;
+      font-size: 10pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s38 {
+      border-bottom: 1px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: left;
+      color: #000000;
+      font-family: Arial;
+      font-size: 10pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s42 {
+      border-bottom: 1px SOLID #7f7f7f;
+      border-right: 2px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: left;
+      color: #000000;
+      font-family: Arial;
+      font-size: 12pt;
+      vertical-align: bottom;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s28 {
+      border-bottom: 2px SOLID #7f7f7f;
+      border-right: 2px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: left;
+      color: #000000;
+      font-family: Arial;
+      font-size: 10pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s18 {
+      border-right: none;
+      border-bottom: 1px DASHED #aeabab;
+      background-color: #ffffff;
+      text-align: left;
+      color: #000000;
+      font-family: Arial;
+      font-size: 9pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s12 {
+      border-bottom: 1px DASHED #aeabab;
+      border-right: 2px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: left;
+      font-weight: bold;
+      color: #000000;
+      font-family: Arial;
+      font-size: 10pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s40 {
+      border-bottom: 1px SOLID #7f7f7f;
+      border-right: 2px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: center;
+      font-weight: bold;
+      color: #000000;
+      font-family: Arial;
+      font-size: 10pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle .s0 {
+      border-bottom: 1px SOLID #7f7f7f;
+      border-right: 1px SOLID #7f7f7f;
+      background-color: #ffffff;
+      text-align: center;
+      color: #000000;
+      font-family: Calibri, Arial;
+      font-size: 10pt;
+      vertical-align: middle;
+      white-space: nowrap;
+      direction: ltr;
+      padding: 0px 3px 0px 3px;
+    }
+
+    .ritz .waffle {
+      border-collapse: collapse;
+    }
+
+    .ritz table.waffle {
+      width: 765px;
+    }
+
+    .cutline {
+      margin: 10px 0;
+      border-top: 2px dashed #7f7f7f;
+      position: relative;
+      page-break-after: always;
+    }
+
+    .scissors {
+      position: absolute;
+      top: -10px;
+      left: 0;
+    }
+  </style>
+</head>
+
+<body>
+  @php
+  $student = $req->student ?? null;
+  $copies = $req->copies ?? 1;
+  $gmCost = 70 * $copies;
+  $safeLoan = $req->safe_loan_amount ?? 0;
+  $total = $gmCost + $safeLoan;
+  @endphp
+
+  <div class="ritz grid-container" dir="ltr">
+    <table class="waffle" cellspacing="0" cellpadding="0">
+      <tbody>
+        <tr style="height: 11px">
+          <td class="s0" rowspan="4" style="width:164px;"></td>
+          <td class="s1" colspan="6" style="width:464px;">Republic of the Philippines</td>
+          <td class="s2" colspan="2" rowspan="4" style="width:137px;">Reference No. {{ $req->reference_no ?? '__________________' }}</td>
+        </tr>
+        <tr style="height: 14px">
+          <td class="s3" colspan="6">University of Southeastern Philippines</td>
+        </tr>
+        <tr style="height: 12px">
+          <td class="s4" colspan="6">Office of Student Affairs and Services</td>
+        </tr>
+        <tr style="height: 14px">
+          <td class="s5" colspan="6">Iñigo St., Bo. Obrero Davao City</td>
+        </tr>
+        <tr style="height: 23px">
+          <td class="s6" colspan="9">REQUEST FOR CERTIFICATE OF GOOD MORAL CHARACTER /SAFE LOAN</td>
+        </tr>
+        <tr style="height: 3px">
+          <td class="s7" colspan="9"></td>
+        </tr>
+        <tr style="height: 3px">
+          <td class="s8"></td>
+          <td class="s8"></td>
+          <td class="s8"></td>
+          <td class="s8"></td>
+          <td class="s8"></td>
+          <td class="s8"></td>
+          <td class="s8"></td>
+          <td class="s8"></td>
+          <td class="s9"></td>
+        </tr>
+        <tr style="height: 22px">
+          <td class="s10">Date</td>
+          <td class="s11">:</td>
+          <td class="s12" colspan="7">{{ now()->format('F d, Y') }}</td>
+        </tr>
+        <tr style="height: 26px">
+          <td class="s10">Email:</td>
+          <td class="s11">:</td>
+          <td class="s13" colspan="7">{{ $student->email ?? ($req->email ?? '') }}</td>
+        </tr>
+        <tr style="height: 22px">
+          <td class="s10">Contact:</td>
+          <td class="s11">:</td>
+          <td class="s13" colspan="7">{{ $student->contact ?? ($req->contact ?? '') }}</td>
+        </tr>
+        <tr style="height: 26px">
+          <td class="s10">Student's Name</td>
+          <td class="s11">:</td>
+          <td class="s13" colspan="7">{{ $student->last_name ?? ($req->last_name ?? '') }}, {{ $student->first_name ?? ($req->first_name ?? '') }} {{ $student->middle_name ?? ($req->middle_name ?? '') }}</td>
+        </tr>
+        <tr style="height: 12px">
+          <td class="s10"></td>
+          <td class="s14"></td>
+          <td class="s15">(Last Name)</td>
+          <td class="s15"></td>
+          <td class="s15">(First Name)</td>
+          <td class="s15"></td>
+          <td class="s15"></td>
+          <td class="s15">(Middle Name)</td>
+          <td class="s16"></td>
+        </tr>
+        <tr style="height: 16px">
+          <td class="s10">Gender</td>
+          <td class="s11">:</td>
+          <td class="s17">( {{ (($student->gender ?? $req->gender ?? '') === 'Female') ? '✓' : ' ' }} ) Female </td>
+          <td class="s17"></td>
+          <td class="s17">( {{ (($student->gender ?? $req->gender ?? '') === 'Male') ? '✓' : ' ' }} ) Male </td>
+          <td class="s17"></td>
+          <td class="s18" colspan="2">( {{ (($student->gender ?? $req->gender ?? '') === 'Prefer not to say') ? '✓' : ' ' }} ) Prefer not to Say</td>
+          <td class="s20"></td>
+        </tr>
+        <tr style="height: 16px">
+          <td class="s10">Course and Year</td>
+          <td class="s11">:</td>
+          <td class="s13" colspan="7">{{ $student->program ?? ($req->program_year ?? '') }}</td>
+        </tr>
+        <tr style="height: 17px">
+          <td class="s10" rowspan="2">Student's Status</td>
+          <td class="s21" rowspan="2">:</td>
+          <td class="s22" colspan="7">( {{ (($student->status ?? null) === 'Currently Enrolled' || ($req->student_status ?? null) === 'currently_enrolled') ? '✓' : ' ' }} ) Currently Enrolled</td>
+        </tr>
+        <tr style="height: 14px">
+          <td class="s23" colspan="7">( {{ (($student->status ?? null) === 'Not Enrolled' || ($req->student_status ?? null) === 'not_enrolled') ? '✓' : ' ' }} ) Not Enrolled (pls. specify last Sem. &amp; SY) {{ $req->last_sem_sy ?? '____________________________' }}</td>
+        </tr>
+        <tr style="height: 16px">
+          <td class="s10">Year Graduated <span style="font-size:8pt;font-family:Arial;font-weight:bold;font-style:italic;color:#000000;">(If Applicable)</span></td>
+          <td class="s24">:</td>
+          <td class="s25" colspan="7">{{ $student->year_graduated ?? ($req->year_graduated ?? '') }}</td>
+        </tr>
+        <tr style="height: 24px">
+          <td class="s26">Purpose</td>
+          <td class="s27">:</td>
+          <td class="s28" colspan="7">{{ $req->purpose ?? '' }}</td>
+        </tr>
+        <tr style="height: 21px">
+          <td class="s29" colspan="9">NOTE: Attach Official Receipt (OR) issued by the University Cashier's Office and present the OR to the OSAS Staff.</td>
+        </tr>
+        <tr style="height: 7px">
+          <td class="s30"></td>
+          <td class="s30"></td>
+          <td class="s30"></td>
+          <td class="s30"></td>
+          <td class="s30"></td>
+          <td class="s30"></td>
+          <td class="s30"></td>
+          <td class="s30"></td>
+          <td class="s30"></td>
+        </tr>
+      </tbody>
     </table>
-    <p class="note">NOTE: Attach Official Receipt (OR) issued by the University Cashier’s Office and present the OR to the OSAS Staff.</p>
+  </div>
 
-    <div class="cutline"><span class="scissors">✂</span></div>
+  <div class="cutline"><span class="scissors">✂</span></div>
 
-    <table class="mt-6 w-full border-collapse border border-gray-400 font-sans text-base">
-      <tr>
-        <td class="w-60 border border-gray-400 bg-white p-3 align-top text-black">
-          <img src="{{ asset('images/osas_logo.png') }}" alt="OSAS Logo" class="mx-auto h-16 w-16 object-contain" />
-        </td>
-        <td colspan="4" class="w-128 border border-gray-400 bg-white p-3 text-center text-black">
-          <span class="font-calibri-8">Republic of the Philippines</span><br />
-          <span class="font-oldenglish-10">University of Southeastern Philippines</span><br />
-          <span class="font-calibri-8-bold">Office of Student Affairs and Services</span><br />
-          <span class="font-calibri-8">Iñigo St., Bo. Obrero Davao City</span>
-        </td>
-        <td class="border border-gray-400 bg-white p-3 text-black font-arial-8">Reference No. {{ $req->reference_no ?? '__________' }}</td>
-      </tr>
-      <tr style="background-color: maroon;">
-        <td colspan="6" class="border border-gray-400 p-3 text-center text-white font-arial-12-bold">PAYMENT ORDER SLIP</td>
-      </tr>
-      <tr>
-        <td colspan="6" class="h-2 border border-gray-400 bg-white p-3"></td>
-      </tr>
-      <tr style="border-bottom: dashed 1px gray;">
-  <td class="border border-gray-400 bg-white p-3 text-black form-label">Date</td>
-        <td class="w-4 border border-gray-400 bg-white p-3 text-black">:</td>
-        <td colspan="4" class="border border-gray-400 bg-white p-3 text-black">{{ now()->format('F d, Y') }}</td>
-      </tr>
-      <tr style="border-bottom: dashed 1px gray;">
-  <td class="border border-gray-400 bg-white p-3 text-black form-label">Student's Name</td>
-        <td class="w-4 border border-gray-400 bg-white p-3 text-black">:</td>
-        <td colspan="4" class="border border-gray-400 bg-white p-3 text-black">
-          {{ $student->last_name ?? ($req->last_name ?? '') }} {{ $student->first_name ?? ($req->first_name ?? '') }} {{ $student->middle_name ?? ($req->middle_name ?? '') }}
-        </td>
-      </tr>
-      <tr style="height: 5px; font-size: 10px; border-bottom: dashed 1px gray;">
-        <td class="border border-gray-400 bg-white p-3 text-black"></td>
-        <td class="w-4 border border-gray-400 bg-white p-3 text-black"></td>
-        <td colspan="4" class="border border-gray-400 bg-white p-1 text-black">(Last Name) (First Name) (Middle Name).</td>
-      </tr>
-      <tr style="border-bottom: dashed 1px gray;">
-  <td class="border border-gray-400 bg-white p-3 text-black form-label">Course and Year</td>
-        <td class="w-4 border border-gray-400 bg-white p-3 text-black">:</td>
-        <td colspan="4" class="border border-gray-400 bg-white p-3 text-black">{{ $student->program ?? ($req->program_year ?? '') }}</td>
-      </tr>
-      </table>
+  <div class="ritz grid-container" dir="ltr">
+    <table class="waffle" cellspacing="0" cellpadding="0">
+      <tbody>
+        <tr style="height: 11px">
+          <td class="s0" rowspan="4" style="width:164px;"></td>
+          <td class="s1" colspan="6" style="width:464px;">Republic of the Philippines</td>
+          <td class="s2" colspan="2" rowspan="4" style="width:137px;">Reference No. {{ $req->reference_no ?? '__________________' }}</td>
+        </tr>
+        <tr style="height: 14px">
+          <td class="s31" colspan="6">University of Southeastern Philippines</td>
+        </tr>
+        <tr style="height: 12px">
+          <td class="s4" colspan="6">Office of Student Affairs and Services</td>
+        </tr>
+        <tr style="height: 14px">
+          <td class="s5" colspan="6">Iñigo St., Bo. Obrero Davao City</td>
+        </tr>
+        <tr style="height: 25px">
+          <td class="s32" colspan="9">PAYMENT ORDER SLIP</td>
+        </tr>
+        <tr style="height: 4px">
+          <td class="s9" colspan="9"></td>
+        </tr>
+        <tr style="height: 22px">
+          <td class="s10">Date</td>
+          <td class="s11">:</td>
+          <td class="s13" colspan="7">{{ now()->format('F d, Y') }}</td>
+        </tr>
+        <tr style="height: 23px">
+          <td class="s10">Student's Name</td>
+          <td class="s11">:</td>
+          <td class="s13" colspan="7">{{ $student->last_name ?? ($req->last_name ?? '') }}, {{ $student->first_name ?? ($req->first_name ?? '') }} {{ $student->middle_name ?? ($req->middle_name ?? '') }}</td>
+        </tr>
+        <tr style="height: 13px">
+          <td class="s10"></td>
+          <td class="s14"></td>
+          <td class="s15">(Last Name)</td>
+          <td class="s15"></td>
+          <td class="s15">(First Name)</td>
+          <td class="s15"></td>
+          <td class="s15"></td>
+          <td class="s15">(Middle Name)</td>
+          <td class="s16"></td>
+        </tr>
+        <tr style="height: 16px">
+          <td class="s33">Course &amp; Year</td>
+          <td class="s34">:</td>
+          <td class="s35" colspan="7">{{ $student->program ?? ($req->program_year ?? '') }}</td>
+        </tr>
+        <tr style="height: 16px">
+          <td class="s36"></td>
+          <td class="s36"></td>
+          <td class="s36"></td>
+          <td class="s37"></td>
+          <td class="s38"></td>
+          <td class="s39" colspan="2">Description</td>
+          <td class="s40" colspan="2">Cost</td>
+        </tr>
+        <tr style="height: 30px">
+          <td class="s36"></td>
+          <td class="s36"></td>
+          <td class="s36"></td>
+          <td class="s37"></td>
+          <td class="s41" colspan="3">Certificate of Good Moral Character <span style="font-size:8pt;font-family:Arial;font-style:italic;color:#000000;">(70.00 per copy)</span></td>
+          <td class="s42" colspan="2">₱{{ number_format($gmCost, 2) }}</td>
+        </tr>
+        <tr style="height: 20px">
+          <td class="s36"></td>
+          <td class="s36"></td>
+          <td class="s36"></td>
+          <td class="s37"></td>
+          <td class="s43" colspan="3">Safe Loan</td>
+          <td class="s44" colspan="2">₱{{ number_format($safeLoan, 2) }}</td>
+        </tr>
+        <tr style="height: 23px">
+          <td class="s38"></td>
+          <td class="s38"></td>
+          <td class="s38"></td>
+          <td class="s45"></td>
+          <td class="s43" colspan="3">Total Amount</td>
+          <td class="s46" colspan="2">₱{{ number_format($total, 2) }}</td>
+        </tr>
+        <tr style="height: 30px">
+          <td class="s47" colspan="3">By: </td>
+          <td class="s38"></td>
+          <td class="s38"></td>
+          <td class="s38"></td>
+          <td class="s36"></td>
+          <td class="s36"></td>
+          <td class="s48"></td>
+        </tr>
+        <tr style="height: 16px">
+          <td class="s49" colspan="9">OSAS Staff</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-      @php
-        $copies = $req->copies ?? 1;
-        $gmCost = 70 * $copies;
-        $safeLoan = $req->safe_loan_amount ?? 0;
-        $total = $gmCost + $safeLoan;
-      @endphp
-      <table class="w-full border-collapse border border-gray-400 font-sans text-base">
-        <tr>
-          <td rowspan="4" colspan="" class="w-160 border border-gray-400 bg-white p-3 text-black"></td>
-          <!-- <td class="border border-gray-400 bg-white p-3 text-black"></td> -->
-          <td class="w-100 border border-gray-400 bg-white p-3 text-right text-black">Description</td>
-          <td class="border border-gray-400 bg-white p-3 text-center text-black">Cost</td>
-        </tr>
-        <tr>
-          <!-- <td class="border border-gray-400 bg-white p-3 text-black"></td> -->
-          <td class="border border-gray-400 bg-white p-3 text-right text-black">Certificate of Good Moral Character (70.00 per copy)</td>
-          <td class="border border-gray-400 bg-white p-3 text-black">₱{{ number_format($gmCost, 2) }}</td>
-        </tr>
-        <tr>
-          <!-- <td class="border border-gray-400 bg-white p-3 text-black"></td> -->
-          <td class="border border-gray-400 bg-white p-3 text-right text-black">Safe Loan</td>
-          <td class="border border-gray-400 bg-white p-3 text-black">₱{{ number_format($safeLoan, 2) }}</td>
-        </tr>
-        <tr>
-          <!-- <td class="border border-gray-400 bg-white p-3 text-black"></td> -->
-          <td class="border border-gray-400 bg-white p-3 text-right text-black">Total Amount</td>
-          <td class="border border-gray-400 bg-white p-3 text-black">₱{{ number_format($total, 2) }}</td>
-        </tr>
-      </table>
-    <div class="sign">
-      <p class="p-3 text-center text-base">By: _________________________________________<br />OSAS Staff</p>
-    </div>
-  </body>
+</body>
+
 </html>
-
-

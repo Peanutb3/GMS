@@ -7,8 +7,8 @@
     <title>Certificate of Good Moral Character</title>
     <style>
         @page {
-            size: 8.27in 11.69in;
-            margin: 1.0in 1.0in 1.0in 1.1in;
+            size: A4;
+            margin: 1.0in 1.0in 0.25in 1.1in;
         }
 
         body {
@@ -146,92 +146,50 @@
         }
 
         .footer {
-            clear: both;
-            margin-top: 12pt;
+            width: 100%;
+            margin-top: 40pt;
             font-size: 9pt;
             font-family: 'Arial Narrow', Arial, sans-serif;
+        }
+
+        .footer-line {
+            width: 100%;
+            border-bottom: 1px solid #000;
+            margin-bottom: 6pt;
         }
 
         .footer-content {
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
+            width: 100%;
         }
 
         .footer-text {
-            line-height: 1.2;
+            line-height: 1.3;
+            width: 65%;
         }
 
         .footer-logos {
             display: flex;
-            gap: 15px;
-            align-items: center;
+            gap: 10px;
+            align-items: flex-end;
         }
 
         .footer-logos img {
-            height: 60px;
-            width: auto;
+            height: 0.78in;
+            object-fit: contain;
         }
 
-        .print-button {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 10px 20px;
-            background: #800000;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            z-index: 1000;
-        }
-
-        .print-button:hover {
-            background: #600000;
-        }
-
-        @media print {
-            .print-button {
-                display: none;
-            }
-
-            .complete-button-form {
-                display: none;
-            }
-        }
-
-        .complete-button {
-            margin: 20px auto;
-            padding: 12px 30px;
-            background-color: #15803d;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            display: block;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .complete-button:hover {
-            background-color: #166534;
+        .footer-logos img:last-child {
+            height: 0.70in;
         }
     </style>
 </head>
 
 <body>
-    <button class="print-button" onclick="window.print()">🖨️ Print Certificate</button>
-    <form method="POST" action="{{ route('good-moral.mark-completed', $request->id) }}" style="text-align: center;" class="complete-button-form">
-        @csrf
-        <button type="submit" class="complete-button"
-            onclick="return confirm('Mark this request as completed? It will be moved to history.')">
-            ✓ Mark as Completed
-        </button>
-    </form>
-
     <div class="header">
-        <img src="{{ asset('images/USeP_logo.png') }}" alt="USeP Logo" class="logo">
+        <img src="{{ public_path('images/USeP_logo.png') }}" alt="USeP Logo" class="logo">
         <div class="university-name">University of Southeastern Philippines</div>
         <div class="office-name">Office of Student Affairs and Services</div>
     </div>
@@ -282,19 +240,23 @@
     </div>
 
     <div class="footer">
+        <div class="footer-line"></div>
+
         <div class="footer-content">
+
             <div class="footer-text">
-                <div class="footer-line">__________________________________________________________</div>
                 <strong>VISION: PREMIER RESEARCH UNIVERSITY TRANSFORMING<br>
                     COMMUNITIES IN THE ASEAN AND BEYOND</strong><br>
-                University of Southeastern Philippines &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (082) 227-8192 local 207<br>
-                Iñigo St., Bo. Obrero, Davao City &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; www.usep.edu.ph<br>
-                Philippines 8000 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; osas@usep.edu.ph
+                University of Southeastern Philippines &nbsp;&nbsp; (082) 227-8192 local 207<br>
+                Iñigo St., Bo. Obrero, Davao City &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; www.usep.edu.ph<br>
+                Philippines 8000 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; osas@usep.edu.ph
             </div>
+
             <div class="footer-logos">
-                <img src="{{ asset('images/footer_logo.png') }}" alt="Footer Logo">
-                <img src="{{ asset('images/ISO_logo.png') }}" alt="ISO Logo">
+                <img src="{{ public_path('images/footer_logo.png') }}" alt="Footer Logo">
+                <img src="{{ public_path('images/ISO_logo.png') }}" alt="ISO Logo">
             </div>
+
         </div>
     </div>
 </body>

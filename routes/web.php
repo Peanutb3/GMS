@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GrievanceController;
 use App\Http\Controllers\StaffDashboardController;
@@ -40,6 +41,7 @@ Route::post('/signup/step2', [AuthController::class, 'storeStep2'])->name('signu
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/requests/good-moral', [GoodMoralRequestController::class, 'store'])->name('good-moral.store');
+Route::get('/requests/good-moral/{requestModel}/success', [GoodMoralRequestController::class, 'success'])->name('good-moral.success');
 Route::get('/requests/good-moral/{requestModel}/print', [GoodMoralRequestController::class, 'print'])->name('good-moral.print');
 Route::post('/good-moral/{goodMoralRequest}/enter-or', [GoodMoralRequestController::class, 'enterOrNumber'])->name('good-moral.enter-or');
 Route::get('/good-moral/{goodMoralRequest}/certificate', [GoodMoralRequestController::class, 'showCertificate'])->name('good-moral.certificate');
@@ -50,6 +52,12 @@ Route::get('/requests/safe-loan/{requestModel}', [SafeLoanRequestController::cla
 Route::get('/requests/safe-loan/{requestModel}/print', [SafeLoanRequestController::class, 'print'])->name('safe-loan.print');
 Route::get('/requests/safe-loan/{requestModel}/print', [SafeLoanRequestController::class, 'print'])->name('safe-loan.print');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
+
+// Two-Factor Authentication Routes
+Route::get('/2fa/verify', [TwoFactorController::class, 'show'])->name('2fa.show');
+Route::post('/2fa/verify', [TwoFactorController::class, 'verify'])->name('2fa.verify');
+Route::post('/2fa/resend', [TwoFactorController::class, 'resend'])->name('2fa.resend');
+
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Forgot Password Routes

@@ -36,6 +36,7 @@ class AuthController extends Controller
             'college'        => 'required',
             'program'        => 'required',
             'year'           => 'required',
+            'phone'          => 'nullable|string|max:11',
             // Common fields
             'first_name'     => 'required|string|max:255',
             'middle_initial' => 'nullable|string|max:5',
@@ -75,11 +76,11 @@ class AuthController extends Controller
                 'regex:/[a-z]/',
                 'regex:/[A-Z]/',
                 'regex:/[0-9]/',
-                'regex:/[@$!%*#?&]/'
+                'regex:/[@$!%*#?&_\-]/'
             ],
         ], [
             'password.min' => 'Password must be at least 8 characters.',
-            'password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*#?&).'
+            'password.confirmed' => 'Password confirmation does not match.',
         ]);
 
         // Create user with student role
@@ -101,6 +102,7 @@ class AuthController extends Controller
             'college'        => $step1['college'],
             'program'        => $step1['program'],
             'year'           => $step1['year'],
+            'phone'          => $step1['phone'] ?? null,
         ]);
 
         session()->forget('signup_step1');
@@ -150,8 +152,11 @@ class AuthController extends Controller
             return back()->withErrors(['email' => 'No account found with this email.'])->onlyInput('email');
         }
 
-        // Check if email is verified
-        if (!$user->hasVerifiedEmail()) {
+        // Skip email verification for admin and staff (they are created by admin)
+        $skipEmailVerificationRoles = ['admin', 'staff', 'osas_gmc', 'osas_du'];
+
+        // Check if email is verified (only for students)
+        if (!in_array($user->role, $skipEmailVerificationRoles) && !$user->hasVerifiedEmail()) {
             return back()->withErrors([
                 'email' => 'Please verify your email address before logging in. Check your inbox for the verification link.'
             ])->onlyInput('email');
@@ -201,13 +206,58 @@ class AuthController extends Controller
 
         // Attempt login
         $remember = $request->filled('remember');
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $remember)) {
-            // Clear failed attempts and unlock account on successful login
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password], false)) { // Don't actually log in yet
+            // Clear failed attempts and unlock account
             \Illuminate\Support\Facades\RateLimiter::clear($key);
             $user->update(['locked_until' => null]);
 
+            // Logout immediately (we'll log in after OTP verification)
+            Auth::logout();
+
+            // Skip 2FA for admin and staff (they are created by admin, trusted users)
+            $skipOtpRoles = ['admin', 'staff', 'osas_gmc', 'osas_du'];
+
+            // Check if 2FA is enabled for this user and role requires it
+            if ($user->two_factor_enabled && !in_array($user->role, $skipOtpRoles)) {
+                // Generate OTP code
+                $code = \App\Models\TwoFactorCode::generateCode();
+
+                // Delete old unverified codes
+                \App\Models\TwoFactorCode::where('user_id', $user->id)
+                    ->whereNull('verified_at')
+                    ->delete();
+
+                // Create new code
+                \App\Models\TwoFactorCode::create([
+                    'user_id' => $user->id,
+                    'code' => $code,
+                    'expires_at' => \Carbon\Carbon::now()->addMinutes(10),
+                ]);
+
+                // Send email with OTP
+                try {
+                    \Illuminate\Support\Facades\Mail::send('emails.two-factor-code', ['code' => $code, 'user' => $user], function ($message) use ($user) {
+                        $message->to($user->email);
+                        $message->subject('Your Verification Code - OSAS GMS');
+                    });
+                } catch (\Exception $e) {
+                    \Illuminate\Support\Facades\Log::error('Failed to send 2FA email: ' . $e->getMessage());
+                }
+
+                // Store user ID in session for OTP verification
+                session(['2fa:user:id' => $user->id]);
+
+                // Store OTP in session for testing (REMOVE IN PRODUCTION)
+                session(['2fa:test:code' => $code]);
+
+                // Redirect to OTP verification page
+                return redirect()->route('2fa.show')
+                    ->with('success', 'A verification code has been sent to your email.');
+            }
+
+            // If 2FA is disabled, log in normally
             $request->session()->regenerate();
-            $user = Auth::user();
+            Auth::loginUsingId($user->id);
 
             // Update last login timestamp
             $user->update(['last_login_at' => now()]);

@@ -6,14 +6,15 @@ use App\Models\GoodMoralRequest;
 use App\Models\AuditLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class GoodMoralRequestController extends Controller
 {
     public function store(Request $request)
     {
         $data = $request->validate([
-            'student_id' => ['nullable','exists:students,id'],
-            'staff_id' => ['nullable','exists:staff,id'],
+            'student_id' => ['nullable', 'exists:students,id'],
+            'staff_id' => ['nullable', 'exists:staff,id'],
             'date_needed' => ['nullable', 'date'],
             'email' => ['nullable', 'email'],
             'contact' => ['nullable', 'string', 'max:50'],
@@ -34,18 +35,18 @@ class GoodMoralRequestController extends Controller
         $count = GoodMoralRequest::whereRaw("reference_no LIKE '{$yearMonth}-%'")->count() + 1;
         $data['reference_no'] = $yearMonth . '-' . str_pad($count, 4, '0', STR_PAD_LEFT);
 
-    $req = GoodMoralRequest::create($data);
+        $req = GoodMoralRequest::create($data);
 
-    AuditLog::create([
-        'auditable_type' => GoodMoralRequest::class,
-        'auditable_id' => $req->id,
-        'action' => 'created',
-        'user_id' => optional($request->user())->id,
-        'staff_id' => optional($request->user()->staff ?? null)->id,
-        'old_values' => null,
-        'new_values' => $req->snapshot(),
-        'ip_address' => $request->ip(),
-    ]);
+        AuditLog::create([
+            'auditable_type' => GoodMoralRequest::class,
+            'auditable_id' => $req->id,
+            'action' => 'created',
+            'user_id' => optional($request->user())->id,
+            'staff_id' => optional($request->user()->staff ?? null)->id,
+            'old_values' => null,
+            'new_values' => $req->snapshot(),
+            'ip_address' => $request->ip(),
+        ]);
 
         return redirect()->route('good-moral.print', $req);
     }
@@ -69,9 +70,14 @@ class GoodMoralRequestController extends Controller
             ],
             'purpose' => $requestModel->purpose,
             'copies' => $requestModel->copies,
+            'safe_loan_amount' => $requestModel->safe_loan_amount ?? 0,
         ];
 
-        return view('print', compact('req'));
+        // Generate PDF
+        $pdf = \PDF::loadView('print', compact('req'));
+        $pdf->setPaper('A4', 'portrait');
+
+        return $pdf->stream('good-moral-request-' . $requestModel->reference_no . '.pdf');
     }
 
     public function enterOrNumber(Request $request, GoodMoralRequest $goodMoralRequest)
@@ -106,7 +112,10 @@ class GoodMoralRequestController extends Controller
                 ->with('error', 'OR number must be entered first.');
         }
 
-        return view('good-moral-certificate', ['request' => $goodMoralRequest]);
+        $pdf = Pdf::loadView('good-moral-certificate', ['request' => $goodMoralRequest])
+            ->setPaper('a4', 'portrait');
+
+        return $pdf->stream('Good_Moral_Certificate_' . $goodMoralRequest->reference_no . '.pdf');
     }
 
     public function markCompleted(GoodMoralRequest $goodMoralRequest)
@@ -150,4 +159,3 @@ class GoodMoralRequestController extends Controller
             ->with('status', 'Good moral request deleted successfully.');
     }
 }
-

@@ -153,7 +153,7 @@
     <!-- Right Panel -->
     <div class="w-1/2 bg-white h-full flex flex-col items-center justify-between px-12">
         <div class="flex-1 flex items-center justify-center">
-            <img src="{{ asset('images/LoginSticker.png') }}" alt="Signup Illustration" class="w-[110%] translate-y-6">
+            <img src="{{ asset('images/Login_pic.png') }}" alt="Signup Illustration" class="w-[110%] translate-y-6">
         </div>
         <div class="text-sm text-gray-400 pb-6 text-center">
             © Office of Student Affairs and Services. All Rights Reserved.<br>

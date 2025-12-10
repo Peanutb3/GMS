@@ -8,26 +8,26 @@
     <style>
         @page {
             size: A4;
-            margin: 1.0in 1.0in 0.25in 1.1in;
+            margin: 0.4in 1.0in 0.3in 1.1in;
         }
 
         body {
             font-family: 'Times New Roman', serif;
-            font-size: 12pt;
-            margin: 0;
+            font-size: 13pt;
+            /* margin: 0; */
             padding: 0;
             /* line-height: 1.0; */
         }
 
         .header {
             text-align: center;
-            margin-top: 10pt;
-            /* reduced to match actual certificate */
+            margin-top: 0;
+            margin-bottom: 10pt;
         }
 
         .logo {
-            width: 80pt;
-            height: auto;
+            width: 1.1in;
+            height: 1.1in;
             margin-bottom: 4pt;
         }
 
@@ -44,7 +44,7 @@
             font-size: 14pt;
             font-family: 'Times New Roman', serif;
             font-style: italic;
-            margin: 0;
+            margin-bottom: 43pt;
         }
 
         .title {
@@ -52,7 +52,8 @@
             font-family: 'Times New Roman', serif;
             font-weight: bold;
             text-align: center;
-            margin: 25pt 0 18pt 0;
+            /* margin: 25pt 0 18pt 0; */
+            margin-bottom: 28pt;
             /* Adjusted spacing */
         }
 
@@ -61,7 +62,7 @@
             font-family: Arial, sans-serif;
             font-weight: bold;
             text-align: left;
-            margin: 0 0 12pt 0;
+            margin: 0 0 24pt 0;
         }
 
         .content p {
@@ -87,7 +88,7 @@
             font-size: 12pt;
             font-family: Arial, sans-serif;
             font-weight: bold;
-            margin: 0;
+            margin-top: 35pt;
         }
 
         .director-title {
@@ -100,7 +101,7 @@
         }
 
         .validation-section {
-            margin-top: 24pt;
+            margin-top: 36pt;
             font-size: 14pt;
             font-family: 'Times New Roman', serif;
         }
@@ -113,6 +114,7 @@
             float: right;
             text-align: right;
             margin-right: 0;
+            margin-top: 14pt;
         }
 
         .signature-line {
@@ -146,43 +148,65 @@
         }
 
         .footer {
-            width: 100%;
-            margin-top: 40pt;
+            width: calc(100% + 0.48in);
+            margin-left: -0.38in;
+            padding-top: 40pt;
             font-size: 9pt;
-            font-family: 'Arial Narrow', Arial, sans-serif;
+            font-family: Arial, sans-serif;
+            padding-top: 840px;
+            position: fixed;
         }
 
         .footer-line {
-            width: 100%;
+            width: 54%;
             border-bottom: 1px solid #000;
-            margin-bottom: 6pt;
+            margin-bottom: 4pt;
+            padding-bottom: 110px;
         }
 
         .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            width: 100%;
+            display: table;
+            width: 105%;
+            table-layout: auto;
+            /* margin-bottom: 20px; */
         }
 
         .footer-text {
+            display: table-cell;
             line-height: 1.3;
-            width: 65%;
+            width: 55%;
+            text-align: left;
+            vertical-align: bottom;
+        }
+
+        .footer-text-inner {
+            transform: scaleX(0.85);
+            transform-origin: left center;
         }
 
         .footer-logos {
-            display: flex;
-            gap: 10px;
-            align-items: flex-end;
+            display: table-cell;
+            width: 50%;
+            text-align: left;
+            vertical-align: bottom;
+            white-space: nowrap;
         }
 
         .footer-logos img {
-            height: 0.78in;
-            object-fit: contain;
+            display: inline-block;
+            height: 0.79in;
+            width: 1.69in;
+            vertical-align: bottom;
+            /* margin-left: 5px; */
+        }
+
+        .footer-logos img:first-child {
+            margin-left: 0;
         }
 
         .footer-logos img:last-child {
-            height: 0.70in;
+            height: 0.72in;
+            width: 1.42in;
         }
     </style>
 </head>
@@ -200,9 +224,8 @@
 
     <div class="content">
         <p>
-            This is to certify that <span class="student-name">{{ strtoupper($request->last_name) }}, {{ strtoupper($request->first_name) }} {{ $request->middle_name ? strtoupper(substr($request->middle_name, 0, 1)) . '.' : '' }}</span>
-            is a bonafide student of the {{ $request->program_year ?? 'University' }},
-            at the University of Southeastern Philippines, Bo. Obrero St., Davao City.
+            This is to certify that <strong>{{ $request->gender === 'Male' ? 'Mr.' : 'Ms.' }}</strong> <span class="student-name">{{ strtoupper($request->first_name) }} {{ $request->middle_name ? strtoupper(substr($request->middle_name, 0, 1)) . '.' : '' }} {{ strtoupper($request->last_name) }}</span>
+            is a bonafide student of the {{ $request->college ?? 'University' }}{{ $request->program ? ', enrolled in the program <strong>' . $request->program . '</strong>' : '' }}, at the University of Southeastern Philippines, Bo. Obrero St., Davao City{{ ($request->from_sy && $request->to_sy) ? ', from SY ' . $request->from_sy . ' to SY ' . $request->to_sy : '' }}.
         </p>
 
         <p>
@@ -212,8 +235,8 @@
         </p>
 
         <p>
-            This certification is issued upon the request of <span class="student-name">{{ $request->gender === 'Male' ? 'Mr.' : 'Ms.' }} {{ ucfirst($request->last_name) }}</span>
-            for {{ strtolower($request->purpose) }}.
+            This certification is issued upon the request of <strong>{{ $request->gender === 'Male' ? 'Mr.' : 'Ms.' }} {{ ucfirst(strtolower($request->last_name)) }}</strong>
+            for {{ strtolower($request->purpose) }} only.
         </p>
 
         <p>
@@ -245,11 +268,13 @@
         <div class="footer-content">
 
             <div class="footer-text">
-                <strong>VISION: PREMIER RESEARCH UNIVERSITY TRANSFORMING<br>
-                    COMMUNITIES IN THE ASEAN AND BEYOND</strong><br>
-                University of Southeastern Philippines &nbsp;&nbsp; (082) 227-8192 local 207<br>
-                Iñigo St., Bo. Obrero, Davao City &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; www.usep.edu.ph<br>
-                Philippines 8000 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; osas@usep.edu.ph
+                <div class="footer-text-inner">
+                    <strong>VISION: PREMIER RESEARCH UNIVERSITY TRANSFORMING<br>
+                        COMMUNITIES IN THE ASEAN AND BEYOND</strong><br>
+                    University of Southeastern Philippines &nbsp;&nbsp; (082) 227-8192 local 207<br>
+                    Iñigo St., Bo. Obrero, Davao City &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; www.usep.edu.ph<br>
+                    Philippines 8000 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; osas@usep.edu.ph
+                </div>
             </div>
 
             <div class="footer-logos">

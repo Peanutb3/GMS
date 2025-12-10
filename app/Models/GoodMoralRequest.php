@@ -20,9 +20,13 @@ class GoodMoralRequest extends Model
         'middle_name',
         'last_name',
         'gender',
-        'program_year',
+        'college',
+        'program',
+        'year',
         'student_status',
         'last_semester',
+        'from_sy',
+        'to_sy',
         'year_graduated',
         'purpose',
         'copies',
@@ -50,7 +54,27 @@ class GoodMoralRequest extends Model
     public function snapshot(): array
     {
         return $this->only([
-            'student_id','reference_no','staff_id','date_needed','email','contact','first_name','middle_name','last_name','gender','program_year','student_status','last_semester','year_graduated','purpose','copies','status'
+            'student_id',
+            'reference_no',
+            'staff_id',
+            'date_needed',
+            'email',
+            'contact',
+            'first_name',
+            'middle_name',
+            'last_name',
+            'gender',
+            'college',
+            'program',
+            'year',
+            'student_status',
+            'last_semester',
+            'from_sy',
+            'to_sy',
+            'year_graduated',
+            'purpose',
+            'copies',
+            'status'
         ]);
     }
 }

@@ -76,11 +76,6 @@
             margin-top: 4px;
             display: none;
         }
-
-        .btn-disabled {
-            opacity: 0.5;
-            pointer-events: none;
-        }
     </style>
 </head>
 
@@ -199,7 +194,7 @@
                     <!-- Step 2: Academic Information -->
                     <div class="form-step hidden" data-step="2">
                         <h2 class="text-2xl font-bold mb-6 text-gray-800">Academic Information</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-x-3 gap-y-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-3">
 
                             <div class="relative">
                                 <!-- <input type="date" id="date" name="date" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 peer-valid:pt-6 peer-valid:pb-2 cursor-pointer" required> -->
@@ -212,28 +207,93 @@
                                 </div>
                             </div>
 
-                            <div class="md:col-span-2 relative">
-                                <select id="studentStatus" name="studentStatus" class="peer p-4 pe-9 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2 peer-valid:text-gray-900" onchange="toggleLastSemInput(this.value === 'not-enrolled')" required>
+                            <div class="md:col-span-1 relative">
+                                <select id="studentStatus" name="studentStatus" class="peer appearance-none p-4 pr-10 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2 peer-valid:text-gray-900 bg-white" onchange="toggleLastSemInput(this.value === 'not-enrolled')" required>
                                     <option value=""></option>
                                     <option value="currently-enrolled">Currently Enrolled</option>
                                     <option value="not-enrolled">Not Enrolled</option>
                                 </select>
                                 <label for="studentStatus" class="absolute top-0 start-0 p-4 h-full text-sm text-gray-500 truncate pointer-events-none transition ease-in-out duration-100 origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-400 peer-valid:scale-90 peer-valid:translate-x-0.5 peer-valid:-translate-y-1.5 peer-valid:text-gray-400">Student's Status</label>
+                                <div class="absolute inset-y-0 end-0 flex items-center pe-4 pointer-events-none">
+                                    <svg class="w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
                             </div>
 
-                            <div id="lastSemContainer" class="md:col-span-3 relative hidden">
-                                <input type="text" id="lastSem" name="lastSem" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Last Sem & SY">
-                                <label for="lastSem" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Last Sem & SY</label>
+                            <!-- College Dropdown -->
+                            <div class="md:col-span-1 relative">
+                                <select id="college" name="college" class="peer appearance-none p-4 pr-10 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2 peer-valid:text-gray-900 bg-white" required>
+                                    <option value=""></option>
+                                    <option value="College of Applied Economics">College of Applied Economics</option>
+                                    <option value="College of Arts and Sciences">College of Arts and Sciences</option>
+                                    <option value="College of Business Administration">College of Business Administration</option>
+                                    <option value="College of Information and Computing">College of Information and Computing</option>
+                                    <option value="College of Technology">College of Technology</option>
+                                    <option value="College of Education">College of Education</option>
+                                    <option value="College of Engineering">College of Engineering</option>
+                                    <option value="Graduate School">Graduate School</option>
+                                </select>
+                                <label for="college" class="absolute top-0 start-0 p-4 h-full text-sm text-gray-500 truncate pointer-events-none transition ease-in-out duration-100 origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-400 peer-valid:scale-90 peer-valid:translate-x-0.5 peer-valid:-translate-y-1.5 peer-valid:text-gray-400">College</label>
+                                <div class="absolute inset-y-0 end-0 flex items-center pe-4 pointer-events-none">
+                                    <svg class="w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
                             </div>
 
-                            <div class="relative md:col-span-2">
-                                <input type="text" id="program" name="program" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Program & Year" required>
-                                <label for="program" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Program & Year</label>
+                            <!-- Program -->
+                            <div class="md:col-span-1 relative">
+                                <input type="text" id="program" name="program" autocomplete="off" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Program" required>
+                                <label for="program" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Program (Use full name)</label>
+                                <div id="programSuggestions" class="absolute z-50 w-full bg-white border border-gray-300 rounded-lg shadow-lg mt-1 max-h-60 overflow-y-auto hidden"></div>
                             </div>
 
-                            <div class="relative">
+                            <!-- Year Level Dropdown -->
+                            <div class="md:col-span-1 relative">
+                                <select id="year" name="year" class="peer appearance-none p-4 pr-10 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2 peer-valid:text-gray-900 bg-white" required>
+                                    <option value=""></option>
+                                    <option value="1st Year">1st Year</option>
+                                    <option value="2nd Year">2nd Year</option>
+                                    <option value="3rd Year">3rd Year</option>
+                                    <option value="4th Year">4th Year</option>
+                                    <option value="5th Year">5th Year</option>
+                                </select>
+                                <label for="year" class="absolute top-0 start-0 p-4 h-full text-sm text-gray-500 truncate pointer-events-none transition ease-in-out duration-100 origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-400 peer-valid:scale-90 peer-valid:translate-x-0.5 peer-valid:-translate-y-1.5 peer-valid:text-gray-400">Year</label>
+                                <div class="absolute inset-y-0 end-0 flex items-center pe-4 pointer-events-none">
+                                    <svg class="w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- Year Graduated -->
+                            <div class="md:col-span-1 relative">
                                 <input type="text" id="yearGraduated" name="yearGraduated" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Year Graduated">
                                 <label for="yearGraduated" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Year Graduated</label>
+                            </div>
+
+                            <!-- Not Enrolled details: nested 3-column grid -->
+                            <div class="md:col-span-2">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-3 gap-y-3">
+                                    <!-- Last Sem (for Not Enrolled students) -->
+                                    <div id="lastSemContainer" class="relative hidden">
+                                        <input type="text" id="lastSem" name="lastSem" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Last Sem">
+                                        <label for="lastSem" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Last Sem</label>
+                                    </div>
+
+                                    <!-- From SY (for Not Enrolled students) -->
+                                    <div id="fromSYContainer" class="relative hidden">
+                                        <input type="text" id="fromSY" name="fromSY" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="From SY">
+                                        <label for="fromSY" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">From SY</label>
+                                    </div>
+
+                                    <!-- To SY (for Not Enrolled students) -->
+                                    <div id="toSYContainer" class="relative hidden">
+                                        <input type="text" id="toSY" name="toSY" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="To SY">
+                                        <label for="toSY" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">To SY</label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -314,7 +374,7 @@
         </div>
 
         <!-- Hidden form to POST Good Moral request to backend -->
-        <form id="gm-submit-form" action="{{ route('good-moral.store') }}" method="POST" class="hidden">
+        <form id="gm-submit-form" action="{{ route('goodmoral.store') }}" method="POST" class="hidden">
             @csrf
             <input type="hidden" name="date_needed" id="gm-date_needed">
             <input type="hidden" name="email" id="gm-email">
@@ -323,16 +383,20 @@
             <input type="hidden" name="middle_name" id="gm-middle_name">
             <input type="hidden" name="last_name" id="gm-last_name">
             <input type="hidden" name="gender" id="gm-gender">
-            <input type="hidden" name="program_year" id="gm-program_year">
+            <input type="hidden" name="college" id="gm-college">
+            <input type="hidden" name="program" id="gm-program">
+            <input type="hidden" name="year" id="gm-year">
             <input type="hidden" name="student_status" id="gm-student_status">
             <input type="hidden" name="last_semester" id="gm-last_semester">
+            <input type="hidden" name="from_sy" id="gm-from_sy">
+            <input type="hidden" name="to_sy" id="gm-to_sy">
             <input type="hidden" name="year_graduated" id="gm-year_graduated">
             <input type="hidden" name="purpose" id="gm-purpose">
             <input type="hidden" name="copies" id="gm-copies" value="1">
         </form>
 
         <!-- Hidden form to POST Safe Loan request -->
-        <form id="loan-submit-form" action="{{ route('safe-loan.store') }}" method="POST" class="hidden">
+        <form id="loan-submit-form" action="{{ route('safeloan.store') }}" method="POST" class="hidden">
             @csrf
             <input type="hidden" name="date_needed" id="loan-date_needed">
             <input type="hidden" name="email" id="loan-email_hidden">
@@ -419,7 +483,7 @@
                             </ul>
                         </li>
                     </ol>
-                    <p class="mt-6 text-center font-bold" style="color:#8B0000;">
+                    <p class="mt-6 text-left font-bold" style="color:#8B0000;">
                         Reminder: APPLICANTS WITH INCOMPLETE REQUIREMENTS CAN'T PROCEED WITH THE APPLICATION.
                     </p>
                 </div>
@@ -438,8 +502,8 @@
 
                 <!-- Success Icon -->
                 <div class="mb-6">
-                    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100">
-                        <i class="fas fa-check text-3xl text-green-600"></i>
+                    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-500">
+                        <i class="fas fa-check text-3xl text-white"></i>
                     </div>
                 </div>
 
@@ -587,6 +651,21 @@
 
         <script>
             document.addEventListener('DOMContentLoaded', () => {
+                // Track which type of request was submitted for view slip button
+                let lastSubmittedType = null;
+
+                // Check for success message from Laravel session
+                @if(session('success'))
+                window.lastPdfUrl = @json(session('pdf_url'));
+                lastSubmittedType = @json(session('success'));
+                // Show success modal
+                const successModal = document.getElementById('success-modal');
+                if (successModal) {
+                    successModal.classList.remove('hidden');
+                    successModal.classList.add('flex');
+                }
+                @endif
+
                 // Prevent non-numeric input in contact fields
                 const contactInputs = document.querySelectorAll('#contact, #loanContact');
                 contactInputs.forEach(input => {
@@ -617,20 +696,133 @@
                     'success': document.getElementById('success-modal')
                 };
 
-                // Track which type of request was submitted for view slip button
-                let lastSubmittedType = null;
+                // Set default date to today for both forms
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('date').value = today;
+                document.getElementById('loanDate').value = today;
+
+                // Program autocomplete
+                const programs = [
+                    "Bachelor of Secondary Education",
+                    "Bachelor of Elementary Education",
+                    "Bachelor of Early Childhood Education",
+                    "Bachelor of Special Needs Education",
+                    "Bachelor of Physical Education",
+                    "Bachelor of Technology and Livelihood Education major in Home Economics",
+                    "Bachelor of Technical-Vocational Teacher Education",
+                    "Doctor of Philosophy in Education",
+                    "Doctor of Education",
+                    "Master of Arts in Education",
+                    "Master of Arts in English Language Teaching",
+                    "Master of Education in Language Teaching - English",
+                    "Master of Arts in Mathematics Education",
+                    "Master of Arts in Science Education",
+                    "Bachelor of Arts in Literature and Cultural Studies",
+                    "Bachelor of Arts in English Language major in Applied Linguistics",
+                    "Bachelor of Science in Biology",
+                    "Bachelor of Science in Mathematics",
+                    "Bachelor of Science in Statistics",
+                    "Master of Arts in Literature",
+                    "Master of Arts in Applied Linguistics",
+                    "Master of Science in Applied Mathematics",
+                    "Master of Science in Biology",
+                    "Bachelor of Science in Business Administration Major in Financial Management",
+                    "Bachelor of Science in Hospitality Management",
+                    "Bachelor of Science in Entrepreneurship",
+                    "Bachelor of Science in Accountancy",
+                    "Doctor of Philosophy",
+                    "Master of Business Administration",
+                    "Bachelor of Science in Agricultural and Biosystems Engineering",
+                    "Bachelor of Science in Civil Engineering",
+                    "Bachelor of Science in Electrical Engineering",
+                    "Bachelor of Science in Electronics Engineering",
+                    "Bachelor of Science in Geodetic Engineering",
+                    "Bachelor of Science in Geology",
+                    "Bachelor of Science in Mechanical Engineering",
+                    "Bachelor of Science in Mining Engineering",
+                    "Bachelor of Science in Sanitary Engineering",
+                    "Master of Science in Engineering",
+                    "Bachelor of Science in Industrial Technology",
+                    "Master of Technology Education",
+                    "Master of Industrial Technology",
+                    "Bachelor of Science in Information Technology",
+                    "Bachelor of Science in Computer Science",
+                    "Bachelor of Library and Information Science",
+                    "Master of Library and Information Science",
+                    "Master in Information Technology",
+                    "Doctor in Information Technology",
+                    "Bachelor of Science in Economics",
+                    "Master of Science in Economics"
+                ];
+
+                const programInput = document.getElementById('program');
+                const programSuggestions = document.getElementById('programSuggestions');
+
+                programInput.addEventListener('input', function() {
+                    const value = this.value.trim();
+
+                    if (value.length === 0) {
+                        programSuggestions.classList.add('hidden');
+                        programSuggestions.innerHTML = '';
+                        return;
+                    }
+
+                    const filtered = programs.filter(program =>
+                        program.toLowerCase().includes(value.toLowerCase())
+                    );
+
+                    if (filtered.length === 0) {
+                        programSuggestions.classList.add('hidden');
+                        programSuggestions.innerHTML = '';
+                        return;
+                    }
+
+                    programSuggestions.innerHTML = filtered.map(program =>
+                        `<div class="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm" onclick="selectProgram('${program.replace(/'/g, "\\'")}')">${program}</div>`
+                    ).join('');
+                    programSuggestions.classList.remove('hidden');
+                });
+
+                // Hide suggestions when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!programInput.contains(e.target) && !programSuggestions.contains(e.target)) {
+                        programSuggestions.classList.add('hidden');
+                    }
+                });
+
+                window.selectProgram = function(program) {
+                    programInput.value = program;
+                    programSuggestions.classList.add('hidden');
+                    // Trigger floating label
+                    programInput.dispatchEvent(new Event('input'));
+                };
 
                 // Toggle Last Sem input based on student status
                 window.toggleLastSemInput = function(show) {
-                    const container = document.getElementById('lastSemContainer');
-                    const input = document.getElementById('lastSem');
+                    const lastSemContainer = document.getElementById('lastSemContainer');
+                    const fromSYContainer = document.getElementById('fromSYContainer');
+                    const toSYContainer = document.getElementById('toSYContainer');
+                    const lastSemInput = document.getElementById('lastSem');
+                    const fromSYInput = document.getElementById('fromSY');
+                    const toSYInput = document.getElementById('toSY');
+
                     if (show) {
-                        container.classList.remove('hidden');
-                        input.required = true;
+                        lastSemContainer.classList.remove('hidden');
+                        fromSYContainer.classList.remove('hidden');
+                        toSYContainer.classList.remove('hidden');
+                        lastSemInput.required = true;
+                        fromSYInput.required = true;
+                        toSYInput.required = true;
                     } else {
-                        container.classList.add('hidden');
-                        input.required = false;
-                        input.value = '';
+                        lastSemContainer.classList.add('hidden');
+                        fromSYContainer.classList.add('hidden');
+                        toSYContainer.classList.add('hidden');
+                        lastSemInput.required = false;
+                        fromSYInput.required = false;
+                        toSYInput.required = false;
+                        lastSemInput.value = '';
+                        fromSYInput.value = '';
+                        toSYInput.value = '';
                     }
                 };
 
@@ -708,8 +900,7 @@
                         nextBtn.textContent = 'Continue';
                     }
 
-                    // Revalidate to toggle button state
-                    nextBtn.classList.toggle('btn-disabled', !validateCurrentStep());
+                    // Attach field listeners for validation on input
                     attachStepFieldListeners();
                 }
 
@@ -737,10 +928,30 @@
                     if (!stepEl) return true;
                     const requiredInputs = stepEl.querySelectorAll('input[required], select[required], textarea[required]');
                     requiredInputs.forEach(inp => {
-                        if (!inp.value || (inp.type === 'radio' && !stepEl.querySelector(`input[name="${inp.name}"]:checked`))) {
+                        // Skip radio buttons in this loop - check them separately
+                        if (inp.type === 'radio') return;
+
+                        if (!inp.value || inp.value.trim() === '') {
                             valid = false;
                         }
                     });
+
+                    // Check radio button groups separately
+                    const radioGroups = {};
+                    stepEl.querySelectorAll('input[type="radio"]').forEach(radio => {
+                        if (!radioGroups[radio.name]) {
+                            radioGroups[radio.name] = stepEl.querySelector(`input[name="${radio.name}"]:checked`);
+                        }
+                    });
+
+                    // If any radio group exists and none is checked, invalid
+                    for (const groupName in radioGroups) {
+                        if (!radioGroups[groupName]) {
+                            valid = false;
+                            break;
+                        }
+                    }
+
                     // Special case: if student status is not-enrolled ensure lastSem when step 2
                     if (currentStep === 2) {
                         const status = document.getElementById('studentStatus').value;
@@ -779,14 +990,13 @@
                 function attachStepFieldListeners() {
                     const stepEl = document.querySelector(`.form-step[data-step="${currentStep}"]`);
                     if (!stepEl) return;
-                    const requiredInputs = stepEl.querySelectorAll('input[required], select[required], textarea[required]');
-                    requiredInputs.forEach(inp => {
+                    // Attach to ALL inputs, not just required ones
+                    const allInputs = stepEl.querySelectorAll('input, select, textarea');
+                    allInputs.forEach(inp => {
                         if (!inp.dataset.listenerAttached) {
-                            const evt = inp.tagName === 'SELECT' ? 'change' : 'input';
+                            const evt = (inp.tagName === 'SELECT' || inp.type === 'radio') ? 'change' : 'input';
                             inp.addEventListener(evt, () => {
                                 clearFieldError(inp); // remove error when user types
-                                // Update button state without showing errors
-                                document.getElementById('next-btn').classList.toggle('btn-disabled', !validateCurrentStep());
                             });
                             inp.dataset.listenerAttached = '1';
                         }
@@ -848,11 +1058,8 @@
                     btn.addEventListener('click', () => closeModal(btn.closest('.modal')));
                 });
 
-                document.querySelectorAll('.modal').forEach(modal => {
-                    modal.addEventListener('click', e => {
-                        if (e.target === modal) closeModal(modal);
-                    });
-                });
+                // Removed click-outside-to-close feature to prevent accidental closing
+                // Users must use the X button or Back button to close modals
 
                 // Good Moral Payment Slip: Back button
                 document.getElementById('back-btn').addEventListener('click', () => {
@@ -910,7 +1117,6 @@
                     if (currentLoanStep === 1) loanPrevBtn.classList.add('hidden');
                     else loanPrevBtn.classList.remove('hidden');
                     loanNextBtn.textContent = currentLoanStep === totalLoanSteps ? 'Submit' : 'Continue';
-                    loanNextBtn.classList.toggle('btn-disabled', !validateLoanCurrentStep());
                     attachLoanStepFieldListeners();
                 }
 
@@ -988,8 +1194,6 @@
                                 inp.classList.remove('error-border');
                                 const em = inp.parentElement.querySelector('.error-msg');
                                 if (em) em.style.display = 'none';
-                                // Update button state without showing errors
-                                document.getElementById('loan-next-btn').classList.toggle('btn-disabled', !validateLoanCurrentStep());
                             });
                             inp.dataset.listenerAttached = '1';
                         }
@@ -1084,7 +1288,11 @@
                     const dateNeeded = document.getElementById('date').value; // yyyy-mm-dd
                     const statusRaw = document.getElementById('studentStatus').value; // currently-enrolled | not-enrolled
                     const lastSem = document.getElementById('lastSem').value.trim();
+                    const college = document.getElementById('college').value.trim();
                     const program = document.getElementById('program').value.trim();
+                    const year = document.getElementById('year').value.trim();
+                    const fromSy = document.getElementById('fromSY').value.trim();
+                    const toSy = document.getElementById('toSY').value.trim();
                     const yearGraduated = document.getElementById('yearGraduated').value.trim();
                     const email = document.getElementById('email').value.trim();
                     const purpose = document.getElementById('purpose').value.trim();
@@ -1100,43 +1308,19 @@
                     document.getElementById('gm-date_needed').value = dateNeeded;
                     document.getElementById('gm-student_status').value = statusRaw.replace('-', '_');
                     document.getElementById('gm-last_semester').value = lastSem;
-                    document.getElementById('gm-program_year').value = program;
+                    document.getElementById('gm-college').value = college;
+                    document.getElementById('gm-program').value = program;
+                    document.getElementById('gm-year').value = year;
+                    document.getElementById('gm-from_sy').value = fromSy;
+                    document.getElementById('gm-to_sy').value = toSy;
                     document.getElementById('gm-year_graduated').value = yearGraduated;
                     document.getElementById('gm-email').value = email;
                     document.getElementById('gm-purpose').value = purpose;
                     document.getElementById('gm-gender').value = gender;
                     document.getElementById('gm-copies').value = copies;
 
-                    // Store the reference for PDF viewing later
-                    // Form will submit via fetch to get the URL, then show modal
-                    const formData = new FormData(document.getElementById('gm-submit-form'));
-
-                    const gmSubmitUrl = @json(route('good-moral.store'));
-                    fetch(gmSubmitUrl, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    }).then(response => {
-                        if (response.redirected) {
-                            // Store the PDF URL
-                            window.lastPdfUrl = response.url;
-                            lastSubmittedType = 'good-moral';
-
-                            // Reset button and show modal
-                            submitBtn.dataset.loading = '0';
-                            submitBtn.textContent = 'Submit Request';
-                            submitBtn.classList.remove('btn-disabled');
-                            closeModal(modals['payment-slip']);
-                            openModal('success');
-                        }
-                    }).catch(error => {
-                        console.error('Error:', error);
-                        submitBtn.dataset.loading = '0';
-                        submitBtn.textContent = 'Submit Request';
-                        submitBtn.classList.remove('btn-disabled');
-                    });
+                    // Submit the form normally (will show browser loading spinner)
+                    document.getElementById('gm-submit-form').submit();
                 });
 
                 // Safe Loan payment slip submit mapping
@@ -1181,15 +1365,15 @@
 
                     // Store the reference for PDF viewing later
                     const formData = new FormData(document.getElementById('loan-submit-form'));
+                    const loanSubmitUrl = @json(route('safeloan.store'));
 
-                    fetch('{{ route('
-                        safe - loan.store ') }}', {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest'
-                            }
-                        }).then(response => {
+                    fetch(loanSubmitUrl, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    }).then(response => {
                         if (response.redirected) {
                             // Store the show page URL, we'll need to get print URL from it
                             window.lastShowUrl = response.url;

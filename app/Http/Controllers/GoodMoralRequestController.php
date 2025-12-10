@@ -22,9 +22,13 @@ class GoodMoralRequestController extends Controller
             'middle_name' => ['nullable', 'string', 'max:100'],
             'last_name' => ['required', 'string', 'max:100'],
             'gender' => ['nullable', 'in:Female,Male,Prefer not to say'],
-            'program_year' => ['nullable', 'string', 'max:150'],
+            'college' => ['nullable', 'string', 'max:150'],
+            'program' => ['nullable', 'string', 'max:150'],
+            'year' => ['nullable', 'string', 'max:50'],
             'student_status' => ['nullable', 'in:currently_enrolled,not_enrolled'],
             'last_semester' => ['nullable', 'string', 'max:150'],
+            'from_sy' => ['nullable', 'string', 'max:50'],
+            'to_sy' => ['nullable', 'string', 'max:50'],
             'year_graduated' => ['nullable', 'string', 'max:20'],
             'purpose' => ['nullable', 'string', 'max:500'],
             'copies' => ['nullable', 'integer', 'min:1', 'max:50'],
@@ -48,7 +52,9 @@ class GoodMoralRequestController extends Controller
             'ip_address' => $request->ip(),
         ]);
 
-        return redirect()->route('good-moral.print', $req);
+        return redirect()->route('request')
+            ->with('success', 'good-moral')
+            ->with('pdf_url', route('good-moral.print', $req));
     }
 
     public function print(GoodMoralRequest $requestModel)
@@ -56,6 +62,24 @@ class GoodMoralRequestController extends Controller
         // Reuse existing print.blade with $req variable expected
         $req = (object) [
             'reference_no' => $requestModel->reference_no,
+            'date_needed' => $requestModel->date_needed,
+            'email' => $requestModel->email,
+            'contact' => $requestModel->contact,
+            'last_name' => $requestModel->last_name,
+            'first_name' => $requestModel->first_name,
+            'middle_name' => $requestModel->middle_name,
+            'gender' => $requestModel->gender,
+            'college' => $requestModel->college,
+            'program' => $requestModel->program,
+            'year' => $requestModel->year,
+            'student_status' => $requestModel->student_status,
+            'last_semester' => $requestModel->last_semester,
+            'from_sy' => $requestModel->from_sy,
+            'to_sy' => $requestModel->to_sy,
+            'year_graduated' => $requestModel->year_graduated,
+            'purpose' => $requestModel->purpose,
+            'copies' => $requestModel->copies,
+            'safe_loan_amount' => $requestModel->safe_loan_amount ?? 0,
             'student' => (object) [
                 'email' => $requestModel->email,
                 'contact' => $requestModel->contact,
@@ -63,14 +87,12 @@ class GoodMoralRequestController extends Controller
                 'first_name' => $requestModel->first_name,
                 'middle_name' => $requestModel->middle_name,
                 'gender' => $requestModel->gender,
-                'program' => $requestModel->program_year,
+                'program' => $requestModel->program,
+                'year' => $requestModel->year,
                 'year_level' => null,
                 'status' => $requestModel->student_status === 'currently_enrolled' ? 'Currently Enrolled' : 'Not Enrolled',
                 'year_graduated' => $requestModel->year_graduated,
             ],
-            'purpose' => $requestModel->purpose,
-            'copies' => $requestModel->copies,
-            'safe_loan_amount' => $requestModel->safe_loan_amount ?? 0,
         ];
 
         // Generate PDF
@@ -115,7 +137,9 @@ class GoodMoralRequestController extends Controller
         $pdf = Pdf::loadView('good-moral-certificate', ['request' => $goodMoralRequest])
             ->setPaper('a4', 'portrait');
 
-        return $pdf->stream('Good_Moral_Certificate_' . $goodMoralRequest->reference_no . '.pdf');
+        return response($pdf->output())
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'inline; filename="Good_Moral_Certificate_' . $goodMoralRequest->reference_no . '.pdf"');
     }
 
     public function markCompleted(GoodMoralRequest $goodMoralRequest)

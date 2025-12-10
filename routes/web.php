@@ -40,14 +40,14 @@ Route::get('/signup/step2', [AuthController::class, 'showStep2'])->name('signup.
 Route::post('/signup/step2', [AuthController::class, 'storeStep2'])->name('signup.step2.store');
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/requests/good-moral', [GoodMoralRequestController::class, 'store'])->name('good-moral.store');
+Route::post('/requests/good-moral', [GoodMoralRequestController::class, 'store'])->name('goodmoral.store');
 Route::get('/requests/good-moral/{requestModel}/success', [GoodMoralRequestController::class, 'success'])->name('good-moral.success');
 Route::get('/requests/good-moral/{requestModel}/print', [GoodMoralRequestController::class, 'print'])->name('good-moral.print');
 Route::post('/good-moral/{goodMoralRequest}/enter-or', [GoodMoralRequestController::class, 'enterOrNumber'])->name('good-moral.enter-or');
 Route::get('/good-moral/{goodMoralRequest}/certificate', [GoodMoralRequestController::class, 'showCertificate'])->name('good-moral.certificate');
 Route::post('/good-moral/{goodMoralRequest}/mark-completed', [GoodMoralRequestController::class, 'markCompleted'])->name('good-moral.mark-completed');
 Route::delete('/good-moral/{goodMoralRequest}', [GoodMoralRequestController::class, 'destroy'])->name('good-moral.delete');
-Route::post('/requests/safe-loan', [SafeLoanRequestController::class, 'store'])->name('safe-loan.store');
+Route::post('/requests/safe-loan', [SafeLoanRequestController::class, 'store'])->name('safeloan.store');
 Route::get('/requests/safe-loan/{requestModel}', [SafeLoanRequestController::class, 'show'])->name('safe-loan.show');
 Route::get('/requests/safe-loan/{requestModel}/print', [SafeLoanRequestController::class, 'print'])->name('safe-loan.print');
 Route::get('/requests/safe-loan/{requestModel}/print', [SafeLoanRequestController::class, 'print'])->name('safe-loan.print');

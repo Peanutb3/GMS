@@ -158,9 +158,9 @@
     <!-- Right Panel -->
     <div class="hidden lg:flex w-1/2 bg-white h-full flex-col items-center justify-between px-12">
         <div class="flex-1 flex items-center justify-center">
-            <img src="{{ asset('images/LoginSticker.png') }}"
-                alt="Login Illustration"
-                class="w-[100%] translate-y-6">
+            <img src="{{ asset('images/Login_pic.png') }}"
+                alt="Signup Illustration"
+                class="w-[110%] translate-y-6">
         </div>
 
         <div class="text-sm text-gray-400 pb-6 text-center tracking-wide">
@@ -182,9 +182,10 @@
                 </button>
             </div>
             <div class="p-6 overflow-y-auto max-h-[70vh] text-gray-700 space-y-4">
-        <div class="flex justify-center mb-4">
-          <img src="{{ asset('images/LoginSticker.png') }}" alt="Privacy" class="w-64">
-        </div>                <p class="font-semibold text-lg text-center text-[#800000]">University of Southeastern Philippines<br>Data Privacy Statement</p>
+                <div class="flex justify-center mb-4">
+                    <img src="{{ asset('images/LoginSticker.png') }}" alt="Privacy" class="w-64">
+                </div>
+                <p class="font-semibold text-lg text-center text-[#800000]">University of Southeastern Philippines<br>Data Privacy Statement</p>
 
                 <p class="text-sm">The University of Southeastern Philippines (USeP) is committed to protecting your personal information in compliance with <strong>Republic Act No. 10173 (Data Privacy Act of 2012)</strong>.</p>
 

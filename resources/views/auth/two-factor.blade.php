@@ -123,7 +123,7 @@
     <!-- Right Panel -->
     <div class="w-1/2 bg-white h-full flex flex-col items-center justify-center px-12">
         <div class="flex-1 flex items-center justify-center">
-            <img src="{{ asset('images/LoginSticker.png') }}"
+            <img src="{{ asset('images/Login_pic.png') }}"
                 alt="Security Illustration"
                 class="w-[100%] translate-y-6">
         </div>

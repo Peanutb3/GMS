@@ -73,7 +73,7 @@
             font-family: Arial;
             font-size: 8pt;
             vertical-align: middle;
-            white-space: nowrap;
+            white-space: normal;
             direction: ltr;
             padding: 0px 3px 0px 3px;
         }
@@ -856,7 +856,7 @@
                 <tr style="height: 16px">
                     <td class="s10">Course and Year</td>
                     <td class="s11">:</td>
-                    <td class="s13" colspan="7">{{ $student->program ?? ($req->program_year ?? '') }}</td>
+                    <td class="s13" colspan="7">@php($prog = $student->program ?? ($req->program ?? ''))@php($yr = $student->year ?? ($req->year ?? '')){{ $prog }}@if(!empty($yr)) {{ ' - ' . $yr }}@endif</td>
                 </tr>
                 <tr style="height: 17px">
                     <td class="s10" rowspan="2">Student's Status</td>
@@ -864,7 +864,7 @@
                     <td class="s22" colspan="7">( {{ (($student->status ?? null) === 'Currently Enrolled' || ($req->student_status ?? null) === 'currently_enrolled') ? '/' : ' ' }} ) Currently Enrolled</td>
                 </tr>
                 <tr style="height: 14px">
-                    <td class="s23" colspan="7">( {{ (($student->status ?? null) === 'Not Enrolled' || ($req->student_status ?? null) === 'not_enrolled') ? '/' : ' ' }} ) Not Enrolled (pls. specify last Sem. &amp; SY) {{ $req->last_semester ?? '____________________________' }}</td>
+                    <td class="s23" colspan="7">( {{ (($student->status ?? null) === 'Not Enrolled' || ($req->student_status ?? null) === 'not_enrolled') ? '/' : ' ' }} ) Not Enrolled (pls. specify last Sem. &amp; SY) <span style="text-decoration: underline;">{{ $req->last_semester ?? '____________________________' }}@if(($req->from_sy ?? null) || ($req->to_sy ?? null)) {{ ' & SY ' . ($req->from_sy ?? '') . ' - SY ' . ($req->to_sy ?? '') }}@endif</span></td>
                 </tr>
                 <tr style="height: 16px">
                     <td class="s10">Year Graduated <span style="font-size:8pt;font-family:Arial;font-weight:bold;font-style:italic;color:#000000;">(If Applicable)</span></td>
@@ -945,7 +945,7 @@
                 <tr style="height: 16px">
                     <td class="s33">Course &amp; Year</td>
                     <td class="s34">:</td>
-                    <td class="s35" colspan="7">{{ $student->program ?? ($req->program_year ?? '') }}</td>
+                    <td class="s35" colspan="7">@php($prog2 = $student->program ?? ($req->program ?? ''))@php($yr2 = $student->year ?? ($req->year ?? '')){{ $prog2 }}@if(!empty($yr2)) {{ ' - ' . $yr2 }}@endif</td>
                 </tr>
                 <tr style="height: 16px">
                     <td class="s36"></td>
@@ -982,12 +982,8 @@
                 </tr>
                 <tr style="height: 30px">
                     <td class="s47" colspan="3">By: </td>
-                    <td class="s38"></td>
-                    <td class="s38"></td>
-                    <td class="s38"></td>
-                    <td class="s36"></td>
-                    <td class="s36"></td>
-                    <td class="s48"></td>
+                    <td class="s38" colspan="2"></td>
+                    <td class="s48" colspan="4"></td>
                 </tr>
                 <tr style="height: 16px">
                     <td class="s49" colspan="9">OSAS Staff</td>

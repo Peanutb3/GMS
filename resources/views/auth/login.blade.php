@@ -136,19 +136,19 @@
                         LOGIN
                     </button>
 
-                    <!-- Divider -->
-                    <div class="flex items-center my-4">
+                    <!-- Divider (Commented Out - Google Sign-in Disabled) -->
+                    <!-- <div class="flex items-center my-4">
                         <hr class="flex-grow border-t border-white">
                         <span class="mx-3 text-white text-sm">or</span>
                         <hr class="flex-grow border-t border-white">
-                    </div>
+                    </div> -->
 
-                    <!-- Google Sign-in -->
-                    <button type="button" onclick="signInWithGoogle()"
+                    <!-- Google Sign-in (Disabled) -->
+                    <!-- <button type="button" onclick="signInWithGoogle()"
                         class="w-full bg-white text-black font-medium py-3 rounded-full text-base flex items-center justify-center gap-3 hover:bg-gray-100 transition">
                         <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo" class="w-6 h-6">
                         Sign in with Google
-                    </button>
+                    </button> -->
                 </form>
             </div>
         </div>
@@ -220,9 +220,10 @@
             document.getElementById('privacyModal').classList.add('hidden');
         }
 
-        function signInWithGoogle() {
-            alert("Google Sign-in will be integrated later.");
-        }
+        // Google Sign-in function (Disabled)
+        // function signInWithGoogle() {
+        //     alert("Google Sign-in will be integrated later.");
+        // }
 
         function togglePassword() {
             const pwd = document.getElementById("password");

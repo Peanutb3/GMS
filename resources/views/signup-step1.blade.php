@@ -17,6 +17,46 @@
             background-color: transparent !important;
         }
 
+        /* Program suggestions dropdown */
+        .program-suggestions {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .program-suggestions::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .program-suggestions::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .program-suggestions::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+
+        .program-suggestions::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .suggestion-item {
+            padding: 10px 16px;
+            color: #1f2937;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 0.875rem;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f3f4f6;
+        }
+
         input:-webkit-autofill,
         input:-webkit-autofill:hover,
         input:-webkit-autofill:focus,
@@ -115,11 +155,14 @@
 
                         <!-- Program + Year -->
                         <div class="flex gap-4">
-                            <input type="text" name="program" placeholder="Program" required
-                                class="flex-1 border-b border-white/70 focus:border-white focus:outline-none pb-3 text-white/80 bg-transparent placeholder-white/70 text-sm">
+                            <div class="flex-[2] relative">
+                                <input type="text" name="program" id="program" placeholder="Program (e.g., BSIT, BSCS)" required autocomplete="off"
+                                    class="w-full border-b border-white/70 focus:border-white focus:outline-none pb-3 text-white/80 bg-transparent placeholder-white/70 text-sm">
+                                <div id="programSuggestions" class="hidden absolute z-10 w-full mt-1 program-suggestions"></div>
+                            </div>
 
                             <select name="year" required
-                                class="flex-1 border-b border-white/70 focus:border-white focus:outline-none pb-3 text-white bg-transparent text-sm appearance-none cursor-pointer">
+                                class="w-32 border-b border-white/70 focus:border-white focus:outline-none pb-3 text-white bg-transparent text-sm appearance-none cursor-pointer">
                                 <option value="" disabled selected class="text-black bg-white">Select Year</option>
                                 <option value="1st year" class="text-black bg-white">1st year</option>
                                 <option value="2nd year" class="text-black bg-white">2nd year</option>
@@ -161,6 +204,102 @@
             <a href="{{ route('login') }}" class="text-gray-500 hover:text-gray-700">Privacy Policy</a>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Program autocomplete
+            const programs = [
+                "Bachelor of Secondary Education",
+                "Bachelor of Elementary Education",
+                "Bachelor of Early Childhood Education",
+                "Bachelor of Special Needs Education",
+                "Bachelor of Physical Education",
+                "Bachelor of Technology and Livelihood Education major in Home Economics",
+                "Bachelor of Technical-Vocational Teacher Education",
+                "Doctor of Philosophy in Education",
+                "Doctor of Education",
+                "Master of Arts in Education",
+                "Master of Arts in English Language Teaching",
+                "Master of Education in Language Teaching - English",
+                "Master of Arts in Mathematics Education",
+                "Master of Arts in Science Education",
+                "Bachelor of Arts in Literature and Cultural Studies",
+                "Bachelor of Arts in English Language major in Applied Linguistics",
+                "Bachelor of Science in Biology",
+                "Bachelor of Science in Mathematics",
+                "Bachelor of Science in Statistics",
+                "Master of Arts in Literature",
+                "Master of Arts in Applied Linguistics",
+                "Master of Science in Applied Mathematics",
+                "Master of Science in Biology",
+                "Bachelor of Science in Business Administration Major in Financial Management",
+                "Bachelor of Science in Hospitality Management",
+                "Bachelor of Science in Entrepreneurship",
+                "Bachelor of Science in Accountancy",
+                "Doctor of Philosophy",
+                "Master of Business Administration",
+                "Bachelor of Science in Agricultural and Biosystems Engineering",
+                "Bachelor of Science in Civil Engineering",
+                "Bachelor of Science in Electrical Engineering",
+                "Bachelor of Science in Electronics Engineering",
+                "Bachelor of Science in Geodetic Engineering",
+                "Bachelor of Science in Geology",
+                "Bachelor of Science in Mechanical Engineering",
+                "Bachelor of Science in Mining Engineering",
+                "Bachelor of Science in Sanitary Engineering",
+                "Master of Science in Engineering",
+                "Bachelor of Science in Industrial Technology",
+                "Master of Technology Education",
+                "Master of Industrial Technology",
+                "Bachelor of Science in Information Technology",
+                "Bachelor of Science in Computer Science",
+                "Bachelor of Library and Information Science",
+                "Master of Library and Information Science",
+                "Master in Information Technology",
+                "Doctor in Information Technology",
+                "Bachelor of Science in Economics",
+                "Master of Science in Economics"
+            ];
+
+            const programInput = document.getElementById('program');
+            const programSuggestions = document.getElementById('programSuggestions');
+
+            programInput.addEventListener('input', function() {
+                const value = this.value.trim();
+
+                if (value.length === 0) {
+                    programSuggestions.classList.add('hidden');
+                    return;
+                }
+
+                const filtered = programs.filter(program =>
+                    program.toLowerCase().includes(value.toLowerCase())
+                );
+
+                if (filtered.length === 0) {
+                    programSuggestions.classList.add('hidden');
+                    return;
+                }
+
+                programSuggestions.innerHTML = filtered.map(program =>
+                    `<div class="suggestion-item" onclick="selectProgram('${program.replace(/'/g, "\\'")}')">${program}</div>`
+                ).join('');
+                programSuggestions.classList.remove('hidden');
+            });
+
+            // Hide suggestions when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!programInput.contains(e.target) && !programSuggestions.contains(e.target)) {
+                    programSuggestions.classList.add('hidden');
+                }
+            });
+
+            window.selectProgram = function(program) {
+                programInput.value = program;
+                programSuggestions.classList.add('hidden');
+            };
+        });
+    </script>
 
 </body>
 

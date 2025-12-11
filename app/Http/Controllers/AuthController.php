@@ -18,6 +18,13 @@ use Illuminate\Auth\Events\PasswordReset;
 class AuthController extends Controller
 {
     /**
+     * Generate device fingerprint based on user agent and IP
+     */
+    private function getDeviceFingerprint(Request $request): string
+    {
+        return hash('sha256', $request->userAgent() . '|' . $request->ip());
+    }
+    /**
      * ---------------------------
      * MULTI-STEP SIGNUP
      * ---------------------------
@@ -214,11 +221,16 @@ class AuthController extends Controller
             // Logout immediately (we'll log in after OTP verification)
             Auth::logout();
 
-            // Skip 2FA for admin and staff (they are created by admin, trusted users)
-            $skipOtpRoles = ['admin', 'staff', 'osas_gmc', 'osas_du'];
+            // Get device fingerprint
+            $deviceFingerprint = $this->getDeviceFingerprint($request);
 
-            // Check if 2FA is enabled for this user and role requires it
-            if ($user->two_factor_enabled && !in_array($user->role, $skipOtpRoles)) {
+            // Check if 2FA is enabled and required based on role and device
+            $requiresOtp = false;
+            if ($user->two_factor_enabled) {
+                $requiresOtp = $user->requiresOtp($deviceFingerprint);
+            }
+
+            if ($requiresOtp) {
                 // Generate OTP code
                 $code = \App\Models\TwoFactorCode::generateCode();
 
@@ -244,8 +256,11 @@ class AuthController extends Controller
                     \Illuminate\Support\Facades\Log::error('Failed to send 2FA email: ' . $e->getMessage());
                 }
 
-                // Store user ID in session for OTP verification
-                session(['2fa:user:id' => $user->id]);
+                // Store user ID and device fingerprint in session for OTP verification
+                session([
+                    '2fa:user:id' => $user->id,
+                    '2fa:device:fingerprint' => $deviceFingerprint,
+                ]);
 
                 // Store OTP in session for testing (REMOVE IN PRODUCTION)
                 session(['2fa:test:code' => $code]);
@@ -366,11 +381,11 @@ class AuthController extends Controller
                 'regex:/[a-z]/',
                 'regex:/[A-Z]/',
                 'regex:/[0-9]/',
-                'regex:/[@$!%*#?&]/'
+                'regex:/[@$!%*#?&_\-]/'
             ],
         ], [
             'password.min' => 'Password must be at least 8 characters.',
-            'password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*#?&).'
+            'password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*#?&_-).'
         ]);
 
         $status = Password::reset(

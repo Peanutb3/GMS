@@ -38,17 +38,6 @@
     </div>
 </div>
 
-@if(session('success'))
-<div class="bg-green-100 border border-green-400 text-green-700 px-6 py-4 rounded-lg mb-6 flex items-center justify-between">
-    <span>{{ session('success') }}</span>
-    <button onclick="this.parentElement.remove()" class="text-green-700 hover:text-green-900">
-        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-    </button>
-</div>
-@endif
-
 <!-- Search -->
 <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
     <form method="GET" action="{{ route('admin.manage-admins') }}">
@@ -147,22 +136,10 @@
     @endif
 </div>
 
-<div id="toast" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hidden">
-    <p id="toast-message"></p>
-</div>
-
 @endsection
 
 @push('scripts')
 <script>
-    // Show success message on page load if it exists
-    @if(session('success'))
-    document.addEventListener('DOMContentLoaded', function() {
-        showToast('{{ session('
-            success ') }}', 'success');
-    });
-    @endif
-
     function deleteAdmin(id) {
         if (!confirm('Are you sure you want to delete this administrator?')) {
             return;

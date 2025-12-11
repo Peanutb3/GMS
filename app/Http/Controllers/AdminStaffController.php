@@ -18,9 +18,9 @@ class AdminStaffController extends Controller
         // Search filter
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
@@ -50,14 +50,23 @@ class AdminStaffController extends Controller
             'email' => 'required|email|unique:users,email',
             'staff_type' => 'required|in:Academic,Non-Academic,Administrative',
             'role' => 'required|in:osas_gmc,osas_du',
-            'password' => 'required|min:8|confirmed',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[@$!%*#?&_\-]/'
+            ],
         ]);
 
         // Build full name
-        $fullName = trim($validated['first_name'] . ' ' . 
-                        ($validated['middle_initial'] ?? '') . ' ' . 
-                        $validated['last_name'] . ' ' . 
-                        ($validated['suffix'] ?? ''));
+        $fullName = trim($validated['first_name'] . ' ' .
+            ($validated['middle_initial'] ? $validated['middle_initial'] . '. ' : '') .
+            $validated['last_name'] . ' ' .
+            ($validated['suffix'] ?? ''));
 
         // Create user account with specified role
         $user = User::create([
@@ -103,13 +112,28 @@ class AdminStaffController extends Controller
     {
         $staff = User::with('staff')->whereIn('role', ['staff', 'osas_gmc', 'osas_du'])->findOrFail($id);
 
-        $validated = $request->validate([
+        $rules = [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
             'staff_type' => 'nullable|string|max:100',
             'role' => 'required|in:osas_gmc,osas_du',
-            'password' => 'nullable|min:8|confirmed',
-        ]);
+        ];
+
+        // Only validate password if it's provided
+        if ($request->filled('password')) {
+            $rules['password'] = [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[@$!%*#?&_\-]/',
+            ];
+        }
+
+        $validated = $request->validate($rules);
 
         // Update user account
         $userData = [

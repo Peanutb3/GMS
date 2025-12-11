@@ -28,14 +28,7 @@
 </div>
 
 @if(session('success'))
-<div class="bg-green-100 border border-green-400 text-green-700 px-6 py-4 rounded-lg mb-6 flex items-center justify-between">
-    <span>{{ session('success') }}</span>
-    <button onclick="this.parentElement.remove()" class="text-green-700 hover:text-green-900">
-        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-    </button>
-</div>
+<x-toast type="success" :message="session('success')" />
 @endif
 
 <form method="POST" action="{{ route('admin.settings.update') }}" enctype="multipart/form-data">
@@ -159,9 +152,7 @@
     </div>
 
     @if(session('error'))
-    <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-        {{ session('error') }}
-    </div>
+    <x-toast type="error" :message="session('error')" />
     @endif
 
     <form action="{{ route('admin.settings.test-email') }}" method="POST" class="space-y-4">

@@ -16,9 +16,9 @@ class AdminManagementController extends Controller
         // Search filter
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
@@ -37,7 +37,16 @@ class AdminManagementController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:8|confirmed',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[@$!%*#?&_\-]/'
+            ],
         ]);
 
         User::create([
@@ -61,11 +70,26 @@ class AdminManagementController extends Controller
     {
         $admin = User::where('role', 'admin')->findOrFail($id);
 
-        $validated = $request->validate([
+        $rules = [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
-            'password' => 'nullable|min:8|confirmed',
-        ]);
+        ];
+
+        // Only validate password if it's provided
+        if ($request->filled('password')) {
+            $rules['password'] = [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[@$!%*#?&_\-]/',
+            ];
+        }
+
+        $validated = $request->validate($rules);
 
         // Prepare update data
         $updateData = [
@@ -87,7 +111,7 @@ class AdminManagementController extends Controller
     public function destroy($id)
     {
         $admin = User::where('role', 'admin')->findOrFail($id);
-        
+
         // Prevent deleting yourself
         if ($admin->id == Auth::id()) {
             return response()->json([

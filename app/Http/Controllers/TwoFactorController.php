@@ -26,6 +26,7 @@ class TwoFactorController extends Controller
         ]);
 
         $userId = session('2fa:user:id');
+        $deviceFingerprint = session('2fa:device:fingerprint');
 
         if (!$userId) {
             return redirect()->route('login')->withErrors(['error' => 'Session expired. Please login again.']);
@@ -48,12 +49,25 @@ class TwoFactorController extends Controller
         // Mark code as verified
         $twoFactorCode->update(['verified_at' => now()]);
 
+        // Get user and set OTP expiration based on role
+        $user = \App\Models\User::find($userId);
+        if ($user) {
+            // Set OTP expiration:
+            // - Admin: 1 month
+            // - Staff/Students: indefinite (only triggers on new device)
+            $user->setOtpExpiration();
+
+            // Trust this device if fingerprint is available
+            if ($deviceFingerprint) {
+                $user->trustDevice($deviceFingerprint);
+            }
+        }
+
         // Log the user in
         Auth::loginUsingId($userId);
 
         // Clear session
-        session()->forget('2fa:user:id');
-        session()->forget('2fa:test:code');
+        session()->forget(['2fa:user:id', '2fa:device:fingerprint', '2fa:test:code']);
 
         // Redirect by role to ensure required view data exists
         $user = Auth::user();

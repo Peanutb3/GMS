@@ -12,16 +12,16 @@ class AdminStudentController extends Controller
 {
     public function index(Request $request)
     {
-    $query = Student::with('user');
+        $query = Student::with('user');
 
         // Search filter
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('student_id', 'like', "%{$search}%")
-                  ->orWhere('first_name', 'like', "%{$search}%")
-                  ->orWhere('last_name', 'like', "%{$search}%")
-                  ->orWhere('program', 'like', "%{$search}%");
+                    ->orWhere('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('program', 'like', "%{$search}%");
             });
         }
 
@@ -64,14 +64,23 @@ class AdminStudentController extends Controller
             'college' => 'required|string|max:255',
             'program' => 'required|string|max:255',
             'year' => 'required|string|max:10',
-            'password' => 'required|min:8|confirmed',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[@$!%*#?&_\-]/'
+            ],
         ]);
 
         // Build full name
-        $fullName = trim($validated['first_name'] . ' ' . 
-                        ($validated['middle_initial'] ?? '') . ' ' . 
-                        $validated['last_name'] . ' ' . 
-                        ($validated['suffix'] ?? ''));
+        $fullName = trim($validated['first_name'] . ' ' .
+            ($validated['middle_initial'] ?? '') . ' ' .
+            $validated['last_name'] . ' ' .
+            ($validated['suffix'] ?? ''));
 
         // Create user account
         $user = User::create([
@@ -118,14 +127,23 @@ class AdminStudentController extends Controller
             'college' => 'required|string|max:255',
             'program' => 'required|string|max:255',
             'year' => 'required|string|max:10',
-            'password' => 'nullable|min:8|confirmed',
+            'password' => [
+                'nullable',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[@$!%*#?&_\-]/'
+            ],
         ]);
 
         // Build full name
-        $fullName = trim($validated['first_name'] . ' ' . 
-                        ($validated['middle_initial'] ?? '') . ' ' . 
-                        $validated['last_name'] . ' ' . 
-                        ($validated['suffix'] ?? ''));
+        $fullName = trim($validated['first_name'] . ' ' .
+            ($validated['middle_initial'] ?? '') . ' ' .
+            $validated['last_name'] . ' ' .
+            ($validated['suffix'] ?? ''));
 
         // Update student record
         $student->update([
@@ -161,7 +179,7 @@ class AdminStudentController extends Controller
     public function destroy($id)
     {
         $student = Student::findOrFail($id);
-        
+
         // Delete user account if exists
         if ($student->user) {
             $student->user->delete();

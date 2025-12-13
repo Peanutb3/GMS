@@ -3,7 +3,7 @@
 @section('title', 'Add New Staff')
 
 @section('sidebar')
-    @include('partials.sidebar-admin')
+@include('partials.sidebar-admin')
 @endsection
 
 @section('content')
@@ -11,13 +11,13 @@
 <div class="px-3 -mt-2 mb-4">
     <nav class="text-sm text-gray-600 flex items-center">
         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 30 30" class="w-5 h-5 mr-2 text-gray-500">
-        <path d="M3 9.75L12 3l9 6.75V21a1 1 0 0 1-1 1h-5.5a.5.5 0 0 1-.5-.5V15h-4v6.5a.5.5 0 0 1-.5.5H4a1 1 0 0 1-1-1V9.75z"/>
+            <path d="M3 9.75L12 3l9 6.75V21a1 1 0 0 1-1 1h-5.5a.5.5 0 0 1-.5-.5V15h-4v6.5a.5.5 0 0 1-.5.5H4a1 1 0 0 1-1-1V9.75z" />
         </svg>
         <a href="{{ route('admin.dashboard') }}" class="hover:text-red-800">Dashboard</a>
         <span class="mx-2 text-gray-400">/</span>
         <span class="text-gray-600">Manage Users</span>
         <span class="mx-2 text-gray-400">/</span>
-    <a href="{{ route('admin.manage-staff') }}" class="text-gray-600 hover:text-red-800">Staff</a>
+        <a href="{{ route('admin.manage-staff') }}" class="text-gray-600 hover:text-red-800">Staff</a>
         <span class="mx-2 text-gray-400">/</span>
         <span class="text-blue-600">Create New</span>
     </nav>
@@ -30,8 +30,8 @@
             <h1 class="text-3xl font-bold mb-2">Add New Staff</h1>
             <p class="text-gray-100">Create a new staff member account</p>
         </div>
-        <a href="{{ route('admin.manage-staff') }}" 
-           class="bg-white text-red-800 px-6 py-3 rounded-lg hover:bg-gray-100 font-medium transition-colors flex items-center gap-2">
+        <a href="{{ route('admin.manage-staff') }}"
+            class="bg-white text-red-800 px-6 py-3 rounded-lg hover:bg-gray-100 font-medium transition-colors flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
@@ -45,13 +45,13 @@
 <div class="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-lg mb-6">
     <div class="flex items-start">
         <svg class="h-5 w-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
         </svg>
         <div>
             <p class="font-semibold mb-2">Please correct the following errors:</p>
             <ul class="list-disc list-inside">
                 @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
+                <li>{{ $error }}</li>
                 @endforeach
             </ul>
         </div>
@@ -75,7 +75,7 @@
                         placeholder="e.g., EMP-00001"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent @error('employee_id') border-red-500 @enderror">
                     @error('employee_id')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -85,7 +85,7 @@
                     <input type="email" id="email" name="email" value="{{ old('email') }}" required
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent @error('email') border-red-500 @enderror">
                     @error('email')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -95,7 +95,7 @@
                     <input type="text" id="first_name" name="first_name" value="{{ old('first_name') }}" required
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent @error('first_name') border-red-500 @enderror">
                     @error('first_name')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -105,7 +105,7 @@
                     <input type="text" id="middle_initial" name="middle_initial" value="{{ old('middle_initial') }}" maxlength="2"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent @error('middle_initial') border-red-500 @enderror">
                     @error('middle_initial')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -115,14 +115,14 @@
                     <input type="text" id="last_name" name="last_name" value="{{ old('last_name') }}" required
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent @error('last_name') border-red-500 @enderror">
                     @error('last_name')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <!-- Suffix -->
                 <div>
                     <label for="suffix" class="block text-sm font-medium text-gray-700 mb-2">Suffix</label>
-                    <select id="suffix" name="suffix" 
+                    <select id="suffix" name="suffix"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent">
                         <option value="">None</option>
                         <option value="Jr." {{ old('suffix') === 'Jr.' ? 'selected' : '' }}>Jr.</option>
@@ -139,21 +139,6 @@
         <div class="mb-8">
             <h2 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Employment Information</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Staff Type -->
-                <div>
-                    <label for="staff_type" class="block text-sm font-medium text-gray-700 mb-2">Staff Type <span class="text-red-600">*</span></label>
-                    <select id="staff_type" name="staff_type" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent @error('staff_type') border-red-500 @enderror">
-                        <option value="">Select Type</option>
-                        <option value="Academic" {{ old('staff_type') === 'Academic' ? 'selected' : '' }}>Academic</option>
-                        <option value="Non-Academic" {{ old('staff_type') === 'Non-Academic' ? 'selected' : '' }}>Non-Academic</option>
-                        <option value="Administrative" {{ old('staff_type') === 'Administrative' ? 'selected' : '' }}>Administrative</option>
-                    </select>
-                    @error('staff_type')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
                 <!-- Role -->
                 <div>
                     <label for="role" class="block text-sm font-medium text-gray-700 mb-2">Role/Access Level <span class="text-red-600">*</span></label>
@@ -167,7 +152,7 @@
                         OSAS GMC: Manage requests, view grievances | OSAS DU: Manage grievances, view requests
                     </p>
                     @error('role')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
             </div>
@@ -184,7 +169,7 @@
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent @error('password') border-red-500 @enderror">
                     <p class="mt-1 text-xs text-gray-500">Minimum 8 characters</p>
                     @error('password')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 

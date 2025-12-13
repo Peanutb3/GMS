@@ -89,18 +89,6 @@
                     @enderror
                 </div>
 
-                <!-- Staff Type -->
-                <div>
-                    <label for="staff_type" class="block text-sm font-medium text-gray-700 mb-2">Staff Type</label>
-                    <select id="staff_type" name="staff_type"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent">
-                        <option value="">Select Type</option>
-                        <option value="Academic" {{ old('staff_type', optional($staff->staff)->staff_type) === 'Academic' ? 'selected' : '' }}>Academic</option>
-                        <option value="Non-Academic" {{ old('staff_type', optional($staff->staff)->staff_type) === 'Non-Academic' ? 'selected' : '' }}>Non-Academic</option>
-                        <option value="Administrative" {{ old('staff_type', optional($staff->staff)->staff_type) === 'Administrative' ? 'selected' : '' }}>Administrative</option>
-                    </select>
-                </div>
-
                 <!-- Role -->
                 <div>
                     <label for="role" class="block text-sm font-medium text-gray-700 mb-2">Role/Access Level <span class="text-red-600">*</span></label>

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Student;
 use App\Models\Staff;
+use App\Models\College;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\AuditLog;
@@ -32,7 +33,8 @@ class AuthController extends Controller
      */
     public function showStep1()
     {
-        return view('signup-step1');
+        $colleges = College::active()->orderBy('name')->get();
+        return view('signup-step1', compact('colleges'));
     }
 
     public function storeStep1(Request $request)

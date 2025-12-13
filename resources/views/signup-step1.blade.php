@@ -144,13 +144,9 @@
                                 <select name="college" id="collegeSelect" required
                                     class="w-full border-b border-white/70 focus:border-white focus:outline-none pb-3 text-white bg-transparent text-sm appearance-none cursor-pointer pr-8">
                                     <option value="" disabled selected class="text-black bg-white">Select college here</option>
-                                    <option value="College of Education" class="text-black bg-white">College of Education</option>
-                                    <option value="College of Arts and Sciences" class="text-black bg-white">College of Arts and Sciences</option>
-                                    <option value="College of Business Administration" class="text-black bg-white">College of Business Administration</option>
-                                    <option value="College of Engineering" class="text-black bg-white">College of Engineering</option>
-                                    <option value="College of Technology" class="text-black bg-white">College of Technology</option>
-                                    <option value="College of Information and Computing" class="text-black bg-white">College of Information and Computing</option>
-                                    <option value="College of Applied Economics" class="text-black bg-white">College of Applied Economics</option>
+                                    @foreach($colleges as $college)
+                                    <option value="{{ $college->id }}" class="text-black bg-white">{{ $college->name }}</option>
+                                    @endforeach
                                 </select>
                                 <span class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -175,113 +171,36 @@
                             </div>
                             <script>
                                 document.addEventListener('DOMContentLoaded', function() {
-                                    // College to program mapping (full lists)
-                                    const collegePrograms = {
-                                        'College of Education': [
-                                            // Undergraduate
-                                            'BACHELOR OF SECONDARY EDUCATION',
-                                            'BACHELOR OF ELEMENTARY EDUCATION',
-                                            'Bachelor of Early Childhood Education',
-                                            'Bachelor of Special Needs Education',
-                                            'Bachelor of Physical Education',
-                                            'Bachelor of Technology and Livelihood Education major in Home Economics',
-                                            'Bachelor of Technical-Vocational Teacher Education',
-                                            // Graduate
-                                            'Doctor of Philosophy in Education',
-                                            'Doctor of Education (Old Program)',
-                                            'Master of Arts in Education',
-                                            'Master of Arts in English Language Teaching',
-                                            'Master of Education in Language Teaching - English (Old Program)',
-                                            'Master of Arts in Mathematics Education',
-                                            'Master of Arts in Science Education'
-                                        ],
-
-                                        'College of Arts and Sciences': [
-                                            // Undergraduate
-                                            'Bachelor of Arts in Literature and Cultural Studies',
-                                            'Bachelor of Arts in English Language major in Applied Linguistics',
-                                            'Bachelor of Science in Biology',
-                                            'Bachelor of Science in Mathematics',
-                                            'Bachelor of Science in Statistics',
-                                            // Graduate
-                                            'Master of Arts in Literature',
-                                            'Master of Arts in Applied Linguistics',
-                                            'Master of Science in Applied Mathematics',
-                                            'Master of Science in Biology'
-                                        ],
-
-                                        'College of Business Administration': [
-                                            // Undergraduate
-                                            'Bachelor of Science in Business Administration Major in Financial Management',
-                                            'Bachelor of Science in Hospitality Management',
-                                            'Bachelor of Science in Entrepreneurship',
-                                            'Bachelor of Science in Accountancy',
-                                            // Graduate
-                                            'Doctor of Philosophy',
-                                            'Master of Business Administration / eMBA'
-                                        ],
-
-                                        'College of Engineering': [
-                                            // Undergraduate
-                                            'Bachelor of Science in Agricultural and Biosystems Engineering',
-                                            'Bachelor of Science in Civil Engineering',
-                                            'Bachelor of Science in Electrical Engineering',
-                                            'Bachelor of Science in Electronics Engineering',
-                                            'Bachelor of Science in Geodetic Engineering',
-                                            'Bachelor of Science in Geology',
-                                            'Bachelor of Science in Mechanical Engineering',
-                                            'Bachelor of Science in Mining Engineering',
-                                            'Bachelor of Science in Sanitary Engineering',
-                                            // Graduate
-                                            'Master of Science in Engineering'
-                                        ],
-
-                                        'College of Technology': [
-                                            // Undergraduate
-                                            'Bachelor of Science in Industrial Technology (BS IndTech)',
-                                            // Graduate
-                                            'Master of Technology Education',
-                                            'Master of Industrial Technology'
-                                        ],
-
-                                        'College of Information and Computing': [
-                                            // Undergraduate
-                                            'Bachelor of Science in Information Technology',
-                                            'Bachelor of Science in Computer Science',
-                                            'Bachelor of Library and Information Science',
-                                            // Graduate
-                                            'Master of Library and Information Science',
-                                            'Master in Information Technology',
-                                            'Doctor in Information Technology'
-                                        ],
-
-                                        'College of Applied Economics': [
-                                            // Undergraduate
-                                            'Bachelor of Science in Economics',
-                                            // Graduate
-                                            'Master of Science in Economics'
-                                        ]
-                                    };
-
                                     const collegeSelect = document.getElementById('collegeSelect');
                                     const programSelect = document.getElementById('programSelect');
 
                                     if (!collegeSelect || !programSelect) return;
 
                                     collegeSelect.addEventListener('change', function() {
-                                        const selectedCollege = this.value;
-                                        // Clear and repopulate program dropdown
-                                        programSelect.innerHTML = '<option value="" disabled selected>Select program</option>';
-                                        if (collegePrograms[selectedCollege]) {
-                                            collegePrograms[selectedCollege].forEach(function(prog) {
-                                                const opt = document.createElement('option');
-                                                opt.value = prog;
-                                                opt.textContent = prog;
-                                                // Ensure option text is readable (some browsers ignore CSS classes on <option>)
-                                                opt.style.color = '#111827';
-                                                opt.style.backgroundColor = '#ffffff';
-                                                programSelect.appendChild(opt);
-                                            });
+                                        const collegeId = this.value;
+
+                                        // Clear program dropdown
+                                        programSelect.innerHTML = '<option value="" disabled selected>Loading...</option>';
+
+                                        if (collegeId) {
+                                            // Fetch programs from database
+                                            fetch(`/api/colleges/${collegeId}/programs`)
+                                                .then(response => response.json())
+                                                .then(programs => {
+                                                    programSelect.innerHTML = '<option value="" disabled selected>Select program</option>';
+                                                    programs.forEach(function(program) {
+                                                        const opt = document.createElement('option');
+                                                        opt.value = program.name;
+                                                        opt.textContent = program.name;
+                                                        opt.style.color = '#111827';
+                                                        opt.style.backgroundColor = '#ffffff';
+                                                        programSelect.appendChild(opt);
+                                                    });
+                                                })
+                                                .catch(error => {
+                                                    console.error('Error fetching programs:', error);
+                                                    programSelect.innerHTML = '<option value="" disabled selected>Error loading programs</option>';
+                                                });
                                         }
                                     });
                                 });

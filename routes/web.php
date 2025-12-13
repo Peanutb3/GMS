@@ -60,6 +60,9 @@ Route::post('/2fa/resend', [TwoFactorController::class, 'resend'])->name('2fa.re
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+// API route for fetching programs by college
+Route::get('/api/colleges/{college}/programs', [\App\Http\Controllers\CollegeProgramController::class, 'getPrograms']);
+
 // Forgot Password Routes
 Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
 Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail'])->name('password.email');
@@ -299,6 +302,15 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/admins/{id}/edit', [AdminManagementController::class, 'edit'])->name('admin.admins.edit');
     Route::put('/admins/{id}', [AdminManagementController::class, 'update'])->name('admin.admins.update');
     Route::delete('/admins/{id}', [AdminManagementController::class, 'destroy'])->name('admin.admins.destroy');
+
+    // College & Program Management
+    Route::get('/colleges-programs', [\App\Http\Controllers\CollegeProgramController::class, 'index'])->name('admin.colleges-programs');
+    Route::post('/colleges', [\App\Http\Controllers\CollegeProgramController::class, 'storeCollege'])->name('admin.colleges.store');
+    Route::put('/colleges/{college}', [\App\Http\Controllers\CollegeProgramController::class, 'updateCollege'])->name('admin.colleges.update');
+    Route::delete('/colleges/{college}', [\App\Http\Controllers\CollegeProgramController::class, 'destroyCollege'])->name('admin.colleges.destroy');
+    Route::post('/programs', [\App\Http\Controllers\CollegeProgramController::class, 'storeProgram'])->name('admin.programs.store');
+    Route::put('/programs/{program}', [\App\Http\Controllers\CollegeProgramController::class, 'updateProgram'])->name('admin.programs.update');
+    Route::delete('/programs/{program}', [\App\Http\Controllers\CollegeProgramController::class, 'destroyProgram'])->name('admin.programs.destroy');
 
     // Audit Logs
     Route::get('/audit-logs', [AuditLogController::class, 'adminIndex'])->name('admin.audit-logs');

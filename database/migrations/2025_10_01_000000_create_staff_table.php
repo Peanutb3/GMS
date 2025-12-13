@@ -24,7 +24,6 @@ return new class extends Migration
             $table->string('department')->nullable();
             $table->string('position')->nullable();
             $table->string('role')->default('staff');
-            $table->string('staff_type')->nullable();
             $table->string('phone')->nullable();
             $table->string('email')->unique()->nullable();
 

@@ -10,15 +10,16 @@ class OsasDuDashboardController extends Controller
     public function index()
     {
         $user = auth()->user();
-        
+
         // Get statistics for OSAS DU (Discipline Unit)
-        $totalGrievances = Grievance::count();
-        $pendingGrievances = Grievance::where('status', 'pending')->count();
-        $investigatingGrievances = Grievance::where('status', 'investigating')->count();
-        $resolvedGrievances = Grievance::where('status', 'resolved')->count();
-        
+        $totalGrievances = Grievance::withoutTrashed()->count();
+        $pendingGrievances = Grievance::where('status', 'pending')->withoutTrashed()->count();
+        $investigatingGrievances = Grievance::where('status', 'investigating')->withoutTrashed()->count();
+        $resolvedGrievances = Grievance::where('status', 'resolved')->withoutTrashed()->count();
+
         // Recent grievances
         $recentGrievances = Grievance::with('student')
+            ->withoutTrashed()
             ->latest()
             ->take(10)
             ->get();

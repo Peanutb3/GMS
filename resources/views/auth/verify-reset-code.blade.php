@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forgot Password | GMS</title>
+    <title>Verify Code | GMS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -12,24 +12,27 @@
             font-family: 'Inter', sans-serif;
         }
 
-        /* Prevent white background on input */
-        input {
-            background-color: transparent !important;
+        .code-input {
+            width: 60px;
+            height: 80px;
+            font-size: 32px;
+            text-align: center;
+            font-weight: bold;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.3s;
         }
 
-        input:-webkit-autofill,
-        input:-webkit-autofill:hover,
-        input:-webkit-autofill:focus,
-        input:-webkit-autofill:active {
-            -webkit-box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.1) inset !important;
-            box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.1) inset !important;
-            -webkit-text-fill-color: #ffffff !important;
-            caret-color: #ffffff;
-            transition: background-color 9999s ease-in-out 0s;
+        .code-input:focus {
+            outline: none;
+            border-color: white;
+            background: rgba(255, 255, 255, 0.15);
         }
 
-        ::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+        .code-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
         }
     </style>
 </head>
@@ -42,7 +45,6 @@
 
         <div class="w-full max-w-[420px]">
 
-            <!-- Card Container -->
             <div class="">
 
                 <!-- Icon -->
@@ -57,46 +59,49 @@
                 <!-- Title -->
                 <div class="text-center mb-6">
                     <h1 class="text-2xl font-semibold text-white mb-2">
-                        Forgot password?
+                        Password reset
                     </h1>
                     <p class="text-sm text-white opacity-90">
-                        No worries, we'll send you reset instructions.
+                        We sent a code to <strong>{{ session('email') }}</strong>
                     </p>
                 </div>
 
-                <!-- Success Message -->
-                @if (session('status'))
-                <div class="mb-6 p-4 bg-green-500 bg-opacity-25 border border-green-300 rounded-lg text-white text-sm text-center">
-                    {{ session('status') }}
-                </div>
-                @endif
-
                 <!-- Form -->
-                <form action="{{ route('password.email') }}" method="POST" class="space-y-5">
+                <form action="{{ route('password.verify') }}" method="POST" class="space-y-6">
                     @csrf
+                    <input type="hidden" name="email" value="{{ session('email') }}">
 
-                    <!-- Email Input -->
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-white mb-1.5">Email</label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            placeholder="Enter your email"
-                            required
-                            value="{{ old('email') }}"
-                            class="w-full px-3.5 py-2.5 bg-white bg-opacity-10 border {{ $errors->has('email') ? 'border-red-300' : 'border-white border-opacity-30' }} rounded-lg text-sm text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all">
-                        @error('email')
-                        <p class="text-red-300 text-xs mt-1.5">{{ $message }}</p>
-                        @enderror
+                    <!-- Code Inputs -->
+                    <div class="flex justify-center gap-2 mb-6">
+                        <input type="text" maxlength="1" class="code-input" id="code1" name="code[]" required autofocus>
+                        <input type="text" maxlength="1" class="code-input" id="code2" name="code[]" required>
+                        <input type="text" maxlength="1" class="code-input" id="code3" name="code[]" required>
+                        <input type="text" maxlength="1" class="code-input" id="code4" name="code[]" required>
+                        <input type="text" maxlength="1" class="code-input" id="code5" name="code[]" required>
+                        <input type="text" maxlength="1" class="code-input" id="code6" name="code[]" required>
                     </div>
 
-                    <!-- Reset Password Button -->
+                    <!-- Hidden full code input -->
+                    <input type="hidden" name="code" id="fullCode">
+
+                    @error('code')
+                    <p class="text-red-300 text-sm text-center mb-4">{{ $message }}</p>
+                    @enderror
+
+                    <!-- Continue Button -->
                     <button
                         type="submit"
                         class="w-full bg-white text-[#800000] font-semibold py-2.5 rounded-full text-sm hover:bg-gray-100 transition-colors duration-200">
-                        Reset password
+                        Continue
                     </button>
+
+                    <!-- Resend -->
+                    <div class="text-center">
+                        <p class="text-sm text-white">
+                            Didn't receive the email?
+                            <a href="{{ route('password.request') }}" class="text-blue-200 hover:text-white hover:underline font-semibold">Click to resend</a>
+                        </p>
+                    </div>
 
                     <!-- Back to Login -->
                     <div class="text-center">
@@ -112,18 +117,13 @@
 
         </div>
 
-        <!-- Footer -->
-        <div class="text-center text-white text-sm mt-8 opacity-80">
-            Remember your password?
-            <a href="{{ route('login') }}" class="text-blue-200 hover:text-white hover:underline font-semibold transition-colors duration-300">Sign in</a>
-        </div>
     </div>
 
     <!-- Right Panel -->
     <div class="hidden lg:flex w-1/2 bg-white h-full flex-col items-center justify-between px-12">
         <div class="flex-1 flex items-center justify-center">
             <img src="{{ asset('images/Login_pic.png') }}"
-                alt="Forgot Password Illustration"
+                alt="Verification Illustration"
                 class="w-[110%] translate-y-6">
         </div>
 
@@ -136,6 +136,33 @@
 
     <!-- Scripts -->
     <script>
+        // Auto-focus next input
+        const inputs = document.querySelectorAll('.code-input');
+        inputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length === 1 && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+
+                // Combine all digits into hidden input
+                const code = Array.from(inputs).map(i => i.value).join('');
+                document.getElementById('fullCode').value = code;
+            });
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+
+            // Only allow numbers
+            input.addEventListener('keypress', (e) => {
+                if (!/[0-9]/.test(e.key)) {
+                    e.preventDefault();
+                }
+            });
+        });
+
         function showPrivacyPolicy() {
             window.open('https://www.usep.edu.ph/usep-data-privacy-statement/', '_blank');
         }

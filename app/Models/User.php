@@ -25,16 +25,13 @@ class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'last_login_at' => 'datetime',
-            'otp_expires_at' => 'datetime',
-            'trusted_devices' => 'array',
-            'password' => 'hashed',
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'last_login_at' => 'datetime',
+        'otp_expires_at' => 'datetime',
+        'trusted_devices' => 'array',
+        'password' => 'hashed',
+    ];
 
     /**
      * Check if OTP is required based on role and device

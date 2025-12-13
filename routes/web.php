@@ -63,6 +63,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Forgot Password Routes
 Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
 Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('/verify-reset-code', [AuthController::class, 'showVerifyCodeForm'])->name('password.verify.show');
+Route::post('/verify-reset-code', [AuthController::class, 'verifyResetCode'])->name('password.verify');
 Route::get('/reset-password/{token}', [AuthController::class, 'showResetPasswordForm'])->name('password.reset');
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 
@@ -271,6 +273,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 
     // Request Management
     Route::get('/requests/good-moral', [AdminRequestController::class, 'goodMoral'])->name('admin.requests.good-moral');
+    Route::delete('/requests/good-moral/{goodMoralRequest}', [AdminRequestController::class, 'deleteGoodMoral'])->name('admin.good-moral.delete');
     Route::get('/requests/safe-loan', [AdminRequestController::class, 'safeLoan'])->name('admin.requests.safe-loan');
 
     // Student Management

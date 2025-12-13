@@ -22,7 +22,8 @@ class AuthController extends Controller
      */
     private function getDeviceFingerprint(Request $request): string
     {
-        return hash('sha256', $request->userAgent() . '|' . $request->ip());
+        // Use user agent only for fingerprinting to avoid IP instability
+        return hash('sha256', $request->userAgent());
     }
     /**
      * ---------------------------
@@ -159,15 +160,7 @@ class AuthController extends Controller
             return back()->withErrors(['email' => 'No account found with this email.'])->onlyInput('email');
         }
 
-        // Skip email verification for admin and staff (they are created by admin)
-        $skipEmailVerificationRoles = ['admin', 'staff', 'osas_gmc', 'osas_du'];
-
-        // Check if email is verified (only for students)
-        if (!in_array($user->role, $skipEmailVerificationRoles) && !$user->hasVerifiedEmail()) {
-            return back()->withErrors([
-                'email' => 'Please verify your email address before logging in. Check your inbox for the verification link.'
-            ])->onlyInput('email');
-        }
+        // Email verification is no longer required for any role (2FA is sufficient)
 
         // Check if account is locked
         if ($user->locked_until && now()->lt($user->locked_until)) {
@@ -354,24 +347,79 @@ class AuthController extends Controller
     {
         $request->validate(['email' => 'required|email']);
 
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        // Check if user exists
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return back()->withErrors(['email' => 'We could not find a user with that email address.']);
+        }
 
-        return $status === Password::RESET_LINK_SENT
-            ? back()->with('status', __($status))
-            : back()->withErrors(['email' => __($status)]);
+        // Generate 6-digit code
+        $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        // Delete old codes for this email
+        \DB::table('password_reset_codes')->where('email', $request->email)->delete();
+
+        // Store new code
+        \DB::table('password_reset_codes')->insert([
+            'email' => $request->email,
+            'code' => $code,
+            'expires_at' => now()->addMinutes(10),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // Send email with code
+        \Mail::send('emails.password-reset-code', ['code' => $code], function ($message) use ($request) {
+            $message->to($request->email)
+                ->subject('Password Reset Code - GMS');
+        });
+
+        // Redirect to verification page
+        return redirect()->route('password.verify.show')->with('email', $request->email);
+    }
+
+    public function showVerifyCodeForm()
+    {
+        if (!session('email')) {
+            return redirect()->route('password.request');
+        }
+        return view('auth.verify-reset-code');
+    }
+
+    public function verifyResetCode(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'code' => 'required|digits:6',
+        ]);
+
+        $record = \DB::table('password_reset_codes')
+            ->where('email', $request->email)
+            ->where('code', $request->code)
+            ->where('expires_at', '>', now())
+            ->first();
+
+        if (!$record) {
+            return back()->withErrors(['code' => 'Invalid or expired verification code.']);
+        }
+
+        // Generate token for reset password form
+        $token = Str::random(64);
+
+        // Store token temporarily
+        session(['reset_token' => $token, 'reset_email' => $request->email]);
+
+        return redirect()->route('password.reset', ['token' => $token, 'email' => $request->email]);
     }
 
     public function showResetPasswordForm($token)
     {
-        return view('auth.reset-password', ['token' => $token, 'email' => request('email')]);
+        return view('auth.reset-password', ['email' => request('email')]);
     }
 
     public function resetPassword(Request $request)
     {
         $request->validate([
-            'token' => 'required',
             'email' => 'required|email',
             'password' => [
                 'required',
@@ -388,33 +436,27 @@ class AuthController extends Controller
             'password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*#?&_-).'
         ]);
 
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user, $password) use ($request) {
-                $user->forceFill([
-                    'password' => Hash::make($password)
-                ])->setRememberToken(Str::random(60));
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return back()->withErrors(['email' => 'User not found.']);
+        }
 
-                $user->save();
+        $user->forceFill([
+            'password' => Hash::make($request->password)
+        ])->setRememberToken(Str::random(60));
+        $user->save();
+        event(new PasswordReset($user));
+        AuditLog::create([
+            'auditable_type' => User::class,
+            'auditable_id'   => $user->id,
+            'action'         => 'password_reset',
+            'user_id'        => $user->id,
+            'staff_id'       => optional($user->staff)->id,
+            'old_values'     => null,
+            'new_values'     => null,
+            'ip_address'     => $request->ip(),
+        ]);
 
-                event(new PasswordReset($user));
-
-                // Log password reset
-                AuditLog::create([
-                    'auditable_type' => User::class,
-                    'auditable_id'   => $user->id,
-                    'action'         => 'password_reset',
-                    'user_id'        => $user->id,
-                    'staff_id'       => optional($user->staff)->id,
-                    'old_values'     => null,
-                    'new_values'     => null,
-                    'ip_address'     => $request->ip(),
-                ]);
-            }
-        );
-
-        return $status === Password::PASSWORD_RESET
-            ? redirect()->route('login')->with('status', __($status))
-            : back()->withErrors(['email' => [__($status)]]);
+        return redirect()->route('login')->with('status', 'Password reset successful.');
     }
 }

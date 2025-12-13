@@ -91,14 +91,18 @@ $currentStyle = $styles[$type] ?? $styles['info'];
 
 <script>
     // Auto-dismiss after 5 seconds
-    (function() {
-        const toastContainer = document.currentScript.previousElementSibling;
-        if (toastContainer) {
-            setTimeout(() => {
-                toastContainer.style.opacity = '0';
-                toastContainer.style.transform = 'translateX(20px)';
-                setTimeout(() => toastContainer.remove(), 300);
+    document.addEventListener('DOMContentLoaded', function() {
+        const toasts = document.querySelectorAll('[role="alert"]');
+        toasts.forEach(function(toast) {
+            const container = toast.parentElement;
+            setTimeout(function() {
+                container.style.transition = 'opacity 0.3s, transform 0.3s';
+                container.style.opacity = '0';
+                container.style.transform = 'translateX(20px)';
+                setTimeout(function() {
+                    container.remove();
+                }, 300);
             }, 5000);
-        }
-    })();
+        });
+    });
 </script>

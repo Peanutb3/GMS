@@ -21,6 +21,11 @@
     </nav>
 </div>
 
+<!-- Success Message -->
+@if(session('status'))
+<x-toast type="success" :message="session('status')" />
+@endif
+
 <!-- Page Header -->
 <div class="bg-gradient-to-r from-[#760000] to-[#D62F26] text-white rounded-xl p-8 mb-8 shadow-lg">
     <div class="flex items-center justify-between">
@@ -108,7 +113,69 @@
                         @endif
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                        {{ $request->program_year ?? 'N/A' }}
+                        @if($request->program && $request->year)
+                        @php
+                        // Convert full program name to abbreviation
+                        $programAbbr = $request->program;
+                        $abbreviations = [
+                        'Bachelor of Science in Computer Science' => 'BSCS',
+                        'Bachelor of Science in Information Technology' => 'BSIT',
+                        'Bachelor of Science in Information Systems' => 'BSIS',
+                        'Bachelor of Science in Entertainment and Multimedia Computing' => 'BSEMC',
+                        'Bachelor of Science in Civil Engineering' => 'BSCE',
+                        'Bachelor of Science in Electrical Engineering' => 'BSEE',
+                        'Bachelor of Science in Electronics Engineering' => 'BSEcE',
+                        'Bachelor of Science in Mechanical Engineering' => 'BSME',
+                        'Bachelor of Science in Geodetic Engineering' => 'BSGeoE',
+                        'Bachelor of Science in Mining Engineering' => 'BSMinE',
+                        'Bachelor of Science in Metallurgical Engineering' => 'BSMetE',
+                        'Bachelor of Science in Chemical Engineering' => 'BSChE',
+                        'Bachelor of Science in Architecture' => 'BSArch',
+                        'Bachelor of Science in Biology' => 'BSBio',
+                        'Bachelor of Science in Marine Biology' => 'BSMarBio',
+                        'Bachelor of Science in Chemistry' => 'BSChem',
+                        'Bachelor of Science in Mathematics' => 'BSMath',
+                        'Bachelor of Science in Physics' => 'BSPhys',
+                        'Bachelor of Science in Statistics' => 'BSStat',
+                        'Bachelor of Science in Psychology' => 'BSPsych',
+                        'Bachelor of Science in Social Work' => 'BSSW',
+                        'Bachelor of Arts in Communication' => 'BAComm',
+                        'Bachelor of Arts in English Language' => 'BAEL',
+                        'Bachelor of Arts in Filipino' => 'BAF',
+                        'Bachelor of Arts in History' => 'BAH',
+                        'Bachelor of Arts in Philosophy' => 'BAPhil',
+                        'Bachelor of Arts in Political Science' => 'BAPS',
+                        'Bachelor of Science in Economics' => 'BSEcon',
+                        'Bachelor of Science in Business Administration' => 'BSBA',
+                        'Bachelor of Science in Accountancy' => 'BSA',
+                        'Bachelor of Science in Entrepreneurship' => 'BSEntrep',
+                        'Bachelor of Science in Nursing' => 'BSN',
+                        'Bachelor of Science in Midwifery' => 'BSMidwifery',
+                        'Bachelor of Science in Physical Therapy' => 'BSPT',
+                        'Bachelor of Science in Medical Technology' => 'BSMT',
+                        'Bachelor of Science in Radiologic Technology' => 'BSRT',
+                        'Bachelor of Science in Pharmacy' => 'BSPharma',
+                        'Bachelor of Elementary Education' => 'BEEd',
+                        'Bachelor of Secondary Education' => 'BSEd',
+                        'Bachelor of Physical Education' => 'BPEd',
+                        'Bachelor of Early Childhood Education' => 'BECEd',
+                        'Bachelor of Science in Agriculture' => 'BSAgri',
+                        'Bachelor of Science in Forestry' => 'BSFor',
+                        'Bachelor of Science in Environmental Science' => 'BSES',
+                        'Bachelor of Science in Fisheries' => 'BSFish',
+                        'Bachelor of Science in Development Communication' => 'BSDC',
+                        'Bachelor of Science in Agricultural Engineering' => 'BSAgriE',
+                        'Bachelor of Science in Food Technology' => 'BSFT',
+                        ];
+
+                        if (isset($abbreviations[$request->program])) {
+                        $programAbbr = $abbreviations[$request->program];
+                        }
+                        @endphp
+                        {{ $programAbbr }} - {{ $request->year }}
+                        @else
+                        N/A
+                        @endif
                     </td>
                     <td class="px-6 py-4 text-sm text-gray-700">
                         {{ $request->purpose ?? 'N/A' }}
@@ -126,12 +193,24 @@
                         {{ $request->created_at->format('M d, Y') }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <a href="{{ route('good-moral.print', $request->id) }}"
-                            class="text-blue-600 hover:text-blue-900" title="View/Print">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                            </svg>
-                        </a>
+                        <div class="flex items-center gap-3">
+                            <a href="{{ route('good-moral.print', $request->id) }}"
+                                class="text-blue-600 hover:text-blue-900" title="View/Print">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                </svg>
+                            </a>
+                            <form action="{{ route('admin.good-moral.delete', $request->id) }}" method="POST"
+                                onsubmit="return confirm('Are you sure you want to delete this request?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-600 hover:text-red-900" title="Delete">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 @empty

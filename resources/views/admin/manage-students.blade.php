@@ -144,12 +144,18 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                 </svg>
                             </a>
-                            <button onclick="deleteStudent('{{ $student->id }}')"
-                                class="text-red-600 hover:text-red-900" title="Delete">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>
-                            </button>
+
+                            <form method="POST" action="{{ route('admin.students.destroy', $student->id) }}" onsubmit="return confirm('Are you sure you want to delete this student? This will also delete their user account.');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-600 hover:text-red-900" title="Delete">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </form>
+
+                            {{-- Toast will be rendered at the top of the page --}}
                         </div>
                     </td>
                 </tr>
@@ -176,44 +182,10 @@
 
 @endsection
 
-@push('scripts')
-<script>
-    function deleteStudent(id) {
-        if (!confirm('Are you sure you want to delete this student? This will also delete their user account.')) {
-            return;
-        }
 
-        fetch(`/admin/students/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showToast(data.message, 'success');
-                    document.getElementById(`student-row-${id}`).remove();
-                } else {
-                    showToast('Failed to delete student', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showToast('An error occurred', 'error');
-            });
-    }
-
-    function showToast(message, type = 'success') {
-        const toast = document.getElementById('toast');
-        const toastMessage = document.getElementById('toast-message');
-
-        toastMessage.textContent = message;
-        toast.classList.remove('hidden', 'bg-green-500', 'bg-red-500');
-        toast.classList.add(type === 'success' ? 'bg-green-500' : 'bg-red-500');
-
-        setTimeout(() => toast.classList.add('hidden'), 3000);
-    }
-</script>
-@endpush
+{{-- Toast notification at top of page --}}
+@if(session('status'))
+<div class="fixed top-5 right-5 z-50">
+    <x-toast type="success" :message="session('status')" />
+</div>
+@endif

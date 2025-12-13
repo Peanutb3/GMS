@@ -32,7 +32,7 @@
                     alt="Profile Avatar"
                     class="h-24 w-24 md:h-28 md:w-28 rounded-full bg-white object-cover shadow-sm ring-4 ring-gray-200">
                 @else
-                <div class="h-24 w-24 md:h-28 md:w-28 rounded-full bg-gradient-to-br from-blue-800 to-blue-600 flex items-center justify-center ring-4 ring-gray-200">
+                <div class="h-24 w-24 md:h-28 md:w-28 rounded-full bg-gradient-to-br from-[#760000] to-[#D62F26] flex items-center justify-center ring-4 ring-gray-200">
                     <span class="text-4xl font-bold text-white">{{ substr($user->name ?? 'S', 0, 1) }}</span>
                 </div>
                 @endif
@@ -52,14 +52,23 @@
                 <div class="flex items-start justify-between">
                     <div>
                         <div class="flex items-center gap-3">
-                            <h2 class="text-xl md:text-2xl font-bold text-gray-900">{{ $user->name ?? 'Anna Alleah Jane B. Lindo' }}</h2>
+                            <h2 class="text-xl md:text-2xl font-bold text-gray-900">
+                                {{ $student->first_name }}
+                                @if(!empty($student->middle_initial))
+                                    {{ $student->middle_initial }}.
+                                @endif
+                                {{ $student->last_name }}
+                                @if(!empty($student->suffix))
+                                    {{ ' ' . $student->suffix }}
+                                @endif
+                            </h2>
                             <span class="px-3 py-1 bg-gradient-to-r from-blue-100 to-blue-50 text-blue-800 text-xs font-semibold rounded-full border border-blue-200">
                                 Student
                             </span>
                         </div>
                         <div class="text-sm text-gray-500 mt-1 mb-3">{{ $student->program_and_year ?? 'BSIT - 4th Year' }}</div>
                     </div>
-                    <button onclick="window.location.href='{{ route('student.profile.edit') }}'" class="px-4 py-2 bg-gradient-to-r from-blue-900 to-blue-800 text-white text-sm font-medium rounded-lg hover:from-blue-800 hover:to-blue-700 transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
+                    <button onclick="window.location.href='{{ route('student.profile.edit') }}'" class="px-4 py-2 bg-gradient-to-r from-[#760000] to-[#D62F26] text-white text-sm font-medium rounded-lg hover:from-[#8B0000] hover:to-[#B22222] transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                         </svg>
@@ -96,7 +105,16 @@
         <div class="divide-y divide-gray-100">
             <div class="flex items-center justify-between px-6 py-4">
                 <div class="text-sm text-gray-600">Name</div>
-                <div class="text-sm text-gray-800">{{ $user->name ?? 'Anna Alleah Jane B. Lindo' }}</div>
+                <div class="text-sm text-gray-800">
+                    {{ $student->first_name }}
+                    @if(!empty($student->middle_initial))
+                        {{ $student->middle_initial }}.
+                    @endif
+                    {{ $student->last_name }}
+                    @if(!empty($student->suffix))
+                        {{ ' ' . $student->suffix }}
+                    @endif
+                </div>
             </div>
 
             <div class="flex items-center justify-between px-6 py-4">
@@ -109,10 +127,11 @@
                 <div class="text-sm text-gray-800">{{ $student->program_and_year ?? 'BSIT - 4th Year' }}</div>
             </div>
 
-            <!-- <div class="flex items-center justify-between px-6 py-4">
-                    <div class="text-sm text-gray-600">Phone</div>
-                    <div class="text-sm text-gray-800">{{ $student->phone ?? '0991 234 5678' }}</div>
-                </div> -->
+
+            <div class="flex items-center justify-between px-6 py-4">
+                <div class="text-sm text-gray-600">Phone</div>
+                <div class="text-sm text-gray-800">{{ $student->phone ?? '—' }}</div>
+            </div>
 
             <div class="flex items-center justify-between px-6 py-4">
                 <div class="text-sm text-gray-600">Email</div>

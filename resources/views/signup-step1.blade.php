@@ -116,7 +116,7 @@
                     <!-- Student Fields -->
                     <div id="studentFields" class="space-y-6">
                         <div class="flex gap-4">
-                            <input type="text" name="student_id" placeholder="Student ID"
+                            <input type="text" name="student_id" placeholder="Student ID" required
                                 class="flex-1 border-b border-white/70 focus:border-white focus:outline-none pb-3 text-white/80 bg-transparent placeholder-white/70 text-sm">
                             <!-- <div class="flex gap-4"> -->
 
@@ -136,30 +136,156 @@
 
                         <!-- Phone + College -->
                         <div class="flex gap-4">
-                            <input type="tel" name="phone" placeholder="Phone Number"
+                            <input type="tel" name="phone" placeholder="Phone Number" required
                                 pattern="[0-9]{11}" maxlength="11"
-                                class="flex-1 border-b border-white/70 focus:border-white focus:outline-none pb-3 text-white/80 bg-transparent placeholder-white/70 text-sm">
+                                class="w-32 border-b border-white/70 focus:border-white focus:outline-none pb-3 text-white/80 bg-transparent placeholder-white/70 text-sm">
 
-                            <select name="college" required
-                                class="flex-1 border-b border-white/70 focus:border-white focus:outline-none pb-3 text-white bg-transparent text-sm appearance-none cursor-pointer pr-8">
-                                <option value="" disabled selected class="text-black bg-white">Select College</option>
-                                <option value="College of Applied of economics" class="text-black bg-white">College of Applied of economics</option>
-                                <option value="College of Arts and Sciences" class="text-black bg-white">College of Arts and Sciences</option>
-                                <option value="College of Business Administration" class="text-black bg-white">College of Business Administration</option>
-                                <option value="College of Information and Computing" class="text-black bg-white">College of Information and Computing</option>
-                                <option value="College of Technology" class="text-black bg-white">College of Technology</option>
-                                <option value="College of Education" class="text-black bg-white">College of Education</option>
-                                <option value="College of Engineering" class="text-black bg-white">College of Engineering</option>
-                            </select>
+                            <div class="relative flex-1">
+                                <select name="college" id="collegeSelect" required
+                                    class="w-full border-b border-white/70 focus:border-white focus:outline-none pb-3 text-white bg-transparent text-sm appearance-none cursor-pointer pr-8">
+                                    <option value="" disabled selected class="text-black bg-white">Select college here</option>
+                                    <option value="College of Education" class="text-black bg-white">College of Education</option>
+                                    <option value="College of Arts and Sciences" class="text-black bg-white">College of Arts and Sciences</option>
+                                    <option value="College of Business Administration" class="text-black bg-white">College of Business Administration</option>
+                                    <option value="College of Engineering" class="text-black bg-white">College of Engineering</option>
+                                    <option value="College of Technology" class="text-black bg-white">College of Technology</option>
+                                    <option value="College of Information and Computing" class="text-black bg-white">College of Information and Computing</option>
+                                    <option value="College of Applied Economics" class="text-black bg-white">College of Applied Economics</option>
+                                </select>
+                                <span class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </span>
+                            </div>
                         </div>
 
                         <!-- Program + Year -->
                         <div class="flex gap-4">
                             <div class="flex-[2] relative">
-                                <input type="text" name="program" id="program" placeholder="Program (e.g., BSIT, BSCS)" required autocomplete="off"
-                                    class="w-full border-b border-white/70 focus:border-white focus:outline-none pb-3 text-white/80 bg-transparent placeholder-white/70 text-sm">
-                                <div id="programSuggestions" class="hidden absolute z-10 w-full mt-1 program-suggestions"></div>
+                                <select name="program" id="programSelect" required
+                                    class="w-full border-b border-white/70 focus:border-white focus:outline-none pb-3 text-white bg-transparent text-sm appearance-none cursor-pointer pr-8">
+                                    <option value="" disabled selected class="text-black bg-white">Select program</option>
+                                </select>
+                                <span class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </span>
                             </div>
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    // College to program mapping (full lists)
+                                    const collegePrograms = {
+                                        'College of Education': [
+                                            // Undergraduate
+                                            'BACHELOR OF SECONDARY EDUCATION',
+                                            'BACHELOR OF ELEMENTARY EDUCATION',
+                                            'Bachelor of Early Childhood Education',
+                                            'Bachelor of Special Needs Education',
+                                            'Bachelor of Physical Education',
+                                            'Bachelor of Technology and Livelihood Education major in Home Economics',
+                                            'Bachelor of Technical-Vocational Teacher Education',
+                                            // Graduate
+                                            'Doctor of Philosophy in Education',
+                                            'Doctor of Education (Old Program)',
+                                            'Master of Arts in Education',
+                                            'Master of Arts in English Language Teaching',
+                                            'Master of Education in Language Teaching - English (Old Program)',
+                                            'Master of Arts in Mathematics Education',
+                                            'Master of Arts in Science Education'
+                                        ],
+
+                                        'College of Arts and Sciences': [
+                                            // Undergraduate
+                                            'Bachelor of Arts in Literature and Cultural Studies',
+                                            'Bachelor of Arts in English Language major in Applied Linguistics',
+                                            'Bachelor of Science in Biology',
+                                            'Bachelor of Science in Mathematics',
+                                            'Bachelor of Science in Statistics',
+                                            // Graduate
+                                            'Master of Arts in Literature',
+                                            'Master of Arts in Applied Linguistics',
+                                            'Master of Science in Applied Mathematics',
+                                            'Master of Science in Biology'
+                                        ],
+
+                                        'College of Business Administration': [
+                                            // Undergraduate
+                                            'Bachelor of Science in Business Administration Major in Financial Management',
+                                            'Bachelor of Science in Hospitality Management',
+                                            'Bachelor of Science in Entrepreneurship',
+                                            'Bachelor of Science in Accountancy',
+                                            // Graduate
+                                            'Doctor of Philosophy',
+                                            'Master of Business Administration / eMBA'
+                                        ],
+
+                                        'College of Engineering': [
+                                            // Undergraduate
+                                            'Bachelor of Science in Agricultural and Biosystems Engineering',
+                                            'Bachelor of Science in Civil Engineering',
+                                            'Bachelor of Science in Electrical Engineering',
+                                            'Bachelor of Science in Electronics Engineering',
+                                            'Bachelor of Science in Geodetic Engineering',
+                                            'Bachelor of Science in Geology',
+                                            'Bachelor of Science in Mechanical Engineering',
+                                            'Bachelor of Science in Mining Engineering',
+                                            'Bachelor of Science in Sanitary Engineering',
+                                            // Graduate
+                                            'Master of Science in Engineering'
+                                        ],
+
+                                        'College of Technology': [
+                                            // Undergraduate
+                                            'Bachelor of Science in Industrial Technology (BS IndTech)',
+                                            // Graduate
+                                            'Master of Technology Education',
+                                            'Master of Industrial Technology'
+                                        ],
+
+                                        'College of Information and Computing': [
+                                            // Undergraduate
+                                            'Bachelor of Science in Information Technology',
+                                            'Bachelor of Science in Computer Science',
+                                            'Bachelor of Library and Information Science',
+                                            // Graduate
+                                            'Master of Library and Information Science',
+                                            'Master in Information Technology',
+                                            'Doctor in Information Technology'
+                                        ],
+
+                                        'College of Applied Economics': [
+                                            // Undergraduate
+                                            'Bachelor of Science in Economics',
+                                            // Graduate
+                                            'Master of Science in Economics'
+                                        ]
+                                    };
+
+                                    const collegeSelect = document.getElementById('collegeSelect');
+                                    const programSelect = document.getElementById('programSelect');
+
+                                    if (!collegeSelect || !programSelect) return;
+
+                                    collegeSelect.addEventListener('change', function() {
+                                        const selectedCollege = this.value;
+                                        // Clear and repopulate program dropdown
+                                        programSelect.innerHTML = '<option value="" disabled selected>Select program</option>';
+                                        if (collegePrograms[selectedCollege]) {
+                                            collegePrograms[selectedCollege].forEach(function(prog) {
+                                                const opt = document.createElement('option');
+                                                opt.value = prog;
+                                                opt.textContent = prog;
+                                                // Ensure option text is readable (some browsers ignore CSS classes on <option>)
+                                                opt.style.color = '#111827';
+                                                opt.style.backgroundColor = '#ffffff';
+                                                programSelect.appendChild(opt);
+                                            });
+                                        }
+                                    });
+                                });
+                            </script>
 
                             <select name="year" required
                                 class="w-32 border-b border-white/70 focus:border-white focus:outline-none pb-3 text-white bg-transparent text-sm appearance-none cursor-pointer">
@@ -205,101 +331,7 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Program autocomplete
-            const programs = [
-                "Bachelor of Secondary Education",
-                "Bachelor of Elementary Education",
-                "Bachelor of Early Childhood Education",
-                "Bachelor of Special Needs Education",
-                "Bachelor of Physical Education",
-                "Bachelor of Technology and Livelihood Education major in Home Economics",
-                "Bachelor of Technical-Vocational Teacher Education",
-                "Doctor of Philosophy in Education",
-                "Doctor of Education",
-                "Master of Arts in Education",
-                "Master of Arts in English Language Teaching",
-                "Master of Education in Language Teaching - English",
-                "Master of Arts in Mathematics Education",
-                "Master of Arts in Science Education",
-                "Bachelor of Arts in Literature and Cultural Studies",
-                "Bachelor of Arts in English Language major in Applied Linguistics",
-                "Bachelor of Science in Biology",
-                "Bachelor of Science in Mathematics",
-                "Bachelor of Science in Statistics",
-                "Master of Arts in Literature",
-                "Master of Arts in Applied Linguistics",
-                "Master of Science in Applied Mathematics",
-                "Master of Science in Biology",
-                "Bachelor of Science in Business Administration Major in Financial Management",
-                "Bachelor of Science in Hospitality Management",
-                "Bachelor of Science in Entrepreneurship",
-                "Bachelor of Science in Accountancy",
-                "Doctor of Philosophy",
-                "Master of Business Administration",
-                "Bachelor of Science in Agricultural and Biosystems Engineering",
-                "Bachelor of Science in Civil Engineering",
-                "Bachelor of Science in Electrical Engineering",
-                "Bachelor of Science in Electronics Engineering",
-                "Bachelor of Science in Geodetic Engineering",
-                "Bachelor of Science in Geology",
-                "Bachelor of Science in Mechanical Engineering",
-                "Bachelor of Science in Mining Engineering",
-                "Bachelor of Science in Sanitary Engineering",
-                "Master of Science in Engineering",
-                "Bachelor of Science in Industrial Technology",
-                "Master of Technology Education",
-                "Master of Industrial Technology",
-                "Bachelor of Science in Information Technology",
-                "Bachelor of Science in Computer Science",
-                "Bachelor of Library and Information Science",
-                "Master of Library and Information Science",
-                "Master in Information Technology",
-                "Doctor in Information Technology",
-                "Bachelor of Science in Economics",
-                "Master of Science in Economics"
-            ];
-
-            const programInput = document.getElementById('program');
-            const programSuggestions = document.getElementById('programSuggestions');
-
-            programInput.addEventListener('input', function() {
-                const value = this.value.trim();
-
-                if (value.length === 0) {
-                    programSuggestions.classList.add('hidden');
-                    return;
-                }
-
-                const filtered = programs.filter(program =>
-                    program.toLowerCase().includes(value.toLowerCase())
-                );
-
-                if (filtered.length === 0) {
-                    programSuggestions.classList.add('hidden');
-                    return;
-                }
-
-                programSuggestions.innerHTML = filtered.map(program =>
-                    `<div class="suggestion-item" onclick="selectProgram('${program.replace(/'/g, "\\'")}')">${program}</div>`
-                ).join('');
-                programSuggestions.classList.remove('hidden');
-            });
-
-            // Hide suggestions when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!programInput.contains(e.target) && !programSuggestions.contains(e.target)) {
-                    programSuggestions.classList.add('hidden');
-                }
-            });
-
-            window.selectProgram = function(program) {
-                programInput.value = program;
-                programSuggestions.classList.add('hidden');
-            };
-        });
-    </script>
+    <!-- Program autocomplete removed: program is now a dependent select populated by college selection -->
 
 </body>
 

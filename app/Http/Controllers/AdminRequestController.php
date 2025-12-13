@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\GoodMoralRequest;
+use App\Models\AuditLog;
 use Illuminate\Http\Request;
 
 class AdminRequestController extends Controller
@@ -14,9 +15,9 @@ class AdminRequestController extends Controller
         // Search filter
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->whereHas('student', function($q) use ($search) {
+            $query->whereHas('student', function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('student_no', 'like', "%{$search}%");
+                    ->orWhere('student_no', 'like', "%{$search}%");
             });
         }
 
@@ -45,5 +46,25 @@ class AdminRequestController extends Controller
         // You'll need to create the SafeLoanRequest model and migration
 
         return view('admin.requests-safe-loan');
+    }
+
+    public function deleteGoodMoral(GoodMoralRequest $goodMoralRequest)
+    {
+        // Log the deletion for audit trail
+        AuditLog::create([
+            'auditable_type' => GoodMoralRequest::class,
+            'auditable_id' => $goodMoralRequest->id,
+            'action' => 'deleted',
+            'user_id' => auth()->id(),
+            'staff_id' => optional(auth()->user())->staff_id,
+            'old_values' => $goodMoralRequest->snapshot(),
+            'new_values' => null,
+            'ip_address' => request()->ip(),
+        ]);
+
+        $goodMoralRequest->delete();
+
+        return redirect()->route('admin.requests.good-moral')
+            ->with('status', 'Good moral request deleted successfully.');
     }
 }

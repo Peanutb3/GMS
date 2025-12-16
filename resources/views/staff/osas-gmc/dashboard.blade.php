@@ -8,22 +8,18 @@
 
 @section('content')
 <!-- TOP CARD -->
-<div class="bg-gradient-to-br from-red-900 via-red-800 to-red-700 text-white rounded-2xl flex flex-col md:flex-row justify-between items-stretch p-8 mb-8 shadow-2xl h-44 overflow-hidden relative">
-    <!-- Decorative elements -->
-    <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32"></div>
-    <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full -ml-24 -mb-24"></div>
-
+<div class="bg-gradient-to-r from-[#760000] to-[#D62F26] text-white rounded-xl flex flex-col md:flex-row justify-between items-stretch px-8 mb-8 shadow-lg h-40">
     <!-- Text Section -->
-    <div class="md:w-2/3 flex flex-col justify-center relative z-10">
-        <p class="text-xs text-red-100 mb-2 font-medium tracking-wide">{{ now()->format('F j, Y') }}</p>
-        <h2 class="text-4xl font-bold mb-2 tracking-tight">Welcome back, {{ Auth::user()->name }}!</h2>
-        <p class="text-sm text-red-50/90">Manage Good Moral Certificate and Safe Loan requests efficiently.</p>
+    <div class="md:w-2/3 flex flex-col justify-center">
+        <p class="text-xs text-gray-200 mb-7">{{ now()->format('F j, Y') }}</p>
+        <h2 class="text-3xl font-bold mb-1">Welcome back, {{ Auth::user()->name }}!</h2>
+        <p class="text-sm">Manage Good Moral Certificate and Safe Loan requests efficiently.</p>
     </div>
 
     <!-- Image Section -->
-    <div class="md:w-1/3 flex justify-end items-end relative z-10">
+    <div class="md:w-1/3 flex justify-end items-end">
         <img src="/images/Sticker.png" alt="Staff Illustration"
-            class="h-full object-bottom object-contain drop-shadow-2xl">
+            class="h-full object-bottom object-contain">
     </div>
 </div>
 
@@ -35,7 +31,7 @@
     <div class="sm:col-span-3 space-y-8">
         <!-- Summary -->
         <div>
-            <h3 class="text-2xl font-bold mb-6 text-gray-800">Summary</h3>
+            <h3 class="text-xl font-semibold mb-4">Summary</h3>
             <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 <div class="bg-white rounded-lg shadow p-6 text-center">
                     <p class="text-4xl font-bold text-red-800 mb-2">{{ $totalGoodMoralRequests }}</p>
@@ -81,6 +77,7 @@
                             <tr>
                                 <th class="px-4 py-3 text-left font-semibold text-gray-700">Reference No</th>
                                 <th class="px-4 py-3 text-left font-semibold text-gray-700">Student Name</th>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Program</th>
                                 <th class="px-4 py-3 text-left font-semibold text-gray-700">Purpose</th>
                                 <th class="px-4 py-3 text-left font-semibold text-gray-700">Date</th>
                                 <th class="px-4 py-3 text-left font-semibold text-gray-700">Status</th>
@@ -97,6 +94,13 @@
                                 <td class="px-4 py-3 text-gray-900">{{ $request->reference_no ?? 'N/A' }}</td>
                                 <td class="px-4 py-3">
                                     <div class="font-medium text-gray-900">{{ $request->first_name }} {{ $request->middle_name ? $request->middle_name . ' ' : '' }}{{ $request->last_name }}</div>
+                                </td>
+                                <td class="px-4 py-3 text-gray-700">
+                                    @php
+                                    $prog = $request->program ?? 'N/A';
+                                    $progAbbr = preg_match('/\(([A-Z]+)\)/', $prog, $m) ? $m[1] : $prog;
+                                    @endphp
+                                    <span title="{{ $prog }}">{{ $progAbbr }}</span>
                                 </td>
                                 <td class="px-4 py-3 text-gray-700">{{ $request->purpose }}</td>
                                 <td class="px-4 py-3 text-gray-600">{{ $request->created_at->format('M d, Y') }}</td>
@@ -115,7 +119,7 @@
                             @endforeach
                             @else
                             <tr>
-                                <td colspan="5" class="px-4 py-8 text-center text-gray-400">No recent requests found.</td>
+                                <td colspan="6" class="px-4 py-8 text-center text-gray-400">No recent requests found.</td>
                             </tr>
                             @endif
                         </tbody>
@@ -137,6 +141,7 @@
                             <tr>
                                 <th class="px-4 py-3 text-left font-semibold text-gray-700">Reference No</th>
                                 <th class="px-4 py-3 text-left font-semibold text-gray-700">Student Name</th>
+                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Program</th>
                                 <th class="px-4 py-3 text-left font-semibold text-gray-700">Amount</th>
                                 <th class="px-4 py-3 text-left font-semibold text-gray-700">Date</th>
                                 <th class="px-4 py-3 text-left font-semibold text-gray-700">Status</th>
@@ -153,6 +158,13 @@
                                 <td class="px-4 py-3 text-gray-900">{{ $request->reference_no ?? 'N/A' }}</td>
                                 <td class="px-4 py-3">
                                     <div class="font-medium text-gray-900">{{ $request->first_name }} {{ $request->middle_name ? $request->middle_name . ' ' : '' }}{{ $request->last_name }}</div>
+                                </td>
+                                <td class="px-4 py-3 text-gray-700">
+                                    @php
+                                    $prog = $request->program ?? 'N/A';
+                                    $progAbbr = preg_match('/\(([A-Z]+)\)/', $prog, $m) ? $m[1] : $prog;
+                                    @endphp
+                                    <span title="{{ $prog }}">{{ $progAbbr }}</span>
                                 </td>
                                 <td class="px-4 py-3 text-gray-700">₱{{ number_format($request->loan_amount ?? 0, 2) }}</td>
                                 <td class="px-4 py-3 text-gray-600">{{ $request->created_at->format('M d, Y') }}</td>
@@ -171,7 +183,7 @@
                             @endforeach
                             @else
                             <tr>
-                                <td colspan="5" class="px-4 py-8 text-center text-gray-400">No recent requests found.</td>
+                                <td colspan="6" class="px-4 py-8 text-center text-gray-400">No recent requests found.</td>
                             </tr>
                             @endif
                         </tbody>
@@ -184,7 +196,7 @@
 
     <!-- Right side: Profile card -->
     <div>
-        <h3 class="text-2xl font-bold mb-6 text-gray-800">Profile</h3>
+        <h3 class="text-xl font-semibold mb-4">Profile</h3>
         <div class="bg-white rounded-2xl shadow-lg p-6 flex flex-col">
             <div class="relative">
                 @if(Auth::user()->staff && !empty(Auth::user()->staff->profile_photo_path))
@@ -202,7 +214,7 @@
             <p class="text-sm text-gray-600 text-center mb-4">Staff</p>
             <div class="mb-4 pl-2 text-sm text-gray-700 space-y-2">
                 <p><span class="font-semibold">Staff ID:</span> {{ Auth::user()->staff->employee_id ?? 'N/A' }}</p>
-                <p><span class="font-semibold">Email:</span> {{ Auth::user()->email }}</p>
+                <p class="break-all"><span class="font-semibold">Email:</span> {{ Auth::user()->email }}</p>
                 <p><span class="font-semibold">Role:</span> {{ ucfirst(Auth::user()->role) }}</p>
             </div>
             <a href="{{ route('osas-gmc.profile') }}" class="text-center px-6 py-3 bg-red-900 text-white rounded-lg hover:bg-red-800 font-medium">

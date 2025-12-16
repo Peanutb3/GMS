@@ -10,22 +10,16 @@ use App\Models\User;
 use App\Models\Student;
 use App\Models\Staff;
 use App\Models\College;
+use App\Models\DeviceFingerprint;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use App\Models\AuditLog;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset;
 
 class AuthController extends Controller
 {
-    /**
-     * Generate device fingerprint based on user agent and IP
-     */
-    private function getDeviceFingerprint(Request $request): string
-    {
-        // Use user agent only for fingerprinting to avoid IP instability
-        return hash('sha256', $request->userAgent());
-    }
     /**
      * ---------------------------
      * MULTI-STEP SIGNUP
@@ -216,13 +210,33 @@ class AuthController extends Controller
             // Logout immediately (we'll log in after OTP verification)
             Auth::logout();
 
-            // Get device fingerprint
-            $deviceFingerprint = $this->getDeviceFingerprint($request);
+            // Get device fingerprint using the DeviceFingerprint model method
+            $deviceFingerprint = \App\Models\DeviceFingerprint::generateFingerprint(
+                $request->userAgent() ?? 'Unknown',
+                $request->ip() ?? '0.0.0.0'
+            );
+
+            // Debug logging
+            \Log::info('Login - Device Fingerprint Generated', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'fingerprint' => $deviceFingerprint,
+                'user_agent' => $request->userAgent(),
+                'ip' => $request->ip()
+            ]);
 
             // Check if 2FA is enabled and required based on role and device
             $requiresOtp = false;
             if ($user->two_factor_enabled) {
                 $requiresOtp = $user->requiresOtp($deviceFingerprint);
+
+                // Debug logging
+                \Log::info('Login - OTP Check', [
+                    'user_id' => $user->id,
+                    'requires_otp' => $requiresOtp,
+                    'otp_expires_at' => $user->otp_expires_at,
+                    'is_trusted_device' => $user->isTrustedDevice($deviceFingerprint)
+                ]);
             }
 
             if ($requiresOtp) {
@@ -251,10 +265,12 @@ class AuthController extends Controller
                     \Illuminate\Support\Facades\Log::error('Failed to send 2FA email: ' . $e->getMessage());
                 }
 
-                // Store user ID and device fingerprint in session for OTP verification
+                // Store user ID, device fingerprint, user agent, and IP in session for OTP verification
                 session([
                     '2fa:user:id' => $user->id,
                     '2fa:device:fingerprint' => $deviceFingerprint,
+                    '2fa:user:agent' => $request->userAgent() ?? 'Unknown',
+                    '2fa:ip:address' => $request->ip() ?? '0.0.0.0',
                 ]);
 
                 // Store OTP in session for testing (REMOVE IN PRODUCTION)

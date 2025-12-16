@@ -113,29 +113,32 @@
     </div>
 
     <!-- Right side: Profile card -->
-    <div class="bg-white rounded-2xl shadow-lg p-6 flex flex-col">
-        <div class="relative">
-            @if($student && !empty($student->profile_photo_path))
-            <img src="{{ asset('storage/' . $student->profile_photo_path) }}"
-                alt="Profile Avatar"
-                class="h-20 w-20 rounded-full border-4 border-pink-300 mx-auto mb-4 object-cover">
-            @else
-            <div class="h-20 w-20 rounded-full border-4 border-pink-300 bg-gradient-to-br from-blue-800 to-blue-600 flex items-center justify-center mx-auto mb-4">
-                <span class="text-2xl font-bold text-white">{{ substr($user->name ?? 'S', 0, 1) }}</span>
+    <div>
+        <h3 class="text-xl font-semibold mb-4 text-gray-800">Profile</h3>
+        <div class="bg-white rounded-2xl shadow-lg p-6 flex flex-col">
+            <div class="relative">
+                @if($student && !empty($student->profile_photo_path))
+                <img src="{{ asset('storage/' . $student->profile_photo_path) }}"
+                    alt="Profile Avatar"
+                    class="h-20 w-20 rounded-full border-4 border-pink-300 mx-auto mb-4 object-cover">
+                @else
+                <div class="h-20 w-20 rounded-full border-4 border-pink-300 bg-gradient-to-br from-blue-800 to-blue-600 flex items-center justify-center mx-auto mb-4">
+                    <span class="text-2xl font-bold text-white">{{ substr($user->name ?? 'S', 0, 1) }}</span>
+                </div>
+                @endif
             </div>
-            @endif
-        </div>
 
-        <h4 class="font-semibold text-center text-lg mb-1">{{ $user->name ?? ($student->first_name . ' ' . $student->last_name) ?? 'Student' }}</h4>
-        <p class="text-sm text-gray-600 text-center mb-4">Student</p>
-        <div class="mb-4 text-sm text-gray-700 space-y-2">
-            <p><span class="font-semibold">Student ID:</span> {{ $student->student_id ?? '—' }}</p>
-            <p><span class="font-semibold">Email:</span> {{ Auth::user()->email }}</p>
-            <p><span class="font-semibold">Program:</span> {{ $student->program ?? '—' }}@if(!empty($student->year)) | {{ $student->year }}@endif</p>
+            <h4 class="font-semibold text-center text-lg mb-1">{{ $user->name ?? ($student->first_name . ' ' . $student->last_name) ?? 'Student' }}</h4>
+            <p class="text-sm text-gray-600 text-center mb-4">Student</p>
+            <div class="mb-4 px-2 text-sm text-gray-700 space-y-2">
+                <p class="break-words"><span class="font-semibold">Student ID:</span> {{ $student->student_id ?? '—' }}</p>
+                <p class="break-words"><span class="font-semibold">Email:</span> {{ Str::limit(Auth::user()->email, 30) }}</p>
+                <p class="break-words"><span class="font-semibold">Program:</span> {{ $student->program_name ?? '—' }}@if(!empty($student->year)) | Year {{ $student->year }}@endif</p>
+            </div>
+            <a href="{{ route('student.profile') }}" class="text-center px-6 py-3 bg-red-900 text-white rounded-lg hover:bg-red-800 font-medium">
+                Edit Profile
+            </a>
         </div>
-        <a href="{{ route('student.profile') }}" class="text-center px-6 py-3 bg-red-900 text-white rounded-lg hover:bg-red-800 font-medium">
-            Edit Profile
-        </a>
     </div>
 </div>
 @endsection

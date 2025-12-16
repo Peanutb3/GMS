@@ -42,8 +42,8 @@
         input:-webkit-autofill:hover,
         input:-webkit-autofill:focus,
         input:-webkit-autofill:active {
-            -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
-            box-shadow: 0 0 0 1000px transparent inset !important;
+            -webkit-box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.1) inset !important;
+            box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.1) inset !important;
             -webkit-text-fill-color: #ffffff !important;
             caret-color: #ffffff;
             transition: background-color 9999s ease-in-out 0s;
@@ -57,7 +57,7 @@
 
         /* Ensure placeholder stays dim and no white flash */
         ::placeholder {
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255, 255, 255, 0.6);
         }
     </style>
 </head>
@@ -80,27 +80,36 @@
                 </div>
 
                 <!-- Form -->
-                <form id="loginForm" action="{{ route('login.submit') }}" method="POST">
+                <form id="loginForm" action="{{ route('login.submit') }}" method="POST" class="space-y-5">
                     @csrf
 
                     <!-- Email -->
                     <div>
-                        <div class="flex justify-center mb-4">
-                            <input type="text" name="email" placeholder="Email" required
-                                value="{{ old('email') }}"
-                                class="w-[380px] border-b pb-3 bg-transparent text-base mx-auto text-white placeholder-white focus:outline-none {{ $errors->has('email') ? 'border-red-500 focus:border-red-500' : 'border-white focus:border-white' }}">
-                        </div>
+                        <label for="email" class="block text-sm font-medium text-white mb-1.5">Email</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Enter your email"
+                            required
+                            value="{{ old('email') }}"
+                            class="w-full px-3.5 py-2.5 bg-white bg-opacity-10 border {{ $errors->has('email') ? 'border-red-300' : 'border-white border-opacity-30' }} rounded-lg text-sm text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all">
                         @error('email')
-                        <p class="text-red-300 text-xs text-left">{{ $message }}</p>
+                        <p class="text-red-300 text-xs mt-1.5">{{ $message }}</p>
                         @enderror
                     </div>
-
                     <!-- Password -->
                     <div>
-                        <div class="relative flex justify-center mb-2">
-                            <input type="password" id="password" name="password" placeholder="Password" required
-                                class="w-[380px] border-b pb-3 bg-transparent text-base pr-10 mx-auto text-white placeholder-white focus:outline-none {{ $errors->has('password') ? 'border-red-500 focus:border-red-500' : 'border-white focus:border-white' }}">
-                            <button type="button" onclick="togglePassword()" class="absolute right-[0%] top-1 text-white">
+                        <label for="password" class="block text-sm font-medium text-white mb-1.5">Password</label>
+                        <div class="relative">
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Enter your password"
+                                required
+                                class="w-full px-3.5 py-2.5 bg-white bg-opacity-10 border {{ $errors->has('password') ? 'border-red-300' : 'border-white border-opacity-30' }} rounded-lg text-sm text-white placeholder-white placeholder-opacity-60 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent transition-all pr-10">
+                            <button type="button" onclick="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-white hover:text-gray-200 focus:outline-none">
                                 <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -110,12 +119,12 @@
                             </button>
                         </div>
                         @error('password')
-                        <p class="text-red-300 text-xs mb-2 text-left">{{ $message }}</p>
+                        <p class="text-red-300 text-xs mt-1.5">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Remember me + Forgot password -->
-                    <div class="flex justify-between items-center text-white text-sm mb-6">
+                    <div class="flex justify-between items-center text-white text-sm">
                         <label class="flex items-center space-x-2 cursor-pointer select-none">
                             <!-- Custom checkbox container -->
                             <div class="w-4 h-4 border-2 border-white rounded flex items-center justify-center bg-transparent">
@@ -132,8 +141,8 @@
 
                     <!-- Login Button -->
                     <button type="submit"
-                        class="w-full bg-white text-black font-semibold py-3 rounded-full text-base uppercase hover:bg-gray-100 transition">
-                        LOGIN
+                        class="w-full bg-white text-[#800000] font-semibold py-2.5 rounded-full text-sm hover:bg-gray-100 transition-colors duration-200">
+                        Sign in to your account
                     </button>
 
                     <!-- Divider (Commented Out - Google Sign-in Disabled) -->

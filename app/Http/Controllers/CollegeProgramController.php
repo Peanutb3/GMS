@@ -121,4 +121,26 @@ class CollegeProgramController extends Controller
         $programs = $college->programs()->active()->get();
         return response()->json($programs);
     }
+
+    /**
+     * Get all active colleges for API/forms
+     */
+    public function getColleges()
+    {
+        $colleges = College::active()->orderBy('name')->get(['id', 'name', 'code']);
+        return response()->json($colleges);
+    }
+
+    /**
+     * Get all active programs for a specific college by college ID
+     */
+    public function getProgramsByCollege($collegeId)
+    {
+        $programs = Program::where('college_id', $collegeId)
+            ->active()
+            ->orderBy('name')
+            ->get(['id', 'name', 'code']);
+
+        return response()->json($programs);
+    }
 }

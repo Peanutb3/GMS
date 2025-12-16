@@ -48,7 +48,6 @@ class AdminStaffController extends Controller
             'last_name' => 'required|string|max:255',
             'suffix' => 'nullable|string|max:10',
             'email' => 'required|email|unique:users,email',
-            'staff_type' => 'required|in:Academic,Non-Academic,Administrative',
             'role' => 'required|in:osas_gmc,osas_du',
             'password' => [
                 'required',
@@ -88,8 +87,7 @@ class AdminStaffController extends Controller
                     'last_name' => $validated['last_name'],
                     'suffix' => $validated['suffix'] ?? null,
                     'email' => $validated['email'],
-                    'staff_type' => $validated['staff_type'],
-                    'role' => $validated['role'], // Store role in staff table too
+                    'role' => $validated['role'], // Store role in staff table
                 ]);
             }
         } catch (\Throwable $e) {
@@ -115,7 +113,6 @@ class AdminStaffController extends Controller
         $rules = [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
-            'staff_type' => 'nullable|string|max:100',
             'role' => 'required|in:osas_gmc,osas_du',
         ];
 
@@ -154,7 +151,6 @@ class AdminStaffController extends Controller
             if (Schema::hasTable('staff') && $staff->staff) {
                 $staff->staff->update([
                     'email' => $validated['email'],
-                    'staff_type' => $validated['staff_type'] ?? $staff->staff->staff_type,
                     'role' => $validated['role'], // Update role in staff table
                 ]);
             }

@@ -85,7 +85,7 @@ $currentStyle = $styles[$type] ?? $styles['info'];
     }
 
     .toast-timer-bar {
-        animation: timer-progress 5s linear forwards;
+        animation: timer-progress 3s linear forwards;
     }
 </style>
 

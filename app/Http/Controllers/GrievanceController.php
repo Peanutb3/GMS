@@ -186,6 +186,7 @@ class GrievanceController extends Controller
         $data = $request->validate([
             'student_id' => 'nullable|string|max:255',
             'name' => 'required|string|max:255',
+            'college' => 'nullable|string|max:255',
             'program' => 'nullable|string|max:255',
             'date' => 'nullable|date',
             'grievance' => 'required|string|max:255',
@@ -201,8 +202,10 @@ class GrievanceController extends Controller
             $data['attachment_path'] = $path;
         }
 
-        // Generate case ID
-        $data['case_id'] = 'CASE-' . date('Y') . '-' . str_pad((Grievance::max('id') + 1), 3, '0', STR_PAD_LEFT);
+        // Generate case ID: GRV-YY-###
+        $year = date('y'); // Last 2 digits of year (e.g., 25 for 2025)
+        $count = Grievance::whereYear('created_at', date('Y'))->count() + 1;
+        $data['case_id'] = 'GRV-' . $year . '-' . str_pad($count, 3, '0', STR_PAD_LEFT);
         $data['status'] = 'pending';
 
         // Try to attach student_record_id and populate snapshot fields
@@ -213,17 +216,20 @@ class GrievanceController extends Controller
                 // Populate snapshot fields from student record
                 $data['name_snapshot'] = $student->first_name . ' ' . $student->last_name;
                 $data['student_no_snapshot'] = $student->student_id;
-                $data['program_snapshot'] = $student->program;
+                $data['college_snapshot'] = $student->college_name;
+                $data['program_snapshot'] = $student->program_name;
             } else {
                 // Student ID provided but not found - use form data for snapshots
                 $data['name_snapshot'] = $data['name'];
                 $data['student_no_snapshot'] = $data['student_id'];
+                $data['college_snapshot'] = $data['college'] ?? null;
                 $data['program_snapshot'] = $data['program'] ?? null;
             }
         } else {
             // No student ID - use form data for snapshots
             $data['name_snapshot'] = $data['name'];
             $data['student_no_snapshot'] = null;
+            $data['college_snapshot'] = $data['college'] ?? null;
             $data['program_snapshot'] = $data['program'] ?? null;
         }
 
@@ -259,42 +265,73 @@ class GrievanceController extends Controller
      */
     public function findStudent($studentId)
     {
-        Log::info('findStudent called', ['studentId' => $studentId]);
+        try {
+            Log::info('findStudent called', [
+                'studentId' => $studentId,
+                'auth_user' => auth()->id(),
+                'route' => request()->url()
+            ]);
 
-        $studentIdTrim = trim($studentId);
-        $student = \App\Models\Student::where('student_id', $studentIdTrim)->first();
+            $studentIdTrim = trim($studentId);
 
-        // Try normalized variants (e.g. remove spaces and dashes)
-        if (!$student) {
-            $norm = preg_replace('/[^A-Za-z0-9]/', '', $studentIdTrim);
-            if ($norm !== $studentIdTrim) {
-                $student = \App\Models\Student::whereRaw("REPLACE(REPLACE(student_id, '-', ''), ' ', '') = ?", [$norm])->first();
+            if (empty($studentIdTrim)) {
+                return response()->json(['found' => false, 'error' => 'Student ID is empty'], 400);
             }
-        }
 
-        if (!$student) {
-            Log::info('findStudent not found', ['studentId' => $studentIdTrim]);
-            return response()->json(['found' => false], 404);
-        }
+            // Since student_id is encrypted, we need to fetch and check each one
+            // Note: This is not optimal for large datasets, but works for moderate sizes
+            $student = \App\Models\Student::all()->first(function ($s) use ($studentIdTrim) {
+                $decryptedId = $s->student_id; // Auto-decrypted by trait
 
-        // Combine College and Program into one string
-        $collegeProgram = trim(($student->college ?? '') . ' | ' . ($student->program ?? ''));
+                // Exact match
+                if ($decryptedId === $studentIdTrim) {
+                    return true;
+                }
 
-        // Format full name properly
-        $fullName = trim($student->first_name . ' ' .
-            ($student->middle_initial ? $student->middle_initial . ' ' : '') .
-            $student->last_name .
-            ($student->suffix ? ' ' . $student->suffix : ''));
+                // Try normalized comparison (remove spaces and dashes)
+                $norm1 = preg_replace('/[^A-Za-z0-9]/', '', $decryptedId);
+                $norm2 = preg_replace('/[^A-Za-z0-9]/', '', $studentIdTrim);
+                return $norm1 === $norm2;
+            });
 
-        Log::info('findStudent found', ['student_id' => $student->student_id, 'name' => $fullName]);
+            if (!$student) {
+                Log::info('findStudent not found', ['studentId' => $studentIdTrim]);
+                return response()->json(['found' => false], 404);
+            }
 
-        return response()->json([
-            'found' => true,
-            'student' => [
+            // Combine College and Program into one string using accessors
+            $collegeProgram = trim(($student->college_name ?? '') . ' | ' . ($student->program_name ?? ''));
+
+            // Format full name properly
+            $fullName = trim($student->first_name . ' ' .
+                ($student->middle_initial ? $student->middle_initial . ' ' : '') .
+                $student->last_name .
+                ($student->suffix ? ' ' . $student->suffix : ''));
+
+            Log::info('findStudent found', [
+                'student_id' => $student->student_id,
                 'name' => $fullName,
-                'program' => $collegeProgram, // updated here
-            ],
-        ]);
+                'college_program' => $collegeProgram
+            ]);
+
+            return response()->json([
+                'found' => true,
+                'student' => [
+                    'name' => $fullName,
+                    'program' => $collegeProgram,
+                ],
+            ]);
+        } catch (\Exception $e) {
+            Log::error('findStudent exception', [
+                'studentId' => $studentId,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'found' => false,
+                'error' => 'An error occurred while looking up the student'
+            ], 500);
+        }
     }
 
     public function create()

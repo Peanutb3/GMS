@@ -116,36 +116,64 @@
                     <!-- Student Fields -->
                     <div id="studentFields" class="space-y-6">
                         <div class="flex gap-4">
-                            <input type="text" name="student_id" placeholder="Student ID" required
-                                class="flex-1 border-b border-white/70 focus:border-white focus:outline-none pb-3 text-white/80 bg-transparent placeholder-white/70 text-sm">
-                            <!-- <div class="flex gap-4"> -->
+                            <div class="flex-1">
+                                <input type="text" name="student_id" placeholder="Student ID" required value="{{ old('student_id') }}"
+                                    class="w-full border-b @error('student_id') border-red-400 @else border-white/70 @enderror focus:border-white focus:outline-none pb-3 text-white/80 bg-transparent placeholder-white/70 text-sm">
+                                @error('student_id')
+                                <p class="text-red-300 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
 
-                            <!-- Names -->
-                            <input type="text" name="last_name" placeholder="Last Name" required
-                                class="flex-1 border-b border-white/70 focus:border-white focus:outline-none pb-3 text-white/80 bg-transparent placeholder-white/70 text-sm">
+                            <div class="flex-1">
+                                <input type="text" name="last_name" placeholder="Last Name" required value="{{ old('last_name') }}"
+                                    class="w-full border-b @error('last_name') border-red-400 @else border-white/70 @enderror focus:border-white focus:outline-none pb-3 text-white/80 bg-transparent placeholder-white/70 text-sm">
+                                @error('last_name')
+                                <p class="text-red-300 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
                         </div>
 
                         <div class="flex gap-4">
-                            <input type="text" name="first_name" placeholder="First Name" required
-                                class="flex-1 border-b border-white/70 focus:border-white focus:outline-none pb-3 text-white/80 bg-transparent placeholder-white/70 text-sm">
-                            <input type="text" name="middle_initial" placeholder="M.I."
-                                class="w-20 border-b border-white/70 focus:border-white focus:outline-none pb-3 text-white/80 bg-transparent placeholder-white/70 text-sm">
-                            <input type="text" name="suffix" placeholder="Suffix"
-                                class="w-24 border-b border-white/70 focus:border-white focus:outline-none pb-3 text-white/80 bg-transparent placeholder-white/70 text-sm">
+                            <div class="flex-1">
+                                <input type="text" name="first_name" placeholder="First Name" required value="{{ old('first_name') }}"
+                                    class="w-full border-b @error('first_name') border-red-400 @else border-white/70 @enderror focus:border-white focus:outline-none pb-3 text-white/80 bg-transparent placeholder-white/70 text-sm">
+                                @error('first_name')
+                                <p class="text-red-300 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div class="w-20">
+                                <input type="text" name="middle_initial" placeholder="M.I." value="{{ old('middle_initial') }}"
+                                    class="w-full border-b @error('middle_initial') border-red-400 @else border-white/70 @enderror focus:border-white focus:outline-none pb-3 text-white/80 bg-transparent placeholder-white/70 text-sm">
+                                @error('middle_initial')
+                                <p class="text-red-300 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div class="w-24">
+                                <input type="text" name="suffix" placeholder="Suffix" value="{{ old('suffix') }}"
+                                    class="w-full border-b @error('suffix') border-red-400 @else border-white/70 @enderror focus:border-white focus:outline-none pb-3 text-white/80 bg-transparent placeholder-white/70 text-sm">
+                                @error('suffix')
+                                <p class="text-red-300 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
                         </div>
 
                         <!-- Phone + College -->
                         <div class="flex gap-4">
-                            <input type="tel" name="phone" placeholder="Phone Number" required
-                                pattern="[0-9]{11}" maxlength="11"
-                                class="w-32 border-b border-white/70 focus:border-white focus:outline-none pb-3 text-white/80 bg-transparent placeholder-white/70 text-sm">
+                            <div class="w-32">
+                                <input type="tel" name="phone" placeholder="Phone Number" required value="{{ old('phone') }}"
+                                    pattern="[0-9]{11}" maxlength="11"
+                                    class="w-full border-b @error('phone') border-red-400 @else border-white/70 @enderror focus:border-white focus:outline-none pb-3 text-white/80 bg-transparent placeholder-white/70 text-sm">
+                                @error('phone')
+                                <p class="text-red-300 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
 
                             <div class="relative flex-1">
                                 <select name="college" id="collegeSelect" required
-                                    class="w-full border-b border-white/70 focus:border-white focus:outline-none pb-3 text-white bg-transparent text-sm appearance-none cursor-pointer pr-8">
+                                    class="w-full border-b @error('college') border-red-400 @else border-white/70 @enderror focus:border-white focus:outline-none pb-3 text-white bg-transparent text-sm appearance-none cursor-pointer pr-8">
                                     <option value="" disabled selected class="text-black bg-white">Select college here</option>
                                     @foreach($colleges as $college)
-                                    <option value="{{ $college->id }}" class="text-black bg-white">{{ $college->name }}</option>
+                                    <option value="{{ $college->id }}" {{ old('college') == $college->id ? 'selected' : '' }} class="text-black bg-white">{{ $college->name }}</option>
                                     @endforeach
                                 </select>
                                 <span class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -153,6 +181,9 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </span>
+                                @error('college')
+                                <p class="text-red-300 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
@@ -160,7 +191,7 @@
                         <div class="flex gap-4">
                             <div class="flex-[2] relative">
                                 <select name="program" id="programSelect" required
-                                    class="w-full border-b border-white/70 focus:border-white focus:outline-none pb-3 text-white bg-transparent text-sm appearance-none cursor-pointer pr-8">
+                                    class="w-full border-b @error('program') border-red-400 @else border-white/70 @enderror focus:border-white focus:outline-none pb-3 text-white bg-transparent text-sm appearance-none cursor-pointer pr-8">
                                     <option value="" disabled selected class="text-black bg-white">Select program</option>
                                 </select>
                                 <span class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -168,6 +199,9 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </span>
+                                @error('program')
+                                <p class="text-red-300 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
                             <script>
                                 document.addEventListener('DOMContentLoaded', function() {
@@ -203,18 +237,36 @@
                                                 });
                                         }
                                     });
+
+                                    // Phone number validation - numbers only
+                                    const phoneInput = document.querySelector('input[name="phone"]');
+                                    if (phoneInput) {
+                                        phoneInput.addEventListener('input', function(e) {
+                                            this.value = this.value.replace(/[^0-9]/g, '');
+                                        });
+                                    }
                                 });
                             </script>
 
-                            <select name="year" required
-                                class="w-32 border-b border-white/70 focus:border-white focus:outline-none pb-3 text-white bg-transparent text-sm appearance-none cursor-pointer">
-                                <option value="" disabled selected class="text-black bg-white">Select Year</option>
-                                <option value="1st year" class="text-black bg-white">1st year</option>
-                                <option value="2nd year" class="text-black bg-white">2nd year</option>
-                                <option value="3rd year" class="text-black bg-white">3rd year</option>
-                                <option value="4th year" class="text-black bg-white">4th year</option>
-                                <option value="5th year" class="text-black bg-white">5th year</option>
-                            </select>
+                            <div class="w-32 relative">
+                                <select name="year" required
+                                    class="w-full border-b @error('year') border-red-400 @else border-white/70 @enderror focus:border-white focus:outline-none pb-3 text-white bg-transparent text-sm appearance-none cursor-pointer pr-8">
+                                    <option value="" disabled selected class="text-black bg-white">Select Year</option>
+                                    <option value="1st year" {{ old('year') == '1st year' ? 'selected' : '' }} class="text-black bg-white">1st year</option>
+                                    <option value="2nd year" {{ old('year') == '2nd year' ? 'selected' : '' }} class="text-black bg-white">2nd year</option>
+                                    <option value="3rd year" {{ old('year') == '3rd year' ? 'selected' : '' }} class="text-black bg-white">3rd year</option>
+                                    <option value="4th year" {{ old('year') == '4th year' ? 'selected' : '' }} class="text-black bg-white">4th year</option>
+                                    <option value="5th year" {{ old('year') == '5th year' ? 'selected' : '' }} class="text-black bg-white">5th year</option>
+                                </select>
+                                <span class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </span>
+                                @error('year')
+                                <p class="text-red-300 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
                         </div>
                     </div>
 

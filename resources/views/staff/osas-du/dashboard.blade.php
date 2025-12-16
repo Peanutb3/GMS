@@ -92,12 +92,35 @@
                             <tr class="hover:bg-gray-50">
                                 <td class="px-4 py-3 text-gray-900">{{ $g->case_id }}</td>
                                 <td class="px-4 py-3">
-                                    <div class="font-medium text-gray-900">{{ optional($g->student)->first_name ? optional($g->student)->first_name . ' ' . optional($g->student)->last_name : $g->name }}</div>
+                                    <div class="font-medium text-gray-900">{{ optional($g->student)->first_name ? optional($g->student)->first_name . ' ' . optional($g->student)->last_name : ($g->name_snapshot ?? $g->name ?? 'N/A') }}</div>
                                     @if($g->student && $g->student->student_id)
                                     <div class="text-xs text-gray-500">{{ $g->student->student_id }}</div>
                                     @endif
                                 </td>
-                                <td class="px-4 py-3 text-gray-700">{{ optional($g->student)->program ?? $g->program }}</td>
+                                <td class="px-4 py-3 text-gray-700">
+                                    @php
+                                    $prog = optional($g->student)->program ?? ($g->program_snapshot ?? $g->program ?? 'N/A');
+
+                                    // Try to get abbreviation
+                                    if ($g->student && $g->student->program_abbr) {
+                                    $progAbbr = $g->student->program_abbr;
+                                    } elseif (preg_match('/\(([A-Z\-]+)\)/', $prog, $m)) {
+                                    // Extract from parentheses like "Bachelor of Science in IT (BSIT)"
+                                    $progAbbr = $m[1];
+                                    } else {
+                                    // Generate abbreviation from program name
+                                    // "Bachelor of Science in Information Technology" -> "BSIT"
+                                    $words = explode(' ', $prog);
+                                    $abbr = '';
+                                    foreach ($words as $word) {
+                                    if (in_array(strtolower($word), ['of', 'in', 'and', 'the', 'with'])) continue;
+                                    $abbr .= strtoupper($word[0] ?? '');
+                                    }
+                                    $progAbbr = $abbr ?: $prog;
+                                    }
+                                    @endphp
+                                    <span title="{{ $prog }}">{{ $progAbbr }}</span>
+                                </td>
                                 <td class="px-4 py-3">
                                     @if($g->status === 'pending')
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-800">Pending</span>
@@ -145,7 +168,7 @@
             <p class="text-sm text-gray-600 text-center mb-4">Staff</p>
             <div class="mb-4 pl-2 text-sm text-gray-700 space-y-2">
                 <p><span class="font-semibold">Staff ID:</span> {{ Auth::user()->staff->employee_id ?? 'N/A' }}</p>
-                <p><span class="font-semibold">Email:</span> {{ Auth::user()->email }}</p>
+                <p class="break-all"><span class="font-semibold">Email:</span> {{ Auth::user()->email }}</p>
                 <p><span class="font-semibold">Role:</span> {{ ucfirst(Auth::user()->role) }}</p>
             </div>
             <a href="{{ route('osas-du.profile') }}" class="text-center px-6 py-3 bg-red-900 text-white rounded-lg hover:bg-red-800 font-medium">

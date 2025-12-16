@@ -225,14 +225,7 @@
                             <div class="md:col-span-1 relative">
                                 <select id="college" name="college" class="peer appearance-none p-4 pr-10 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2 peer-valid:text-gray-900 bg-white" required>
                                     <option value=""></option>
-                                    <option value="College of Applied Economics">College of Applied Economics</option>
-                                    <option value="College of Arts and Sciences">College of Arts and Sciences</option>
-                                    <option value="College of Business Administration">College of Business Administration</option>
-                                    <option value="College of Information and Computing">College of Information and Computing</option>
-                                    <option value="College of Technology">College of Technology</option>
-                                    <option value="College of Education">College of Education</option>
-                                    <option value="College of Engineering">College of Engineering</option>
-                                    <option value="Graduate School">Graduate School</option>
+                                    <!-- Dynamically loaded from database -->
                                 </select>
                                 <label for="college" class="absolute top-0 start-0 p-4 h-full text-sm text-gray-500 truncate pointer-events-none transition ease-in-out duration-100 origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-400 peer-valid:scale-90 peer-valid:translate-x-0.5 peer-valid:-translate-y-1.5 peer-valid:text-gray-400">College</label>
                                 <div class="absolute inset-y-0 end-0 flex items-center pe-4 pointer-events-none">
@@ -244,9 +237,15 @@
 
                             <!-- Program -->
                             <div class="md:col-span-1 relative">
-                                <input type="text" id="program" name="program" autocomplete="off" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Program" required>
-                                <label for="program" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Program (Use full name)</label>
-                                <div id="programSuggestions" class="absolute z-50 w-full bg-white border border-gray-300 rounded-lg shadow-lg mt-1 max-h-60 overflow-y-auto hidden"></div>
+                                <select id="program" name="program" class="peer appearance-none p-4 pr-10 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2 peer-valid:text-gray-900 bg-white" required disabled>
+                                    <option value=""></option>
+                                </select>
+                                <label for="program" class="absolute top-0 start-0 p-4 h-full text-sm text-gray-500 truncate pointer-events-none transition ease-in-out duration-100 origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-400 peer-valid:scale-90 peer-valid:translate-x-0.5 peer-valid:-translate-y-1.5 peer-valid:text-gray-400">Program</label>
+                                <div class="absolute inset-y-0 end-0 flex items-center pe-4 pointer-events-none">
+                                    <svg class="w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
                             </div>
 
                             <!-- Year Level Dropdown -->
@@ -701,101 +700,60 @@
                 document.getElementById('date').value = today;
                 document.getElementById('loanDate').value = today;
 
-                // Program autocomplete
-                const programs = [
-                    "Bachelor of Secondary Education",
-                    "Bachelor of Elementary Education",
-                    "Bachelor of Early Childhood Education",
-                    "Bachelor of Special Needs Education",
-                    "Bachelor of Physical Education",
-                    "Bachelor of Technology and Livelihood Education major in Home Economics",
-                    "Bachelor of Technical-Vocational Teacher Education",
-                    "Doctor of Philosophy in Education",
-                    "Doctor of Education",
-                    "Master of Arts in Education",
-                    "Master of Arts in English Language Teaching",
-                    "Master of Education in Language Teaching - English",
-                    "Master of Arts in Mathematics Education",
-                    "Master of Arts in Science Education",
-                    "Bachelor of Arts in Literature and Cultural Studies",
-                    "Bachelor of Arts in English Language major in Applied Linguistics",
-                    "Bachelor of Science in Biology",
-                    "Bachelor of Science in Mathematics",
-                    "Bachelor of Science in Statistics",
-                    "Master of Arts in Literature",
-                    "Master of Arts in Applied Linguistics",
-                    "Master of Science in Applied Mathematics",
-                    "Master of Science in Biology",
-                    "Bachelor of Science in Business Administration Major in Financial Management",
-                    "Bachelor of Science in Hospitality Management",
-                    "Bachelor of Science in Entrepreneurship",
-                    "Bachelor of Science in Accountancy",
-                    "Doctor of Philosophy",
-                    "Master of Business Administration",
-                    "Bachelor of Science in Agricultural and Biosystems Engineering",
-                    "Bachelor of Science in Civil Engineering",
-                    "Bachelor of Science in Electrical Engineering",
-                    "Bachelor of Science in Electronics Engineering",
-                    "Bachelor of Science in Geodetic Engineering",
-                    "Bachelor of Science in Geology",
-                    "Bachelor of Science in Mechanical Engineering",
-                    "Bachelor of Science in Mining Engineering",
-                    "Bachelor of Science in Sanitary Engineering",
-                    "Master of Science in Engineering",
-                    "Bachelor of Science in Industrial Technology",
-                    "Master of Technology Education",
-                    "Master of Industrial Technology",
-                    "Bachelor of Science in Information Technology",
-                    "Bachelor of Science in Computer Science",
-                    "Bachelor of Library and Information Science",
-                    "Master of Library and Information Science",
-                    "Master in Information Technology",
-                    "Doctor in Information Technology",
-                    "Bachelor of Science in Economics",
-                    "Master of Science in Economics"
-                ];
+                // Dynamic College and Program Loading
+                const collegeSelect = document.getElementById('college');
+                const programSelect = document.getElementById('program');
 
-                const programInput = document.getElementById('program');
-                const programSuggestions = document.getElementById('programSuggestions');
+                // Load colleges on page load
+                async function loadColleges() {
+                    try {
+                        const response = await fetch('/api/colleges');
+                        const colleges = await response.json();
 
-                programInput.addEventListener('input', function() {
-                    const value = this.value.trim();
+                        collegeSelect.innerHTML = '<option value=""></option>';
+                        colleges.forEach(college => {
+                            const option = document.createElement('option');
+                            option.value = college.name;
+                            option.dataset.collegeId = college.id;
+                            option.textContent = college.name;
+                            collegeSelect.appendChild(option);
+                        });
+                    } catch (error) {
+                        console.error('Error loading colleges:', error);
+                    }
+                }
 
-                    if (value.length === 0) {
-                        programSuggestions.classList.add('hidden');
-                        programSuggestions.innerHTML = '';
+                // Load programs when college is selected
+                collegeSelect.addEventListener('change', async function() {
+                    const selectedOption = this.options[this.selectedIndex];
+                    const collegeId = selectedOption.dataset.collegeId;
+
+                    if (!collegeId) {
+                        programSelect.innerHTML = '<option value=""></option>';
+                        programSelect.disabled = true;
                         return;
                     }
 
-                    const filtered = programs.filter(program =>
-                        program.toLowerCase().includes(value.toLowerCase())
-                    );
+                    try {
+                        const response = await fetch(`/api/programs/${collegeId}`);
+                        const programs = await response.json();
 
-                    if (filtered.length === 0) {
-                        programSuggestions.classList.add('hidden');
-                        programSuggestions.innerHTML = '';
-                        return;
-                    }
-
-                    programSuggestions.innerHTML = filtered.map(program =>
-                        `<div class="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm" onclick="selectProgram('${program.replace(/'/g, "\\'")}')">${program}</div>`
-                    ).join('');
-                    programSuggestions.classList.remove('hidden');
-                });
-
-                // Hide suggestions when clicking outside
-                document.addEventListener('click', function(e) {
-                    if (!programInput.contains(e.target) && !programSuggestions.contains(e.target)) {
-                        programSuggestions.classList.add('hidden');
+                        programSelect.innerHTML = '<option value=""></option>';
+                        programs.forEach(program => {
+                            const option = document.createElement('option');
+                            option.value = program.name;
+                            option.textContent = program.name;
+                            programSelect.appendChild(option);
+                        });
+                        programSelect.disabled = false;
+                    } catch (error) {
+                        console.error('Error loading programs:', error);
+                        programSelect.innerHTML = '<option value="">Error loading programs</option>';
                     }
                 });
 
-                window.selectProgram = function(program) {
-                    programInput.value = program;
-                    programSuggestions.classList.add('hidden');
-                    // Trigger floating label
-                    programInput.dispatchEvent(new Event('input'));
-                };
+                // Initialize colleges on load
+                loadColleges();
 
                 // Toggle Last Sem input based on student status
                 window.toggleLastSemInput = function(show) {

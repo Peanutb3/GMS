@@ -856,7 +856,7 @@
                 <tr style="height: 16px">
                     <td class="s10">Course and Year</td>
                     <td class="s11">:</td>
-                    <td class="s13" colspan="7">@php($prog = $student->program ?? ($req->program ?? ''))@php($yr = $student->year ?? ($req->year ?? '')){{ $prog }}@if(!empty($yr)) {{ ' - ' . $yr }}@endif</td>
+                    <td class="s13" colspan="7">@php($prog = $student->program_name ?? ($req->program ?? ''))@php($yr = $student->year ?? ($req->year ?? '')){{ $prog }}@if(!empty($yr)) {{ ' - ' . $yr }}@endif</td>
                 </tr>
                 <tr style="height: 17px">
                     <td class="s10" rowspan="2">Student's Status</td>
@@ -945,7 +945,7 @@
                 <tr style="height: 16px">
                     <td class="s33">Course &amp; Year</td>
                     <td class="s34">:</td>
-                    <td class="s35" colspan="7">@php($prog2 = $student->program ?? ($req->program ?? ''))@php($yr2 = $student->year ?? ($req->year ?? '')){{ $prog2 }}@if(!empty($yr2)) {{ ' - ' . $yr2 }}@endif</td>
+                    <td class="s35" colspan="7">@php($prog2 = $student->program_name ?? ($req->program ?? ''))@php($yr2 = $student->year ?? ($req->year ?? '')){{ $prog2 }}@if(!empty($yr2)) {{ ' - ' . $yr2 }}@endif</td>
                 </tr>
                 <tr style="height: 16px">
                     <td class="s36"></td>

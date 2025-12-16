@@ -50,20 +50,17 @@ class User extends Authenticatable implements MustVerifyEmail
             return false;
         }
 
-        // Staff & Students: OTP required only on first login or new device
-        if ($this->role === 'staff' || $this->role === 'student') {
-            // First time login (never verified OTP)
-            if (!$this->otp_expires_at) {
-                return true;
-            }
-            // Check if new device
-            if ($deviceFingerprint && !$this->isTrustedDevice($deviceFingerprint)) {
-                return true;
-            }
-            return false;
+        // All other roles (staff, student, osas_gmc, osas_du, etc.):
+        // OTP required only on first login or new device
+        // First time login (never verified OTP)
+        if (!$this->otp_expires_at) {
+            return true;
         }
-
-        return true; // Default: require OTP
+        // Check if new device
+        if ($deviceFingerprint && !$this->isTrustedDevice($deviceFingerprint)) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -71,23 +68,22 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function isTrustedDevice($deviceFingerprint): bool
     {
-        if (!$this->trusted_devices || !is_array($this->trusted_devices)) {
-            return false;
-        }
-        return in_array($deviceFingerprint, $this->trusted_devices);
+        return DeviceFingerprint::isTrustedDevice($this->id, $deviceFingerprint);
     }
 
     /**
      * Add device to trusted list
      */
-    public function trustDevice($deviceFingerprint): void
+    public function trustDevice($deviceFingerprint, $userAgent = null, $ipAddress = null): void
     {
-        $devices = $this->trusted_devices ?? [];
-        if (!in_array($deviceFingerprint, $devices)) {
-            $devices[] = $deviceFingerprint;
-            $this->trusted_devices = $devices;
-            $this->save();
-        }
+        // Use provided values or fall back to current request
+        $request = request();
+        DeviceFingerprint::registerDevice(
+            $this->id,
+            $deviceFingerprint,
+            $userAgent ?? $request->userAgent() ?? 'Unknown',
+            $ipAddress ?? $request->ip() ?? '0.0.0.0'
+        );
     }
 
     /**
@@ -114,5 +110,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function staff()
     {
         return $this->hasOne(Staff::class, 'user_id', 'id');
+    }
+
+    public function deviceFingerprints()
+    {
+        return $this->hasMany(DeviceFingerprint::class);
     }
 }

@@ -116,22 +116,10 @@
                         </div>
                     </td>
                     <td class="px-6 py-3 text-sm text-gray-700">
-                        @php
-                        $collegeAbbr = match($student->college) {
-                        'College of Information and Computing' => 'CIC',
-                        'College of Engineering' => 'COE',
-                        'College of Education' => 'CED',
-                        'College of Business Administration' => 'CBA',
-                        'College of Arts and Sciences' => 'CAS',
-                        'College of Applied Economics' => 'CAEC',
-                        'College of Technology' => 'CT',
-                        default => $student->college
-                        };
-                        @endphp
-                        <span title="{{ $student->college }}">{{ $collegeAbbr }}</span>
+                        <span title="{{ $student->college_name }}">{{ $student->college_abbr }}</span>
                     </td>
                     <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-700">
-                        {{ $student->program }}
+                        <span title="{{ $student->program }}">{{ $student->program_abbr }}</span>
                     </td>
                     <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-700 text-center">
                         {{ $student->year }}

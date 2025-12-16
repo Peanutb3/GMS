@@ -61,12 +61,12 @@
                     <p class="font-medium text-gray-900">{{ $grievance->student_no_snapshot }}</p>
                 </div>
                 <div>
-                    <p class="text-sm text-gray-600">Program</p>
-                    <p class="font-medium text-gray-900">{{ $grievance->program_snapshot }}</p>
+                    <p class="text-sm text-gray-600">College</p>
+                    <p class="font-medium text-gray-900">{{ $grievance->college_snapshot ?? '-' }}</p>
                 </div>
                 <div>
-                    <p class="text-sm text-gray-600">Gender</p>
-                    <p class="font-medium text-gray-900">{{ $grievance->gender_snapshot }}</p>
+                    <p class="text-sm text-gray-600">Program</p>
+                    <p class="font-medium text-gray-900">{{ $grievance->program_snapshot ?? '-' }}</p>
                 </div>
             </div>
         </div>
@@ -79,13 +79,10 @@
             <select name="grievance" id="grievance" required
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-red-800 outline-none">
                 <option value="">Select grievance type</option>
-                <option value="academic_issue" {{ $grievance->grievance === 'academic_issue' ? 'selected' : '' }}>Academic Issue</option>
-                <option value="behavioral_issue" {{ $grievance->grievance === 'behavioral_issue' ? 'selected' : '' }}>Behavioral Issue</option>
-                <option value="harassment" {{ $grievance->grievance === 'harassment' ? 'selected' : '' }}>Harassment</option>
-                <option value="discrimination" {{ $grievance->grievance === 'discrimination' ? 'selected' : '' }}>Discrimination</option>
-                <option value="facility_concern" {{ $grievance->grievance === 'facility_concern' ? 'selected' : '' }}>Facility Concern</option>
-                <option value="policy_violation" {{ $grievance->grievance === 'policy_violation' ? 'selected' : '' }}>Policy Violation</option>
-                <option value="other" {{ $grievance->grievance === 'other' ? 'selected' : '' }}>Other</option>
+                <option value="Grievance" {{ $grievance->grievance === 'Grievance' ? 'selected' : '' }}>Grievance</option>
+                <option value="Spot Report" {{ $grievance->grievance === 'Spot Report' ? 'selected' : '' }}>Spot Report</option>
+                <option value="Pending Arf" {{ $grievance->grievance === 'Pending Arf' ? 'selected' : '' }}>Pending ARF</option>
+                <option value="Other" {{ $grievance->grievance === 'Other' ? 'selected' : '' }}>Other</option>
             </select>
             @error('grievance')
             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
@@ -95,7 +92,7 @@
         <!-- Date -->
         <div class="mb-6">
             <label for="date" class="block text-sm font-medium text-gray-700 mb-2">
-                <span class="text-red-600">*</span> Date of Incident
+                <span class="text-red-600">*</span> Date
             </label>
             <input type="date" name="date" id="date" value="{{ $grievance->date }}" required
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-red-800 outline-none">

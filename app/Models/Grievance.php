@@ -18,6 +18,7 @@ class Grievance extends Model
         'student_no_snapshot',
         'name_snapshot',
         'program_snapshot',
+        'college_snapshot',
         'date',
         'grievance',
         'description',
@@ -36,7 +37,8 @@ class Grievance extends Model
         static::creating(function ($grievance) {
             $user = Auth::user();
 
-            if ($user && $user->role === 'staff' && $user->staff) {
+            // Handle both staff and osas_du roles
+            if ($user && in_array($user->role, ['staff', 'osas_du', 'osas_gmc']) && $user->staff) {
                 $grievance->filed_by_staff_id = $user->staff->id;
                 $grievance->filed_by_name_snapshot = trim(($user->staff->first_name ?? '') . ' ' . ($user->staff->last_name ?? ''));
             } elseif ($user && empty($grievance->filed_by_name_snapshot)) {

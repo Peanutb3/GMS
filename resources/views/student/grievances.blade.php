@@ -67,7 +67,13 @@
             <tr class="odd:bg-white even:bg-gray-50 border-b border-gray-200 hover:bg-gray-100 cursor-pointer" onclick="showGrievanceModal({{ $g->id }})">
                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{{ $g->case_id }}</th>
                 <td class="px-6 py-4">{{ optional($g->student)->first_name ? optional($g->student)->first_name . ' ' . optional($g->student)->last_name : ($g->name_snapshot ?? $g->name ?? '-') }}</td>
-                <td class="px-6 py-4">{{ optional($g->student)->program ?? ($g->program_snapshot ?? $g->program ?? '-') }}</td>
+                <td class="px-6 py-4">
+                    @php
+                    $prog = optional($g->student)->program ?? ($g->program_snapshot ?? $g->program ?? '-');
+                    $progAbbr = $g->student ? $g->student->program_abbr : (preg_match('/\(([A-Z]+)\)/', $prog, $m) ? $m[1] : $prog);
+                    @endphp
+                    <span title="{{ $prog }}">{{ $progAbbr }}</span>
+                </td>
                 <td class="px-6 py-4 capitalize">{{ str_replace('_', ' ', $g->grievance) }}</td>
                 <td class="px-6 py-4">{{ $g->created_at->format('Y-m-d') }}</td>
                 <td class="px-6 py-4">

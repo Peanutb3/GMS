@@ -49,7 +49,9 @@ class AdminStudentController extends Controller
 
     public function create()
     {
-        return view('admin.students-create');
+        $colleges = \App\Models\College::active()->orderBy('name')->get();
+        $programs = \App\Models\Program::active()->with('college')->orderBy('name')->get();
+        return view('admin.students-create', compact('colleges', 'programs'));
     }
 
     public function store(Request $request)
@@ -61,8 +63,8 @@ class AdminStudentController extends Controller
             'last_name' => 'required|string|max:255',
             'suffix' => 'nullable|string|max:10',
             'email' => 'required|email|unique:users,email',
-            'college' => 'required|string|max:255',
-            'program' => 'required|string|max:255',
+            'college' => 'required|exists:colleges,id',
+            'program' => 'required|exists:programs,id',
             'year' => 'required|string|max:10',
             'password' => [
                 'required',
@@ -75,6 +77,10 @@ class AdminStudentController extends Controller
                 'regex:/[@$!%*#?&_\-]/'
             ],
         ]);
+
+        // Get college and program names
+        $college = \App\Models\College::findOrFail($validated['college']);
+        $program = \App\Models\Program::findOrFail($validated['program']);
 
         // Build full name
         $fullName = trim($validated['first_name'] . ' ' .
@@ -98,8 +104,8 @@ class AdminStudentController extends Controller
             'middle_initial' => $validated['middle_initial'] ?? null,
             'last_name' => $validated['last_name'],
             'suffix' => $validated['suffix'] ?? null,
-            'college' => $validated['college'],
-            'program' => $validated['program'],
+            'college' => $college->name,
+            'program' => $program->name,
             'year' => $validated['year'],
         ]);
 

@@ -49,6 +49,10 @@ Route::post('/good-moral/{goodMoralRequest}/mark-completed', [GoodMoralRequestCo
 Route::delete('/good-moral/{goodMoralRequest}', [GoodMoralRequestController::class, 'destroy'])->name('good-moral.delete');
 Route::post('/requests/safe-loan', [SafeLoanRequestController::class, 'store'])->name('safeloan.store');
 Route::get('/requests/safe-loan/{requestModel}', [SafeLoanRequestController::class, 'show'])->name('safe-loan.show');
+
+// API endpoints for dynamic form data
+Route::get('/api/colleges', [\App\Http\Controllers\CollegeProgramController::class, 'getColleges']);
+Route::get('/api/programs/{collegeId}', [\App\Http\Controllers\CollegeProgramController::class, 'getProgramsByCollege']);
 Route::get('/requests/safe-loan/{requestModel}/print', [SafeLoanRequestController::class, 'print'])->name('safe-loan.print');
 Route::get('/requests/safe-loan/{requestModel}/print', [SafeLoanRequestController::class, 'print'])->name('safe-loan.print');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
@@ -207,6 +211,8 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->group(function (
     Route::get('/profile', [\App\Http\Controllers\StudentProfileController::class, 'show'])->name('student.profile');
     Route::get('/profile/edit', [\App\Http\Controllers\StudentProfileController::class, 'edit'])->name('student.profile.edit');
     Route::post('/profile', [\App\Http\Controllers\StudentProfileController::class, 'update'])->name('student.profile.update');
+    Route::get('/change-password', [\App\Http\Controllers\StudentProfileController::class, 'showChangePassword'])->name('student.change-password');
+    Route::patch('/change-password', [\App\Http\Controllers\StudentProfileController::class, 'updatePassword'])->name('student.password.update');
 });
 
 Route::get('/request', function () {
@@ -278,6 +284,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/requests/good-moral', [AdminRequestController::class, 'goodMoral'])->name('admin.requests.good-moral');
     Route::delete('/requests/good-moral/{goodMoralRequest}', [AdminRequestController::class, 'deleteGoodMoral'])->name('admin.good-moral.delete');
     Route::get('/requests/safe-loan', [AdminRequestController::class, 'safeLoan'])->name('admin.requests.safe-loan');
+    Route::post('/safe-loan/{id}/enter-or', [AdminRequestController::class, 'enterOrNumber'])->name('admin.safe-loan.enter-or');
+    Route::delete('/safe-loan/{safeLoanRequest}', [AdminRequestController::class, 'deleteSafeLoan'])->name('safe-loan.delete');
 
     // Student Management
     Route::get('/manage-students', [AdminStudentController::class, 'index'])->name('admin.manage-students');

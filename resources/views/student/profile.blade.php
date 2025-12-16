@@ -55,11 +55,11 @@
                             <h2 class="text-xl md:text-2xl font-bold text-gray-900">
                                 {{ $student->first_name }}
                                 @if(!empty($student->middle_initial))
-                                    {{ $student->middle_initial }}.
+                                {{ $student->middle_initial }}.
                                 @endif
                                 {{ $student->last_name }}
                                 @if(!empty($student->suffix))
-                                    {{ ' ' . $student->suffix }}
+                                {{ ' ' . $student->suffix }}
                                 @endif
                             </h2>
                             <span class="px-3 py-1 bg-gradient-to-r from-blue-100 to-blue-50 text-blue-800 text-xs font-semibold rounded-full border border-blue-200">
@@ -108,25 +108,29 @@
                 <div class="text-sm text-gray-800">
                     {{ $student->first_name }}
                     @if(!empty($student->middle_initial))
-                        {{ $student->middle_initial }}.
+                    {{ $student->middle_initial }}.
                     @endif
                     {{ $student->last_name }}
                     @if(!empty($student->suffix))
-                        {{ ' ' . $student->suffix }}
+                    {{ ' ' . $student->suffix }}
                     @endif
                 </div>
             </div>
 
             <div class="flex items-center justify-between px-6 py-4">
                 <div class="text-sm text-gray-600">College</div>
-                <div class="text-sm text-gray-800">{{ $student->college ?? 'College of Information Computing' }}</div>
+                <div class="text-sm text-gray-800">{{ $collegeName ?? ($student->college ?? 'Not Set') }}</div>
             </div>
 
             <div class="flex items-center justify-between px-6 py-4">
-                <div class="text-sm text-gray-600">Program & Year</div>
-                <div class="text-sm text-gray-800">{{ $student->program_and_year ?? 'BSIT - 4th Year' }}</div>
+                <div class="text-sm text-gray-600">Program</div>
+                <div class="text-sm text-gray-800">{{ $programName ?? ($student->program ?? 'Not Set') }}</div>
             </div>
 
+            <div class="flex items-center justify-between px-6 py-4">
+                <div class="text-sm text-gray-600">Year Level</div>
+                <div class="text-sm text-gray-800">{{ $student->year ? ($student->year . ' Year') : '—' }}</div>
+            </div>
 
             <div class="flex items-center justify-between px-6 py-4">
                 <div class="text-sm text-gray-600">Phone</div>
@@ -138,7 +142,7 @@
                 <div class="text-sm text-gray-800">{{ $user->email ?? 'aajlindo@usep.edu.ph' }}</div>
             </div>
 
-            <a href="{{ route('student.profile.edit') }}#password" class="flex items-center justify-between gap-4 px-6 py-4 hover:bg-gray-50">
+            <a href="{{ route('student.change-password') }}" class="flex items-center justify-between gap-4 px-6 py-4 hover:bg-gray-50">
                 <div class="text-sm text-gray-600">Change password</div>
                 <div class="flex items-center gap-3">
                     <div class="text-sm text-gray-800">********</div>

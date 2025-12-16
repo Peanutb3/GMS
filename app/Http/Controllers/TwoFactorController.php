@@ -6,6 +6,7 @@ use App\Models\TwoFactorCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
 class TwoFactorController extends Controller
@@ -27,6 +28,8 @@ class TwoFactorController extends Controller
 
         $userId = session('2fa:user:id');
         $deviceFingerprint = session('2fa:device:fingerprint');
+        $userAgent = session('2fa:user:agent');
+        $ipAddress = session('2fa:ip:address');
 
         if (!$userId) {
             return redirect()->route('login')->withErrors(['error' => 'Session expired. Please login again.']);
@@ -59,7 +62,25 @@ class TwoFactorController extends Controller
 
             // Trust this device if fingerprint is available
             if ($deviceFingerprint) {
-                $user->trustDevice($deviceFingerprint);
+                \Log::info('OTP Verify - Trusting Device', [
+                    'user_id' => $user->id,
+                    'email' => $user->email,
+                    'fingerprint' => $deviceFingerprint,
+                    'user_agent' => $userAgent,
+                    'ip' => $ipAddress
+                ]);
+
+                $user->trustDevice($deviceFingerprint, $userAgent, $ipAddress);
+
+                // Verify it was saved
+                $saved = \App\Models\DeviceFingerprint::where('user_id', $user->id)
+                    ->where('fingerprint_hash', $deviceFingerprint)
+                    ->exists();
+
+                \Log::info('OTP Verify - Device Saved Check', [
+                    'user_id' => $user->id,
+                    'saved' => $saved
+                ]);
             }
         }
 
@@ -67,7 +88,7 @@ class TwoFactorController extends Controller
         Auth::loginUsingId($userId);
 
         // Clear session
-        session()->forget(['2fa:user:id', '2fa:device:fingerprint', '2fa:test:code']);
+        session()->forget(['2fa:user:id', '2fa:device:fingerprint', '2fa:user:agent', '2fa:ip:address', '2fa:test:code']);
 
         // Redirect by role to ensure required view data exists
         $user = Auth::user();

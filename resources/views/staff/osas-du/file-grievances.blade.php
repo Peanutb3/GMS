@@ -68,20 +68,42 @@
           </div>
         </div>
 
-        <div class="relative">
-          <label for="program" class="block text-sm font-medium text-gray-700 mb-2">College and Program</label>
-          <input type="text" id="program" name="program" placeholder="e.g., College of Engineering - BS Computer Science"
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-red-800 outline-none transition-all hover:border-gray-400" />
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="relative">
+            <label for="college" class="block text-sm font-medium text-gray-700 mb-2">College</label>
+            <select id="college" name="college"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-red-800 outline-none appearance-none bg-white transition-all hover:border-gray-400">
+              <option value=""></option>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 pt-7 text-gray-700">
+              <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+              </svg>
+            </div>
+          </div>
+
+          <div class="relative">
+            <label for="program" class="block text-sm font-medium text-gray-700 mb-2">Program</label>
+            <select id="program" name="program" disabled
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-red-800 outline-none appearance-none bg-white transition-all hover:border-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed">
+              <option value=""></option>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 pt-7 text-gray-700">
+              <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+              </svg>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Incident Details Section -->
+      <!-- Grievance Details Section -->
       <div class="space-y-5 pt-4">
         <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
           <svg class="w-5 h-5 text-red-800" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
           </svg>
-          Incident Details
+          Grievance Details
         </h2>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -150,6 +172,7 @@
               <p class="text-xs text-red-600 mt-2 font-medium">Click to change file</p>
             </div>
           </div>
+          <p id="fileError" class="hidden text-xs text-red-600 mt-2 font-medium"></p>
         </div>
       </div>
 
@@ -182,10 +205,10 @@
 
   const studentIdInput = document.getElementById('student_id');
   const nameInput = document.getElementById('name');
-  const programInput = document.getElementById('program');
+  const collegeSelect = document.getElementById('college');
+  const programSelect = document.getElementById('program');
   const findUrlBase = '{{ url("osas-du/students/find") }}';
   const statusEl = document.getElementById('studentLookupStatus');
-  // const testBtn = document.getElementById('testLookupBtn');
 
   // File upload feedback
   const fileInput = document.getElementById('attachment');
@@ -194,6 +217,55 @@
   const fileSelected = document.getElementById('fileSelected');
   const fileName = document.getElementById('fileName');
   const fileSize = document.getElementById('fileSize');
+  const fileError = document.getElementById('fileError');
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
+
+  // Load colleges on page load
+  async function loadColleges() {
+    try {
+      const response = await fetch('/api/colleges');
+      const colleges = await response.json();
+      collegeSelect.innerHTML = '<option value=""></option>';
+      colleges.forEach(college => {
+        const option = document.createElement('option');
+        option.value = college.name;
+        option.dataset.collegeId = college.id;
+        option.textContent = college.name;
+        collegeSelect.appendChild(option);
+      });
+    } catch (error) {
+      console.error('Error loading colleges:', error);
+    }
+  }
+
+  // Load programs when college is selected
+  collegeSelect.addEventListener('change', async function() {
+    const selectedOption = this.options[this.selectedIndex];
+    const collegeId = selectedOption.dataset.collegeId;
+
+    if (!collegeId) {
+      programSelect.innerHTML = '<option value=""></option>';
+      programSelect.disabled = true;
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/programs/${collegeId}`);
+      const programs = await response.json();
+      programSelect.innerHTML = '<option value=""></option>';
+      programs.forEach(program => {
+        const option = document.createElement('option');
+        option.value = program.name;
+        option.textContent = program.name;
+        programSelect.appendChild(option);
+      });
+      programSelect.disabled = false;
+    } catch (error) {
+      console.error('Error loading programs:', error);
+    }
+  });
+
+  loadColleges();
 
   if (fileInput) {
     fileInput.addEventListener('change', function(e) {
@@ -201,7 +273,21 @@
         const file = this.files[0];
         const sizeMB = (file.size / 1024 / 1024).toFixed(2);
 
-        // Update UI to show file is attached
+        // Check file size
+        if (file.size > MAX_FILE_SIZE) {
+          fileError.textContent = `File is too large! Maximum file size is 5MB. Your file is ${sizeMB}MB. Please choose a smaller file.`;
+          fileError.classList.remove('hidden');
+          this.value = ''; // Clear the input
+          // Reset to default state
+          fileUploadPrompt.classList.remove('hidden');
+          fileSelected.classList.add('hidden');
+          fileDropZone.classList.remove('border-green-500', 'bg-green-50');
+          fileDropZone.classList.add('border-gray-300', 'hover:border-red-300');
+          return;
+        }
+
+        // Clear error and update UI to show file is attached
+        fileError.classList.add('hidden');
         fileUploadPrompt.classList.add('hidden');
         fileSelected.classList.remove('hidden');
         fileName.textContent = file.name;
@@ -212,6 +298,7 @@
         fileDropZone.classList.add('border-green-500', 'bg-green-50');
       } else {
         // Reset to default state if no file
+        fileError.classList.add('hidden');
         fileUploadPrompt.classList.remove('hidden');
         fileSelected.classList.add('hidden');
         fileDropZone.classList.remove('border-green-500', 'bg-green-50');
@@ -234,7 +321,36 @@
         .then(data => {
           if (data.found) {
             nameInput.value = data.student.name || '';
-            programInput.value = data.student.program || '';
+
+            // Parse college and program from the combined string
+            const collegeProgramStr = data.student.program || '';
+            const parts = collegeProgramStr.split(' | ');
+
+            if (parts.length === 2) {
+              const collegeName = parts[0].trim();
+              const programName = parts[1].trim();
+
+              // Select college
+              for (let i = 0; i < collegeSelect.options.length; i++) {
+                if (collegeSelect.options[i].value === collegeName) {
+                  collegeSelect.selectedIndex = i;
+                  // Trigger change event to load programs
+                  collegeSelect.dispatchEvent(new Event('change'));
+
+                  // Wait a bit for programs to load, then select program
+                  setTimeout(() => {
+                    for (let j = 0; j < programSelect.options.length; j++) {
+                      if (programSelect.options[j].value === programName) {
+                        programSelect.selectedIndex = j;
+                        break;
+                      }
+                    }
+                  }, 300);
+                  break;
+                }
+              }
+            }
+
             if (statusEl) statusEl.textContent = 'Found';
           } else {
             if (statusEl) statusEl.textContent = 'Not found';
@@ -247,7 +363,6 @@
     }, 400);
 
     studentIdInput.addEventListener('input', lookup);
-
   }
 
   //   if (testBtn) {

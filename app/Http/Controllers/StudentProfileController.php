@@ -16,7 +16,32 @@ class StudentProfileController extends Controller
         $user = Auth::user();
         $student = Student::where('user_id', $user->id)->first();
 
-        return view('student.profile', compact('user', 'student'));
+        // Resolve college/program names safely. Student.college/program may contain either a name or an id.
+        $collegeName = null;
+        $programName = null;
+
+        if ($student) {
+            try {
+                if (!empty($student->college) && is_numeric($student->college)) {
+                    $col = \App\Models\College::find((int) $student->college);
+                    $collegeName = $col ? $col->name : $student->college;
+                } else {
+                    $collegeName = $student->college;
+                }
+
+                if (!empty($student->program) && is_numeric($student->program)) {
+                    $prog = \App\Models\Program::find((int) $student->program);
+                    $programName = $prog ? $prog->name : $student->program;
+                } else {
+                    $programName = $student->program;
+                }
+            } catch (\Throwable $e) {
+                $collegeName = $student->college;
+                $programName = $student->program;
+            }
+        }
+
+        return view('student.profile', compact('user', 'student', 'collegeName', 'programName'));
     }
 
     public function edit()
@@ -24,7 +49,31 @@ class StudentProfileController extends Controller
         $user = Auth::user();
         $student = Student::where('user_id', $user->id)->first();
 
-        return view('student.profile-edit', compact('user', 'student'));
+        // resolve display names for edit form as well
+        $collegeName = null;
+        $programName = null;
+        if ($student) {
+            try {
+                if (!empty($student->college) && is_numeric($student->college)) {
+                    $col = \App\Models\College::find((int) $student->college);
+                    $collegeName = $col ? $col->name : $student->college;
+                } else {
+                    $collegeName = $student->college;
+                }
+
+                if (!empty($student->program) && is_numeric($student->program)) {
+                    $prog = \App\Models\Program::find((int) $student->program);
+                    $programName = $prog ? $prog->name : $student->program;
+                } else {
+                    $programName = $student->program;
+                }
+            } catch (\Throwable $e) {
+                $collegeName = $student->college;
+                $programName = $student->program;
+            }
+        }
+
+        return view('student.profile-edit', compact('user', 'student', 'collegeName', 'programName'));
     }
 
     public function update(Request $request)
@@ -64,7 +113,33 @@ class StudentProfileController extends Controller
         ]);
 
         if ($student) {
-            if ($request->hasFile('profile_photo')) {
+            // Handle base64 cropped image from cropper
+            if ($request->filled('profile_photo') && strpos($request->profile_photo, 'data:image') === 0) {
+                // Extract base64 data
+                $image_parts = explode(";base64,", $request->profile_photo);
+                $image_type_aux = explode("image/", $image_parts[0]);
+                $image_type = $image_type_aux[1];
+                $image_base64 = base64_decode($image_parts[1]);
+
+                // Generate secure filename
+                $filename = \Illuminate\Support\Str::uuid() . '.' . $image_type;
+                $path = 'profile-photos/' . $filename;
+
+                // Save to storage
+                Storage::disk('public')->put($path, $image_base64);
+
+                // Delete old photo if exists
+                if (!empty($student->profile_photo_path)) {
+                    try {
+                        Storage::disk('public')->delete($student->profile_photo_path);
+                    } catch (\Exception $e) {
+                    }
+                }
+
+                $student->profile_photo_path = $path;
+            }
+            // Handle regular file upload (fallback)
+            elseif ($request->hasFile('profile_photo')) {
                 $file = $request->file('profile_photo');
 
                 // Generate secure filename
@@ -101,5 +176,50 @@ class StudentProfileController extends Controller
         $user->save();
 
         return redirect()->route('student.profile')->with('success', 'Profile updated.');
+    }
+
+    public function showChangePassword()
+    {
+        $user = Auth::user();
+        $student = Student::where('user_id', $user->id)->first();
+
+        return view('student.change-password', compact('user', 'student'));
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'current_password' => 'required',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+            ],
+        ], [
+            'password.min' => 'Password must be at least 8 characters.',
+            'password.regex' => 'Password must contain uppercase, lowercase, and number.'
+        ]);
+
+        // Check if current password matches
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'Current password is incorrect.']);
+        }
+
+        // Update password
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        // Log out user
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login')->with('success', 'Password changed successfully. Please login with your new password.');
     }
 }

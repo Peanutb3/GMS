@@ -77,7 +77,6 @@
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Name</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Role</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Email</th>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Staff Type</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Created</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Actions</th>
                 </tr>
@@ -104,9 +103,6 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                         {{ $member->email }}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                        {{ optional($member->staff)->staff_type ?? 'N/A' }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                         {{ $member->created_at->format('M d, Y') }}

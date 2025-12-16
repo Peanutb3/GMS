@@ -27,6 +27,14 @@ class SafeLoanRequest extends Model
         'purpose',
         'loan_amount',
         'status',
+        'or_number',
+        'or_entered_at',
+        'completed_at',
+    ];
+
+    protected $casts = [
+        'or_entered_at' => 'datetime',
+        'completed_at' => 'datetime',
     ];
 
     public function student()

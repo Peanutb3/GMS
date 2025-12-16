@@ -116,10 +116,28 @@
                         </div>
                     </td>
                     <td class="px-6 py-3 text-sm text-gray-700">
-                        <span title="{{ $student->college_name }}">{{ $student->college_abbr }}</span>
+                        @php
+                        $collegeName = $student->college_name ?? '';
+                        if (!empty($collegeName)) {
+                        $collegeModel = \App\Models\College::where('name', $collegeName)->first();
+                        $collegeAbbr = $collegeModel && $collegeModel->code ? $collegeModel->code : $collegeName;
+                        } else {
+                        $collegeAbbr = '—';
+                        }
+                        @endphp
+                        <span title="{{ $collegeName }}">{{ $collegeAbbr }}</span>
                     </td>
                     <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-700">
-                        <span title="{{ $student->program }}">{{ $student->program_abbr }}</span>
+                        @php
+                        $prog = $student->program ?? '';
+                        if (!empty($prog)) {
+                        $programModel = \App\Models\Program::where('name', $prog)->first();
+                        $progAbbr = $programModel && $programModel->code ? $programModel->code : $prog;
+                        } else {
+                        $progAbbr = '—';
+                        }
+                        @endphp
+                        <span title="{{ $prog }}">{{ $progAbbr }}</span>
                     </td>
                     <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-700 text-center">
                         {{ $student->year }}

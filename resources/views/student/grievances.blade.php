@@ -17,16 +17,15 @@
     <span class="text-blue-600">Grievances</span>
 </nav>
 
-<!-- Header -->
-<div class="mb-6">
-    <h2 class="text-2xl font-semibold">My Grievances</h2>
-    <p class="text-sm text-gray-600">View your grievance cases and their status</p>
-</div>
-
-<!-- Search Section -->
+<!-- Search Section with Header -->
 <div class="border-b border-gray-200 mb-4">
     <div class="flex items-end justify-between gap-4">
-        <div class="py-3"></div>
+        <!-- Header on the left -->
+        <div class="pb-2">
+            <h2 class="text-2xl font-semibold">My Grievances</h2>
+            <p class="text-sm text-gray-600">View your grievance cases and their status</p>
+        </div>
+        <!-- Search form on the right -->
         <form method="GET" action="{{ route('student.grievances') }}" class="flex items-center space-x-2 pb-2">
             <div class="relative">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Search..."
@@ -70,7 +69,14 @@
                 <td class="px-6 py-4">
                     @php
                     $prog = optional($g->student)->program ?? ($g->program_snapshot ?? $g->program ?? '-');
-                    $progAbbr = $g->student ? $g->student->program_abbr : (preg_match('/\(([A-Z]+)\)/', $prog, $m) ? $m[1] : $prog);
+
+                    // Get program code from database
+                    if ($prog !== '-') {
+                    $programModel = \App\Models\Program::where('name', $prog)->first();
+                    $progAbbr = $programModel && $programModel->code ? $programModel->code : $prog;
+                    } else {
+                    $progAbbr = '-';
+                    }
                     @endphp
                     <span title="{{ $prog }}">{{ $progAbbr }}</span>
                 </td>

@@ -78,13 +78,7 @@ class StaffProfileController extends Controller
                 'regex:/[0-9]/',
                 'regex:/[@$!%*#?&]/'
             ],
-            'profile_photo' => [
-                'nullable',
-                'image',
-                'mimes:jpeg,jpg,png',
-                'max:2048',
-                'dimensions:max_width=2000,max_height=2000'
-            ]
+            'profile_photo' => 'nullable|string', // Can be base64 string or file
         ], [
             'password.min' => 'Password must be at least 8 characters.',
             'password.regex' => 'Password must contain uppercase, lowercase, number, and special character (@$!%*#?&).'
@@ -103,10 +97,50 @@ class StaffProfileController extends Controller
                 'phone' => $data['phone'] ?? $staff->phone,
             ];
 
-            // Handle profile photo upload
-            if ($request->hasFile('profile_photo')) {
+            // Handle base64 cropped image from cropper
+            if ($request->filled('profile_photo') && strpos($request->profile_photo, 'data:image') === 0) {
+                Log::info('Base64 profile photo detected');
+
+                // Extract base64 data
+                $image_parts = explode(";base64,", $request->profile_photo);
+                $image_type_aux = explode("image/", $image_parts[0]);
+                $image_type = $image_type_aux[1];
+                $image_base64 = base64_decode($image_parts[1]);
+
+                // Generate secure filename
+                $filename = \Illuminate\Support\Str::uuid() . '.' . $image_type;
+                $path = 'profile-photos/' . $filename;
+
+                // Save to storage
+                Storage::disk('public')->put($path, $image_base64);
+
+                Log::info('Base64 profile photo saved', ['path' => $path]);
+
+                // Delete old photo if exists
+                if (!empty($staff->profile_photo_path)) {
+                    try {
+                        Storage::disk('public')->delete($staff->profile_photo_path);
+                    } catch (\Exception $e) {
+                    }
+                }
+
+                $staffData['profile_photo_path'] = $path;
+            }
+            // Handle regular file upload (fallback)
+            elseif ($request->hasFile('profile_photo')) {
                 $file = $request->file('profile_photo');
-                $path = $file->store('profile', 'public');
+
+                Log::info('Profile photo upload detected', [
+                    'filename' => $file->getClientOriginalName(),
+                    'size' => $file->getSize(),
+                    'mime' => $file->getMimeType()
+                ]);
+
+                // Generate secure filename with UUID
+                $filename = \Illuminate\Support\Str::uuid() . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs('profile-photos', $filename, 'public');
+
+                Log::info('Profile photo saved', ['path' => $path]);
 
                 // Delete previous photo if exists
                 if ($staff->profile_photo_path) {
@@ -118,6 +152,8 @@ class StaffProfileController extends Controller
                 }
 
                 $staffData['profile_photo_path'] = $path;
+            } else {
+                Log::info('No profile photo file detected in request');
             }
 
             $staff->update($staffData);

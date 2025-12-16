@@ -29,13 +29,7 @@ class AdminProfileController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
-            'profile_photo' => [
-                'nullable',
-                'image',
-                'mimes:jpeg,jpg,png',
-                'max:2048',
-                'dimensions:max_width=2000,max_height=2000'
-            ],
+            'profile_photo' => 'nullable|string', // Can be base64 string
             'password' => [
                 'nullable',
                 'string',
@@ -51,8 +45,33 @@ class AdminProfileController extends Controller
             'password.regex' => 'Password must contain uppercase, lowercase, number, and special character (@$!%*#?&).'
         ]);
 
-        // Handle profile photo upload
-        if ($request->hasFile('profile_photo')) {
+        // Handle base64 cropped image from cropper
+        if ($request->filled('profile_photo') && strpos($request->profile_photo, 'data:image') === 0) {
+            // Extract base64 data
+            $image_parts = explode(";base64,", $request->profile_photo);
+            $image_type_aux = explode("image/", $image_parts[0]);
+            $image_type = $image_type_aux[1];
+            $image_base64 = base64_decode($image_parts[1]);
+
+            // Generate secure filename
+            $filename = \Illuminate\Support\Str::uuid() . '.' . $image_type;
+            $path = 'profile-photos/' . $filename;
+
+            // Save to storage
+            Storage::disk('public')->put($path, $image_base64);
+
+            // Delete old photo if exists
+            if (!empty($user->profile_photo_path)) {
+                try {
+                    Storage::disk('public')->delete($user->profile_photo_path);
+                } catch (\Exception $e) {
+                }
+            }
+
+            $user->profile_photo_path = $path;
+        }
+        // Handle regular file upload (fallback)
+        elseif ($request->hasFile('profile_photo')) {
             $file = $request->file('profile_photo');
 
             // Generate secure filename

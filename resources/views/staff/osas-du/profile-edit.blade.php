@@ -51,8 +51,9 @@
                 </div>
                 <div class="flex-1">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Upload New Photo</label>
-                    <input type="file" id="profile-photo-input" name="profile_photo" accept="image/*"
+                    <input type="file" id="profile-photo-input" name="profile_photo_original" accept="image/*"
                         class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-800 hover:file:bg-red-100 cursor-pointer">
+                    <input type="hidden" id="profile-photo-base64" name="profile_photo" value="">
                     <p class="text-xs text-gray-500 mt-2">JPG, PNG or GIF (max. 2MB)</p>
                     @error('profile_photo') <div class="text-red-600 text-sm mt-1">{{ $message }}</div> @enderror
                 </div>
@@ -163,6 +164,25 @@
 <!-- Cropper.js CSS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
 
+<style>
+    /* Make crop box circular for preview */
+    .cropper-view-box,
+    .cropper-face {
+        border-radius: 50%;
+        outline: 0;
+    }
+
+    /* Ensure modal is visible and centered */
+    #crop-modal {
+        backdrop-filter: blur(2px);
+    }
+
+    /* Improve cropper container */
+    .cropper-container {
+        max-height: 500px;
+    }
+</style>
+
 <!-- Cropper.js Script -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
 
@@ -184,26 +204,42 @@
         if (file && file.type.startsWith('image/')) {
             const reader = new FileReader();
             reader.onload = function(event) {
-                cropImage.src = event.target.result;
                 modal.classList.remove('hidden');
+                cropImage.src = event.target.result;
 
                 if (cropper) {
                     cropper.destroy();
+                    cropper = null;
                 }
 
-                cropper = new Cropper(cropImage, {
-                    aspectRatio: 1,
-                    viewMode: 1,
-                    dragMode: 'move',
-                    autoCropArea: 1,
-                    restore: false,
-                    guides: true,
-                    center: true,
-                    highlight: false,
-                    cropBoxMovable: true,
-                    cropBoxResizable: true,
-                    toggleDragModeOnDblclick: false,
-                });
+                // Wait for modal to render and image to load
+                setTimeout(function() {
+                    cropper = new Cropper(cropImage, {
+                        aspectRatio: 1,
+                        viewMode: 1,
+                        dragMode: 'move',
+                        autoCropArea: 1,
+                        restore: false,
+                        guides: true,
+                        center: true,
+                        highlight: true,
+                        cropBoxMovable: true,
+                        cropBoxResizable: true,
+                        toggleDragModeOnDblclick: false,
+                        responsive: true,
+                        modal: true,
+                        background: true,
+                        movable: true,
+                        zoomable: true,
+                        zoomOnWheel: true,
+                        wheelZoomRatio: 0.1,
+                        scalable: true,
+                        rotatable: false,
+                        ready: function() {
+                            console.log('Cropper initialized successfully!');
+                        }
+                    });
+                }, 100);
             };
             reader.readAsDataURL(file);
         }
@@ -221,6 +257,8 @@
     closeBtn.addEventListener('click', closeCropModal);
     cancelBtn.addEventListener('click', closeCropModal);
 
+    const base64Input = document.getElementById('profile-photo-base64');
+
     applyBtn.addEventListener('click', function() {
         if (cropper) {
             cropper.getCroppedCanvas({
@@ -228,23 +266,26 @@
                 height: 400,
                 imageSmoothingQuality: 'high'
             }).toBlob(function(blob) {
-                const fileName = input.files[0].name;
-                croppedFile = new File([blob], fileName, {
-                    type: blob.type
-                });
+                if (!blob) {
+                    alert('Error cropping image. Please try again.');
+                    return;
+                }
 
-                // Update file input
-                const dataTransfer = new DataTransfer();
-                dataTransfer.items.add(croppedFile);
-                input.files = dataTransfer.files;
+                // Convert blob to base64
+                const reader = new FileReader();
+                reader.onloadend = function() {
+                    base64Input.value = reader.result;
+                    console.log('Cropped image saved as base64');
 
-                // Update preview
-                const url = URL.createObjectURL(blob);
-                previewImage.src = url;
-                previewImage.classList.remove('hidden');
-                previewPlaceholder.classList.add('hidden');
+                    // Update preview
+                    const url = URL.createObjectURL(blob);
+                    previewImage.src = url;
+                    previewImage.classList.remove('hidden');
+                    previewPlaceholder.classList.add('hidden');
 
-                closeCropModal();
+                    closeCropModal();
+                };
+                reader.readAsDataURL(blob);
             }, 'image/jpeg', 0.9);
         }
     });

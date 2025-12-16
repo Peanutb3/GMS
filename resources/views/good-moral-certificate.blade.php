@@ -225,7 +225,7 @@
     <div class="content">
         <p>
             This is to certify that <strong>{{ $request->gender === 'Male' ? 'Mr.' : 'Ms.' }}</strong> <span class="student-name">{{ strtoupper($request->first_name) }} {{ $request->middle_name ? strtoupper(substr($request->middle_name, 0, 1)) . '.' : '' }} {{ strtoupper($request->last_name) }}</span>
-            is a bonafide student of the {{ $request->college ?? 'University' }}{{ $request->program ? ', enrolled in the program <strong>' . $request->program . '</strong>' : '' }}, at the University of Southeastern Philippines, Bo. Obrero St., Davao City{{ ($request->from_sy && $request->to_sy) ? ', from SY ' . $request->from_sy . ' to SY ' . $request->to_sy : '' }}.
+            is a bonafide student of the {{ $request->college ?? 'University' }}@if($request->program), enrolled in the program <strong>{{ $request->program }}</strong>@endif, at the University of Southeastern Philippines, Bo. Obrero St., Davao City{{ ($request->from_sy && $request->to_sy) ? ', from SY ' . $request->from_sy . ' to SY ' . $request->to_sy : '' }}.
         </p>
 
         <p>

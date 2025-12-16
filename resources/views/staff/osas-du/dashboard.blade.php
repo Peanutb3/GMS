@@ -101,25 +101,16 @@
                                     @php
                                     $prog = optional($g->student)->program ?? ($g->program_snapshot ?? $g->program ?? 'N/A');
 
-                                    // Try to get abbreviation
-                                    if ($g->student && $g->student->program_abbr) {
-                                    $progAbbr = $g->student->program_abbr;
-                                    } elseif (preg_match('/\(([A-Z\-]+)\)/', $prog, $m)) {
-                                    // Extract from parentheses like "Bachelor of Science in IT (BSIT)"
-                                    $progAbbr = $m[1];
+                                    // Get program code from database
+                                    if ($prog !== 'N/A') {
+                                    $programModel = \App\Models\Program::where('name', $prog)->first();
+                                    $progAbbr = $programModel && $programModel->code ? $programModel->code : $prog;
                                     } else {
-                                    // Generate abbreviation from program name
-                                    // "Bachelor of Science in Information Technology" -> "BSIT"
-                                    $words = explode(' ', $prog);
-                                    $abbr = '';
-                                    foreach ($words as $word) {
-                                    if (in_array(strtolower($word), ['of', 'in', 'and', 'the', 'with'])) continue;
-                                    $abbr .= strtoupper($word[0] ?? '');
-                                    }
-                                    $progAbbr = $abbr ?: $prog;
+                                    $progAbbr = 'N/A';
                                     }
                                     @endphp
                                     <span title="{{ $prog }}">{{ $progAbbr }}</span>
+                                </td>
                                 </td>
                                 <td class="px-4 py-3">
                                     @if($g->status === 'pending')

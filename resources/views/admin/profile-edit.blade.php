@@ -43,21 +43,44 @@
             </h2>
             <div class="flex items-center space-x-6">
                 <div class="relative">
-                    @if(!empty($user->profile_photo_path))
-                    <img src="{{ asset('storage/' . $user->profile_photo_path) }}" alt="Profile Photo"
-                        class="h-24 w-24 rounded-full object-cover border-4 border-gray-200 shadow-sm">
-                    @else
-                    <div class="h-24 w-24 rounded-full bg-gradient-to-br from-red-800 to-red-600 flex items-center justify-center border-4 border-gray-200 shadow-sm">
+                    <img id="preview-image" src="{{ !empty($user->profile_photo_path) ? asset('storage/' . $user->profile_photo_path) : '' }}" alt="Profile Photo"
+                        class="h-24 w-24 rounded-full object-cover border-4 border-gray-200 shadow-sm {{ empty($user->profile_photo_path) ? 'hidden' : '' }}">
+                    <div id="preview-placeholder" class="h-24 w-24 rounded-full bg-gradient-to-br from-red-800 to-red-600 flex items-center justify-center border-4 border-gray-200 shadow-sm {{ !empty($user->profile_photo_path) ? 'hidden' : '' }}">
                         <span class="text-3xl font-bold text-white">{{ substr($user->name ?? 'A', 0, 1) }}</span>
                     </div>
-                    @endif
                 </div>
                 <div class="flex-1">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Upload New Photo</label>
-                    <input type="file" name="profile_photo" accept="image/*"
+                    <input type="file" id="profile-photo-input" name="profile_photo_original" accept="image/*"
                         class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-800 hover:file:bg-red-100 cursor-pointer">
+                    <input type="hidden" id="profile-photo-base64" name="profile_photo" value="">
                     <p class="text-xs text-gray-500 mt-2">JPG, PNG or GIF (max. 2MB)</p>
                     @error('profile_photo') <div class="text-red-600 text-sm mt-1">{{ $message }}</div> @enderror
+                </div>
+            </div>
+
+            <!-- Image Crop Modal -->
+            <div id="crop-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+                <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Crop Image</h3>
+                        <button type="button" id="close-crop" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="max-h-96 overflow-hidden">
+                        <img id="crop-image" src="" alt="Crop" class="max-w-full">
+                    </div>
+                    <div class="mt-4 flex justify-end space-x-3">
+                        <button type="button" id="cancel-crop" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                            Cancel
+                        </button>
+                        <button type="button" id="apply-crop" class="px-4 py-2 bg-red-800 text-white rounded-lg hover:bg-red-900">
+                            Apply Crop
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -116,4 +139,134 @@
         </div>
     </form>
 </div>
+
+<!-- Cropper.js CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+
+<style>
+    /* Make crop box circular for preview */
+    .cropper-view-box,
+    .cropper-face {
+        border-radius: 50%;
+        outline: 0;
+    }
+
+    /* Ensure modal is visible and centered */
+    #crop-modal {
+        backdrop-filter: blur(2px);
+    }
+
+    /* Improve cropper container */
+    .cropper-container {
+        max-height: 500px;
+    }
+</style>
+
+<!-- Cropper.js Script -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+
+<script>
+    let cropper = null;
+    let croppedFile = null;
+
+    const input = document.getElementById('profile-photo-input');
+    const modal = document.getElementById('crop-modal');
+    const cropImage = document.getElementById('crop-image');
+    const previewImage = document.getElementById('preview-image');
+    const previewPlaceholder = document.getElementById('preview-placeholder');
+    const closeBtn = document.getElementById('close-crop');
+    const cancelBtn = document.getElementById('cancel-crop');
+    const applyBtn = document.getElementById('apply-crop');
+
+    input.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                modal.classList.remove('hidden');
+                cropImage.src = event.target.result;
+
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
+                }
+
+                // Wait for modal to render and image to load
+                setTimeout(function() {
+                    cropper = new Cropper(cropImage, {
+                        aspectRatio: 1,
+                        viewMode: 1,
+                        dragMode: 'move',
+                        autoCropArea: 1,
+                        restore: false,
+                        guides: true,
+                        center: true,
+                        highlight: true,
+                        cropBoxMovable: true,
+                        cropBoxResizable: true,
+                        toggleDragModeOnDblclick: false,
+                        responsive: true,
+                        modal: true,
+                        background: true,
+                        movable: true,
+                        zoomable: true,
+                        zoomOnWheel: true,
+                        wheelZoomRatio: 0.1,
+                        scalable: true,
+                        rotatable: false,
+                        ready: function() {
+                            console.log('Cropper initialized successfully!');
+                        }
+                    });
+                }, 100);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    function closeCropModal() {
+        modal.classList.add('hidden');
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+        input.value = '';
+    }
+
+    closeBtn.addEventListener('click', closeCropModal);
+    cancelBtn.addEventListener('click', closeCropModal);
+
+    const base64Input = document.getElementById('profile-photo-base64');
+
+    applyBtn.addEventListener('click', function() {
+        if (cropper) {
+            cropper.getCroppedCanvas({
+                width: 400,
+                height: 400,
+                imageSmoothingQuality: 'high'
+            }).toBlob(function(blob) {
+                if (!blob) {
+                    alert('Error cropping image. Please try again.');
+                    return;
+                }
+
+                // Convert blob to base64
+                const reader = new FileReader();
+                reader.onloadend = function() {
+                    base64Input.value = reader.result;
+                    console.log('Cropped image saved as base64');
+
+                    // Update preview
+                    const url = URL.createObjectURL(blob);
+                    previewImage.src = url;
+                    previewImage.classList.remove('hidden');
+                    previewPlaceholder.classList.add('hidden');
+
+                    closeCropModal();
+                };
+                reader.readAsDataURL(blob);
+            }, 'image/jpeg', 0.9);
+        }
+    });
+</script>
 @endsection

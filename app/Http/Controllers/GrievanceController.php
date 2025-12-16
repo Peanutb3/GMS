@@ -35,15 +35,47 @@ class GrievanceController extends Controller
         };
 
         if (in_array($role, ['staff', 'osas_gmc', 'osas_du']) && ($user->staff || $role !== 'staff')) {
-            $tab = $request->query('tab', 'active');
-            // GMC: view-only (their own filed grievances not relevant) -> show all pending/in_progress
-            // DU: full access (all grievances)
+            // GMC: view-only (no history tab) -> show all pending/in_progress grievances
+            // DU: full access (all grievances with history)
             // staff: only own filed grievances
+
+            if ($role === 'osas_gmc') {
+                // OSAS-GMC: view-only, no history tab
+                $query = Grievance::query();
+
+                // Search by name, program, or case ID
+                if ($request->filled('search')) {
+                    $search = $request->input('search');
+                    $query->where(function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%")
+                            ->orWhere('program', 'like', "%{$search}%")
+                            ->orWhere('case_id', 'like', "%{$search}%");
+                    });
+                }
+
+                // Only show active grievances (pending + in_progress)
+                $query->whereIn('status', ['pending', 'in_progress']);
+
+                // Filter by status (optional)
+                if ($request->filled('status') && in_array($request->status, ['pending', 'in_progress'])) {
+                    $query->where('status', $request->status);
+                }
+
+                $grievances = $query->orderByDesc('created_at')->paginate(10)->withQueryString();
+
+                return view("{$viewBase}.grievances", [
+                    'grievances' => $grievances,
+                ]);
+            }
+
+            // For OSAS-DU and staff: keep existing history tab logic
+            $tab = $request->query('tab', 'active');
+
             if ($role === 'staff' && $user->staff) {
                 $query = Grievance::where('filed_by_staff_id', $user->staff->id);
             } elseif ($role === 'osas_du') {
                 $query = Grievance::query();
-            } else { // osas_gmc view-only
+            } else {
                 $query = Grievance::query();
             }
 
@@ -83,10 +115,15 @@ class GrievanceController extends Controller
                         ? trim(optional($g->student)->first_name . ' ' . optional($g->student)->last_name)
                         : ($g->name_snapshot ?? $g->name ?? '');
                     $program = optional($g->student)->program ?? ($g->program_snapshot ?? $g->program);
+                    $college = optional($g->student)->college ?? ($g->college_snapshot ?? '');
+                    $studentId = optional($g->student)->student_id ?? $g->student_no_snapshot;
+
                     return [
                         'id' => $g->id,
                         'case_id' => $g->case_id,
                         'name' => $studentName,
+                        'student_id' => $studentId,
+                        'college' => $college,
                         'program' => $program,
                         'type' => $g->grievance,
                         'action' => 'resolved',
@@ -113,6 +150,8 @@ class GrievanceController extends Controller
                         'id' => $s['id'] ?? null,
                         'case_id' => $s['case_id'] ?? '',
                         'name' => $s['name_snapshot'] ?? ($s['name'] ?? ''),
+                        'student_id' => $s['student_no_snapshot'] ?? null,
+                        'college' => $s['college_snapshot'] ?? ($s['college'] ?? ''),
                         'program' => $s['program_snapshot'] ?? ($s['program'] ?? ''),
                         'type' => $s['grievance'] ?? '',
                         'action' => 'deleted',
@@ -158,8 +197,11 @@ class GrievanceController extends Controller
             return view('student.grievances', compact('grievances'));
         }
 
-        // Use normalized FK `student_record_id` to link to students table
-        $query = Grievance::with('staff')->where('student_record_id', $student->id);
+        // Build query - since student_id is encrypted, we need to filter after loading
+        $query = Grievance::with('staff')->where('student_record_id', $student->id)
+            ->orWhere(function ($q) {
+                $q->whereNotNull('student_no_snapshot');
+            });
 
         if ($request->filled('search')) {
             $search = $request->input('search');
@@ -175,7 +217,28 @@ class GrievanceController extends Controller
             $query->where('status', $request->status);
         }
 
-        $grievances = $query->orderByDesc('created_at')->paginate(10)->withQueryString();
+        // Get results and filter by decrypted student_id
+        $allResults = $query->orderByDesc('created_at')->get()
+            ->filter(function ($grievance) use ($student) {
+                return $grievance->student_record_id === $student->id
+                    || $grievance->student_no_snapshot === $student->student_id;
+            });
+
+        // Manual pagination
+        $page = $request->get('page', 1);
+        $perPage = 10;
+        $offset = ($page - 1) * $perPage;
+
+        $items = $allResults->slice($offset, $perPage)->values();
+        $total = $allResults->count();
+
+        $grievances = new \Illuminate\Pagination\LengthAwarePaginator(
+            $items,
+            $total,
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
 
         return view('student.grievances', compact('grievances', 'student'));
     }
@@ -210,7 +273,11 @@ class GrievanceController extends Controller
 
         // Try to attach student_record_id and populate snapshot fields
         if (!empty($data['student_id'])) {
-            $student = \App\Models\Student::where('student_id', $data['student_id'])->first();
+            // Since student_id is encrypted, we need to search all students and compare decrypted values
+            $student = \App\Models\Student::all()->first(function ($s) use ($data) {
+                return $s->student_id === $data['student_id'];
+            });
+
             if ($student) {
                 $data['student_record_id'] = $student->id;
                 // Populate snapshot fields from student record
@@ -250,6 +317,33 @@ class GrievanceController extends Controller
                 'related_type' => 'App\Models\Grievance'
             ]
         );
+
+        // Send email notification to student
+        $grievance->load('student.user'); // Eager load student and user
+
+        // Try to find student by student_record_id first, then by student_no_snapshot
+        $studentUser = null;
+        if ($grievance->student && $grievance->student->user) {
+            $studentUser = $grievance->student->user;
+        } elseif ($grievance->student_no_snapshot) {
+            // Since student_id is encrypted, we need to search all students and compare decrypted values
+            $student = \App\Models\Student::with('user')->get()->first(function ($s) use ($grievance) {
+                return $s->student_id === $grievance->student_no_snapshot;
+            });
+
+            if ($student && $student->user) {
+                $studentUser = $student->user;
+            }
+        }
+
+        if ($studentUser && $studentUser->email) {
+            try {
+                \Mail::to($studentUser->email)
+                    ->send(new \App\Mail\GrievanceNotification($grievance, 'new'));
+            } catch (\Exception $e) {
+                \Log::error('Failed to send grievance notification email: ' . $e->getMessage());
+            }
+        }
 
         $redirectRoute = match (Auth::user()?->role) {
             'staff' => 'staff.grievances',
@@ -361,6 +455,7 @@ class GrievanceController extends Controller
         ]);
 
         $old = ['status' => $grievance->status];
+        $oldStatus = $grievance->status;
         $grievance->status = $data['status'];
         $grievance->save();
 
@@ -382,6 +477,30 @@ class GrievanceController extends Controller
             'snapshot' => ['old' => $old, 'new' => ['status' => $grievance->status]],
             'staff_id' => optional($user->staff)->id,
         ]);
+
+        // Send email notification to student about status change
+        $studentUser = null;
+        if ($grievance->student_record_id && $grievance->student && $grievance->student->user) {
+            $studentUser = $grievance->student->user;
+        } elseif ($grievance->student_no_snapshot) {
+            // Since student_id is encrypted, search all students and compare decrypted values
+            $student = \App\Models\Student::with('user')->get()->first(function ($s) use ($grievance) {
+                return $s->student_id === $grievance->student_no_snapshot;
+            });
+
+            if ($student && $student->user) {
+                $studentUser = $student->user;
+            }
+        }
+
+        if ($studentUser && $studentUser->email) {
+            try {
+                \Mail::to($studentUser->email)
+                    ->send(new \App\Mail\GrievanceNotification($grievance, 'status_update', $oldStatus));
+            } catch (\Exception $e) {
+                \Log::error('Failed to send status update email: ' . $e->getMessage());
+            }
+        }
 
         if ($request->expectsJson()) {
             return response()->json(['ok' => true, 'action' => 'status_changed', 'status' => $grievance->status, 'id' => $grievance->id]);

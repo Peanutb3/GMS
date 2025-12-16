@@ -98,7 +98,14 @@
                                 <td class="px-4 py-3 text-gray-700">
                                     @php
                                     $prog = $request->program ?? 'N/A';
-                                    $progAbbr = preg_match('/\(([A-Z]+)\)/', $prog, $m) ? $m[1] : $prog;
+
+                                    // Get program code from database
+                                    if ($prog !== 'N/A') {
+                                    $programModel = \App\Models\Program::where('name', $prog)->first();
+                                    $progAbbr = $programModel && $programModel->code ? $programModel->code : $prog;
+                                    } else {
+                                    $progAbbr = 'N/A';
+                                    }
                                     @endphp
                                     <span title="{{ $prog }}">{{ $progAbbr }}</span>
                                 </td>
@@ -162,7 +169,14 @@
                                 <td class="px-4 py-3 text-gray-700">
                                     @php
                                     $prog = $request->program ?? 'N/A';
-                                    $progAbbr = preg_match('/\(([A-Z]+)\)/', $prog, $m) ? $m[1] : $prog;
+
+                                    // Get program code from database
+                                    if ($prog !== 'N/A') {
+                                    $programModel = \App\Models\Program::where('name', $prog)->first();
+                                    $progAbbr = $programModel && $programModel->code ? $programModel->code : $prog;
+                                    } else {
+                                    $progAbbr = 'N/A';
+                                    }
                                     @endphp
                                     <span title="{{ $prog }}">{{ $progAbbr }}</span>
                                 </td>

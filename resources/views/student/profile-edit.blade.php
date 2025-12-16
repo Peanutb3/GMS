@@ -277,15 +277,25 @@
                 height: 400,
                 imageSmoothingQuality: 'high'
             }).toBlob(function(blob) {
-                const fileName = input.files[0].name;
+                if (!blob) {
+                    alert('Error cropping image. Please try again.');
+                    return;
+                }
+
+                const fileName = input.files[0]?.name || 'cropped-image.jpg';
                 croppedFile = new File([blob], fileName, {
-                    type: blob.type
+                    type: 'image/jpeg',
+                    lastModified: new Date().getTime()
                 });
 
-                // Update file input
-                const dataTransfer = new DataTransfer();
-                dataTransfer.items.add(croppedFile);
-                input.files = dataTransfer.files;
+                // Update file input using DataTransfer
+                try {
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(croppedFile);
+                    input.files = dataTransfer.files;
+                } catch (e) {
+                    console.error('DataTransfer not supported:', e);
+                }
 
                 // Update preview
                 const url = URL.createObjectURL(blob);

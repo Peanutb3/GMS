@@ -10,21 +10,25 @@ class SafeLoanRequestController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'student_id' => ['nullable','exists:students,id'],
-            'staff_id' => ['nullable','exists:staff,id'],
-            'date_needed' => ['nullable','date'],
-            'email' => ['nullable','email'],
-            'contact' => ['nullable','string','max:50'],
-            'first_name' => ['required','string','max:100'],
-            'middle_name' => ['nullable','string','max:100'],
-            'last_name' => ['required','string','max:100'],
-            'gender' => ['nullable','in:Female,Male,Prefer not to say'],
-            'program_year' => ['nullable','string','max:150'],
-            'student_status' => ['nullable','in:currently_enrolled,not_enrolled'],
-            'last_semester' => ['nullable','string','max:150'],
-            'year_graduated' => ['nullable','string','max:20'],
-            'purpose' => ['nullable','string','max:500'],
-            'loan_amount' => ['nullable','numeric','min:0'],
+            'student_id' => ['nullable', 'exists:students,id'],
+            'staff_id' => ['nullable', 'exists:staff,id'],
+            'date_needed' => ['nullable', 'date'],
+            'email' => ['nullable', 'email'],
+            'contact' => ['nullable', 'string', 'max:50'],
+            'first_name' => ['required', 'string', 'max:100'],
+            'middle_name' => ['nullable', 'string', 'max:100'],
+            'last_name' => ['required', 'string', 'max:100'],
+            'gender' => ['nullable', 'in:Female,Male,Prefer not to say'],
+            'college' => ['nullable', 'string', 'max:150'],
+            'program' => ['nullable', 'string', 'max:150'],
+            'year' => ['nullable', 'string', 'max:50'],
+            'student_status' => ['nullable', 'in:currently_enrolled,not_enrolled'],
+            'last_semester' => ['nullable', 'string', 'max:150'],
+            'from_sy' => ['nullable', 'string', 'max:50'],
+            'to_sy' => ['nullable', 'string', 'max:50'],
+            'year_graduated' => ['nullable', 'string', 'max:20'],
+            'purpose' => ['nullable', 'string', 'max:500'],
+            'loan_amount' => ['nullable', 'numeric', 'min:0'],
         ]);
 
         // Generate reference number: YYYYMM-####
@@ -45,8 +49,27 @@ class SafeLoanRequestController extends Controller
 
     public function print(SafeLoanRequest $requestModel)
     {
+        // Reuse existing print.blade with $req variable expected
         $req = (object) [
             'reference_no' => $requestModel->reference_no,
+            'date_needed' => $requestModel->date_needed,
+            'email' => $requestModel->email,
+            'contact' => $requestModel->contact,
+            'last_name' => $requestModel->last_name,
+            'first_name' => $requestModel->first_name,
+            'middle_name' => $requestModel->middle_name,
+            'gender' => $requestModel->gender,
+            'college' => $requestModel->college,
+            'program' => $requestModel->program,
+            'year' => $requestModel->year,
+            'student_status' => $requestModel->student_status,
+            'last_semester' => $requestModel->last_semester,
+            'from_sy' => $requestModel->from_sy,
+            'to_sy' => $requestModel->to_sy,
+            'year_graduated' => $requestModel->year_graduated,
+            'purpose' => $requestModel->purpose,
+            'copies' => 0, // No good moral copies for safe loan
+            'safe_loan_amount' => $requestModel->loan_amount ?? 0,
             'student' => (object) [
                 'email' => $requestModel->email,
                 'contact' => $requestModel->contact,
@@ -54,16 +77,95 @@ class SafeLoanRequestController extends Controller
                 'first_name' => $requestModel->first_name,
                 'middle_name' => $requestModel->middle_name,
                 'gender' => $requestModel->gender,
-                'program' => $requestModel->program_year,
+                'program' => $requestModel->program,
+                'year' => $requestModel->year,
                 'year_level' => null,
                 'status' => $requestModel->student_status === 'currently_enrolled' ? 'Currently Enrolled' : 'Not Enrolled',
                 'year_graduated' => $requestModel->year_graduated,
             ],
-            'purpose' => $requestModel->purpose,
-            // Copies not applicable to safe loan; keep 1 for payment row compatibility
-            'copies' => 1,
         ];
 
-        return view('print', compact('req'));
+        // Generate PDF like Good Moral does
+        $pdf = \PDF::loadView('print', compact('req'));
+        $pdf->setPaper('A4', 'portrait');
+
+        return $pdf->stream('safe-loan-request-' . $requestModel->reference_no . '.pdf');
+    }
+
+    public function markDone($id)
+    {
+        $safeLoanRequest = SafeLoanRequest::findOrFail($id);
+        $oldStatus = $safeLoanRequest->status;
+
+        $safeLoanRequest->update([
+            'status' => 'completed',
+            'completed_at' => now(),
+        ]);
+
+        \App\Models\AuditLog::create([
+            'auditable_type' => SafeLoanRequest::class,
+            'auditable_id' => $safeLoanRequest->id,
+            'action' => 'marked_done',
+            'user_id' => auth()->id(),
+            'staff_id' => optional(auth()->user())->staff_id,
+            'old_values' => ['status' => $oldStatus],
+            'new_values' => ['status' => 'completed'],
+            'ip_address' => request()->ip(),
+        ]);
+
+        return redirect()->route('osas-gmc.requests', ['tab' => 'safeloan'])
+            ->with('status', 'Safe loan request marked as completed.');
+    }
+
+    public function changeStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => ['required', 'string', 'in:pending,processing,completed'],
+        ]);
+
+        $safeLoanRequest = SafeLoanRequest::findOrFail($id);
+        $oldStatus = $safeLoanRequest->status;
+
+        $updateData = ['status' => $request->status];
+        if ($request->status === 'completed' && !$safeLoanRequest->completed_at) {
+            $updateData['completed_at'] = now();
+        }
+
+        $safeLoanRequest->update($updateData);
+
+        \App\Models\AuditLog::create([
+            'auditable_type' => SafeLoanRequest::class,
+            'auditable_id' => $safeLoanRequest->id,
+            'action' => 'status_changed',
+            'user_id' => auth()->id(),
+            'staff_id' => optional(auth()->user())->staff_id,
+            'old_values' => ['status' => $oldStatus],
+            'new_values' => ['status' => $request->status],
+            'ip_address' => request()->ip(),
+        ]);
+
+        return redirect()->route('osas-gmc.requests', ['tab' => 'safeloan'])
+            ->with('status', 'Safe loan request status updated.');
+    }
+
+    public function destroy($id)
+    {
+        $safeLoanRequest = SafeLoanRequest::findOrFail($id);
+
+        \App\Models\AuditLog::create([
+            'auditable_type' => SafeLoanRequest::class,
+            'auditable_id' => $safeLoanRequest->id,
+            'action' => 'deleted',
+            'user_id' => auth()->id(),
+            'staff_id' => optional(auth()->user())->staff_id,
+            'old_values' => $safeLoanRequest->toArray(),
+            'new_values' => null,
+            'ip_address' => request()->ip(),
+        ]);
+
+        $safeLoanRequest->delete();
+
+        return redirect()->route('osas-gmc.requests', ['tab' => 'safeloan'])
+            ->with('status', 'Safe loan request deleted successfully.');
     }
 }

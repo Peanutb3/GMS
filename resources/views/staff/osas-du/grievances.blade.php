@@ -25,16 +25,6 @@
     <p class="text-sm text-gray-600">Track and manage student grievance cases</p>
 </div>
 
-<!-- @if(($tab ?? 'active')==='active')
-      <div class="flex items-center gap-4">
-        <div class="text-right">
-          <div class="text-2xl font-bold text-gray-900">{{ $grievances->total() ?? 0 }}</div>
-          <div class="text-sm text-gray-500">Active Cases</div>
-        </div>
-      </div>
-      @endif
-    </div> -->
-
 <!-- Tabs + Search (match Requests styling) -->
 <div class="border-b border-gray-200 mb-4">
     <div class="flex items-end justify-between gap-4">
@@ -67,6 +57,10 @@
     </div>
 </div>
 
+@if(session('success'))
+<x-toast type="success" :message="session('success')" />
+@endif
+
 <!-- Table -->
 <div class="relative overflow-x-auto bg-white shadow-sm rounded-lg border border-gray-200 pb-40">
     @if(($tab ?? 'active')==='history')
@@ -88,14 +82,24 @@
                 <td class="px-6 py-4">{{ $h['name'] }}</td>
                 <td class="px-6 py-4">
                     @php
-                    $student = \App\Models\Student::where('student_id', $h['student_id'])->first();
-                    $college = $student ? $student->college_name : ($h['college'] ?? '-');
-                    if ($student) {
-                    $collegeAbbr = $student->college_abbr;
-                    } else {
+                    // Get college from history item or try to lookup student
+                    $college = $h['college'] ?? '-';
+
+                    // If we have student_id and college is still empty, try to find student
+                    if ($college === '-' && !empty($h['student_id'])) {
+                    // Since student_id is encrypted, search all students and compare decrypted values
+                    $student = \App\Models\Student::all()->first(function($s) use ($h) {
+                    return $s->student_id === $h['student_id'];
+                    });
+                    $college = $student ? $student->college_name : '-';
+                    }
+
                     // Look up college code from database
+                    if ($college !== '-') {
                     $collegeModel = \App\Models\College::where('name', $college)->first();
                     $collegeAbbr = $collegeModel && $collegeModel->code ? $collegeModel->code : $college;
+                    } else {
+                    $collegeAbbr = '-';
                     }
                     @endphp
                     <span title="{{ $college }}">{{ $collegeAbbr }}</span>
@@ -103,13 +107,10 @@
                 <td class="px-6 py-4">
                     @php
                     $prog = $h['program'];
-                    if ($student) {
-                    $progAbbr = $student->program_abbr;
-                    } else {
+
                     // Look up program code from database
                     $programModel = \App\Models\Program::where('name', $prog)->first();
                     $progAbbr = $programModel && $programModel->code ? $programModel->code : $prog;
-                    }
                     @endphp
                     <span title="{{ $prog }}">{{ $progAbbr }}</span>
                 </td>
@@ -158,12 +159,13 @@
                 <td class="px-6 py-4">
                     @php
                     $college = optional($g->student)->college_name ?? ($g->college_snapshot ?? '-');
-                    if ($g->student) {
-                    $collegeAbbr = $g->student->college_abbr;
-                    } else {
+
                     // Look up college code from database
+                    if ($college !== '-') {
                     $collegeModel = \App\Models\College::where('name', $college)->first();
                     $collegeAbbr = $collegeModel && $collegeModel->code ? $collegeModel->code : $college;
+                    } else {
+                    $collegeAbbr = '-';
                     }
                     @endphp
                     <span title="{{ $college }}">{{ $collegeAbbr }}</span>
@@ -171,12 +173,13 @@
                 <td class="px-6 py-4">
                     @php
                     $prog = optional($g->student)->program_name ?? ($g->program_snapshot ?? '-');
-                    if ($g->student) {
-                    $progAbbr = $g->student->program_abbr;
-                    } else {
+
                     // Look up program code from database
+                    if ($prog !== '-') {
                     $programModel = \App\Models\Program::where('name', $prog)->first();
                     $progAbbr = $programModel && $programModel->code ? $programModel->code : $prog;
+                    } else {
+                    $progAbbr = '-';
                     }
                     @endphp
                     <span title="{{ $prog }}">{{ $progAbbr }}</span>
@@ -408,9 +411,13 @@
                     class="px-5 py-2.5 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-gray-400 outline-none transition font-medium">
                     Cancel
                 </button>
-                <button type="submit"
-                    class="px-5 py-2.5 bg-gradient-to-r from-red-900 to-red-800 text-white rounded-lg hover:from-red-800 hover:to-red-700 focus:ring-2 focus:ring-red-800 outline-none transition font-medium shadow-lg">
-                    Update Status
+                <button type="submit" id="statusUpdateBtn"
+                    class="px-5 py-2.5 bg-gradient-to-r from-red-900 to-red-800 text-white rounded-lg hover:from-red-800 hover:to-red-700 focus:ring-2 focus:ring-red-800 outline-none transition font-medium shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                    <svg class="animate-spin h-4 w-4 text-white hidden" id="statusLoadingSpinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span id="statusBtnText">Update Status</span>
                 </button>
             </div>
         </form>
@@ -488,7 +495,107 @@
 </div>
 
 @push('scripts')
+<style>
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .animate-fade-in {
+        animation: fade-in 0.3s ease-out;
+    }
+
+    @keyframes timer-progress {
+        from {
+            width: 100%;
+        }
+
+        to {
+            width: 0%;
+        }
+    }
+</style>
 <script>
+    // Helper function to create toast notifications (mimics toast component)
+    function createToast(msg, type = 'info') {
+        const colors = {
+            success: {
+                bg: 'bg-green-100',
+                text: 'text-green-600',
+                bar: 'bg-green-500',
+                icon: '<path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />'
+            },
+            error: {
+                bg: 'bg-red-100',
+                text: 'text-red-600',
+                bar: 'bg-red-500',
+                icon: '<path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z" />'
+            },
+            warning: {
+                bg: 'bg-orange-100',
+                text: 'text-orange-600',
+                bar: 'bg-orange-500',
+                icon: '<path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z" />'
+            },
+            info: {
+                bg: 'bg-blue-100',
+                text: 'text-blue-600',
+                bar: 'bg-blue-500',
+                icon: '<path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />'
+            }
+        };
+        const color = colors[type] || colors.info;
+
+        const toastContainer = document.createElement('div');
+        toastContainer.className = '!fixed !top-20 !right-4 !z-50 animate-fade-in';
+        toastContainer.style.cssText = 'position: fixed !important; top: 5rem !important; right: 1rem !important; z-index: 9999 !important; width: calc(100% - 2rem); max-width: 24rem;';
+
+        toastContainer.innerHTML = `
+            <div class="relative flex items-center w-full max-w-sm p-4 rounded-lg shadow border border-gray-200 bg-white text-gray-800 overflow-hidden" role="alert">
+                <div class="absolute bottom-0 left-0 h-1 ${color.bar} toast-timer-bar"></div>
+                <div class="inline-flex items-center justify-center shrink-0 w-8 h-8 mr-3 rounded-lg ${color.bg} ${color.text}">
+                    <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        ${color.icon}
+                    </svg>
+                </div>
+                <div class="ms-3 text-sm font-normal flex-1">${msg}</div>
+                <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8" onclick="this.closest('[role=alert]').parentElement.remove()">
+                    <span class="sr-only">Close</span>
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                    </svg>
+                </button>
+            </div>
+        `;
+
+        document.body.appendChild(toastContainer);
+
+        setTimeout(() => {
+            toastContainer.style.transition = 'opacity 0.3s, transform 0.3s';
+            toastContainer.style.opacity = '0';
+            toastContainer.style.transform = 'translateX(20px)';
+            setTimeout(() => toastContainer.remove(), 300);
+        }, 5000);
+    }
+
+    // Check for status update success
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('status_updated') === '1') {
+        createToast('Status updated successfully', 'success');
+        // Clean URL
+        const newParams = new URLSearchParams(urlParams);
+        newParams.delete('status_updated');
+        const newUrl = window.location.pathname + (newParams.toString() ? '?' + newParams.toString() : '');
+        window.history.replaceState({}, '', newUrl);
+    }
+
     // Grievance Details Modal Functions
     function openGrievanceModal(id, caseId, name, program, type, date, status, description, remarks, filedBy) {
         document.getElementById('detailCaseId').textContent = caseId;
@@ -567,47 +674,6 @@
     });
 
     const token = '{{ csrf_token() }}';
-    const stack = document.getElementById('toast-stack');
-
-    // Grievance Details Modal Functions
-    function openGrievanceModal(id, caseId, name, program, type, date, status, description, remarks, filedBy) {
-        event.stopPropagation();
-        document.getElementById('detailCaseId').textContent = caseId;
-        document.getElementById('detailName').textContent = name;
-        document.getElementById('detailProgram').textContent = program;
-        document.getElementById('detailType').textContent = type;
-        document.getElementById('detailDate').textContent = date;
-        document.getElementById('detailFiledBy').textContent = filedBy;
-        document.getElementById('detailDescription').textContent = description || 'No description provided';
-        document.getElementById('detailRemarks').textContent = remarks || 'No remarks yet';
-
-        // Set status badge
-        const statusEl = document.getElementById('detailStatus');
-        const statusClass = {
-            'pending': 'bg-yellow-100 text-yellow-800',
-            'in_progress': 'bg-blue-100 text-blue-800',
-            'resolved': 'bg-green-100 text-green-800'
-        } [status] || 'bg-gray-100 text-gray-800';
-        statusEl.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + statusClass;
-        statusEl.textContent = status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
-
-        document.getElementById('grievanceModal').classList.remove('hidden');
-    }
-
-    function closeGrievanceModal() {
-        document.getElementById('grievanceModal').classList.add('hidden');
-    }
-
-    function toast(msg, type = 'info') {
-        const el = document.createElement('div');
-        el.className = 'px-4 py-2 rounded shadow text-sm text-white flex items-center gap-2 ' + (type === 'success' ? 'bg-green-600' : 'bg-red-600');
-        el.textContent = msg;
-        stack.appendChild(el);
-        setTimeout(() => {
-            el.classList.add('opacity-0', 'transition');
-            setTimeout(() => el.remove(), 400);
-        }, 2500);
-    }
 
     function markAsDone(id) {
         if (!confirm('Mark this grievance as done?')) return;
@@ -631,15 +697,14 @@
             .then(data => {
                 console.log('Mark as done response:', data);
                 if (data.ok) {
-                    toast('Grievance marked as done', 'success');
-                    setTimeout(() => location.reload(), 1000);
+                    location.reload();
                 } else {
-                    toast('Failed to mark as done', 'error');
+                    createToast('Failed to mark as done', 'error');
                 }
             })
             .catch(err => {
                 console.error('Mark as done error:', err);
-                toast('Failed to mark as done: ' + err.message, 'error');
+                createToast('Failed to mark as done: ' + err.message, 'error');
             });
     }
 
@@ -665,15 +730,14 @@
             .then(data => {
                 console.log('Delete response:', data);
                 if (data.ok) {
-                    toast('Grievance deleted', 'success');
-                    setTimeout(() => location.reload(), 1000);
+                    location.reload();
                 } else {
-                    toast('Failed to delete', 'error');
+                    createToast('Failed to delete', 'error');
                 }
             })
             .catch(err => {
                 console.error('Delete error:', err);
-                toast('Failed to delete: ' + err.message, 'error');
+                createToast('Failed to delete: ' + err.message, 'error');
             });
     }
 
@@ -708,11 +772,10 @@
             .then(r => r.json())
             .then(data => {
                 if (!data.ok) throw new Error('Failed');
-                toast('Remarks added successfully', 'success');
                 closeRemarksModal();
-                setTimeout(() => location.reload(), 1000);
+                location.reload();
             })
-            .catch(() => toast('Failed to add remarks', 'error'));
+            .catch(() => createToast('Failed to add remarks', 'error'));
     }
 
     // Status Modal Functions
@@ -731,6 +794,26 @@
         event.preventDefault();
         const id = document.getElementById('statusGrievanceId').value;
         const status = document.getElementById('newStatus').value;
+        const btn = document.getElementById('statusUpdateBtn');
+        const spinner = document.getElementById('statusLoadingSpinner');
+        const btnText = document.getElementById('statusBtnText');
+
+        // Show loading
+        btn.disabled = true;
+        spinner.classList.remove('hidden');
+        btnText.textContent = 'Updating...';
+
+        // Show browser loading indicator
+        const loadingOverlay = document.createElement('div');
+        loadingOverlay.id = 'page-loading-overlay';
+        loadingOverlay.className = 'fixed inset-0 bg-white bg-opacity-75 z-[10000] flex items-center justify-center';
+        loadingOverlay.innerHTML = `
+            <div class=\"flex flex-col items-center\">
+                <div class=\"animate-spin rounded-full h-12 w-12 border-b-2 border-red-800\"></div>
+                <p class=\"mt-4 text-gray-600 font-medium\">Updating status...</p>
+            </div>
+        `;
+        document.body.appendChild(loadingOverlay);
 
         fetch(`/osas-du/grievances/${id}/status`, {
                 method: 'PATCH',
@@ -753,16 +836,19 @@
             })
             .then(data => {
                 if (data.ok) {
-                    toast('Status updated successfully', 'success');
-                    closeStatusModal();
-                    setTimeout(() => location.reload(), 1000);
+                    // Reload page to show toast notification
+                    window.location.href = '{{ route("osas-du.grievances") }}?status_updated=1';
                 } else {
-                    toast('Failed to update status', 'error');
+                    throw new Error('Update failed');
                 }
             })
             .catch(err => {
                 console.error('Status change error:', err);
-                toast('Failed to update status: ' + err.message, 'error');
+                document.getElementById('page-loading-overlay')?.remove();
+                createToast('Failed to update status: ' + err.message, 'error');
+                btn.disabled = false;
+                spinner.classList.add('hidden');
+                btnText.textContent = 'Update Status';
             });
     }
 

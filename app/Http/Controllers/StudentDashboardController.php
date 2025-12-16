@@ -10,13 +10,29 @@ class StudentDashboardController extends Controller
 {
     public function index()
     {
-        $student = Auth::user()->student;
+        $user = Auth::user();
+        $student = $user->student;
 
-        // Retrieve grievances by the normalized FK (student_record_id)
-        $myGrievances = Grievance::where('student_record_id', $student->id ?? null)
+        if (!$student) {
+            $myGrievances = collect();
+            return view('student.dashboard', compact('user', 'student', 'myGrievances'));
+        }
+
+        // Get all grievances and filter them after loading
+        // Since student_id is encrypted, we can't do a direct database WHERE comparison
+        $myGrievances = Grievance::where('student_record_id', $student->id)
+            ->orWhere(function ($q) use ($student) {
+                // Get all grievances with a student_no_snapshot
+                $q->whereNotNull('student_no_snapshot');
+            })
             ->orderByDesc('created_at')
-            ->get();
+            ->get()
+            ->filter(function ($grievance) use ($student) {
+                // Filter: either direct link OR student_no_snapshot matches decrypted student_id
+                return $grievance->student_record_id === $student->id
+                    || $grievance->student_no_snapshot === $student->student_id;
+            });
 
-        return view('student.dashboard', compact('student', 'myGrievances'));
+        return view('student.dashboard', compact('user', 'student', 'myGrievances'));
     }
 }

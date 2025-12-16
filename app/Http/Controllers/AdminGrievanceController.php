@@ -18,10 +18,10 @@ class AdminGrievanceController extends Controller
         // Search filter
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name_snapshot', 'like', "%{$search}%")
-                  ->orWhere('student_no_snapshot', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('student_no_snapshot', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
@@ -99,6 +99,30 @@ class AdminGrievanceController extends Controller
             );
         }
 
+        // Send email notification to student about status change
+        $studentUser = null;
+        if ($grievance->student_record_id && $grievance->student && $grievance->student->user) {
+            $studentUser = $grievance->student->user;
+        } elseif ($grievance->student_no_snapshot) {
+            // Since student_id is encrypted, search all students and compare decrypted values
+            $student = \App\Models\Student::with('user')->get()->first(function ($s) use ($grievance) {
+                return $s->student_id === $grievance->student_no_snapshot;
+            });
+
+            if ($student && $student->user) {
+                $studentUser = $student->user;
+            }
+        }
+
+        if ($studentUser && $studentUser->email) {
+            try {
+                \Mail::to($studentUser->email)
+                    ->send(new \App\Mail\GrievanceNotification($grievance, 'status_update', $oldStatus));
+            } catch (\Exception $e) {
+                \Log::error('Failed to send status update email: ' . $e->getMessage());
+            }
+        }
+
         // If resolved, send resolved notification
         if ($request->status === 'resolved' && $grievance->student && $grievance->student->user) {
             $this->notifyGrievanceResolved(
@@ -117,7 +141,7 @@ class AdminGrievanceController extends Controller
     public function destroy($id)
     {
         $grievance = Grievance::findOrFail($id);
-        
+
         // Log the deletion
         GrievanceHistory::create([
             'grievance_id' => $grievance->id,

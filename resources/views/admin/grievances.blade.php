@@ -129,25 +129,26 @@
                     </td>
                     <td class="px-6 py-3 text-sm text-gray-700">
                         @php
-                        // Check if program_snapshot contains a college name and abbreviate it
+                        // Get program from snapshot
                         $programDisplay = $grievance->program_snapshot;
+
                         if (strpos($programDisplay, '|') !== false) {
-                        // If format is "College | Program", split and abbreviate college
-                        [$college, $program] = explode('|', $programDisplay, 2);
-                        $collegeAbbr = match(trim($college)) {
-                        'College of Information and Computing' => 'CIC',
-                        'College of Engineering' => 'COE',
-                        'College of Education' => 'CED',
-                        'College of Business Administration' => 'CBA',
-                        'College of Arts and Sciences' => 'CAS',
-                        'College of Applied Economics' => 'CAEC',
-                        'College of Technology' => 'CT',
-                        default => trim($college)
-                        };
-                        $programDisplay = $collegeAbbr . ' | ' . trim($program);
+                        // If format is "College | Program", get program only
+                        [, $program] = explode('|', $programDisplay, 2);
+                        $program = trim($program);
+                        } else {
+                        $program = $programDisplay;
+                        }
+
+                        // Get program code from database
+                        if (!empty($program)) {
+                        $programModel = \App\Models\Program::where('name', $program)->first();
+                        $progAbbr = $programModel && $programModel->code ? $programModel->code : $program;
+                        } else {
+                        $progAbbr = $programDisplay;
                         }
                         @endphp
-                        <div class="truncate" title="{{ $grievance->program_snapshot }}">{{ $programDisplay }}</div>
+                        <div class="truncate" title="{{ $grievance->program_snapshot }}">{{ $progAbbr }}</div>
                     </td>
                     <!-- <td class="px-3 py-3">
                         <div class="text-xs text-gray-900 truncate" style="max-width: 200px;" title="{{ $grievance->description }}">{{ Str::limit($grievance->description, 35) }}</div>
@@ -207,14 +208,40 @@
     @endif
 </div>
 
-<!-- Toast Notification -->
-<div id="toast" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hidden transition-all transform translate-y-0">
-    <p id="toast-message"></p>
-</div>
-
 @endsection
 
 @push('scripts')
+<style>
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .animate-fade-in {
+        animation: fade-in 0.3s ease-out;
+    }
+
+    @keyframes timer-progress {
+        from {
+            width: 100%;
+        }
+
+        to {
+            width: 0%;
+        }
+    }
+
+    .toast-timer-bar {
+        animation: timer-progress 5s linear forwards;
+    }
+</style>
 <script>
     // Delete grievance
     function deleteGrievance(id) {
@@ -232,7 +259,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    showToast('Grievance deleted successfully!', 'success');
+                    showToast(data.message || 'Grievance deleted successfully!', 'success');
                     document.getElementById(`grievance-row-${id}`).remove();
                 } else {
                     showToast('Failed to delete grievance', 'error');
@@ -244,18 +271,59 @@
             });
     }
 
-    // Toast notification
+    // Unified toast notification function
     function showToast(message, type = 'success') {
-        const toast = document.getElementById('toast');
-        const toastMessage = document.getElementById('toast-message');
+        // Create toast container
+        const toastContainer = document.createElement('div');
+        toastContainer.className = '!fixed !top-20 !right-4 !z-50 animate-fade-in';
+        toastContainer.style.cssText = 'position: fixed !important; top: 5rem !important; right: 1rem !important; z-index: 9999 !important; width: calc(100% - 2rem); max-width: 24rem;';
 
-        toastMessage.textContent = message;
-        toast.classList.remove('hidden', 'bg-green-500', 'bg-red-500');
-        toast.classList.add(type === 'success' ? 'bg-green-500' : 'bg-red-500');
+        const colors = {
+            success: {
+                bg: 'bg-green-100',
+                text: 'text-green-600',
+                bar: 'bg-green-500'
+            },
+            error: {
+                bg: 'bg-red-100',
+                text: 'text-red-600',
+                bar: 'bg-red-500'
+            },
+            warning: {
+                bg: 'bg-orange-100',
+                text: 'text-orange-600',
+                bar: 'bg-orange-500'
+            },
+            info: {
+                bg: 'bg-blue-100',
+                text: 'text-blue-600',
+                bar: 'bg-blue-500'
+            }
+        };
+        const color = colors[type] || colors.info;
 
+        toastContainer.innerHTML = `
+            <div class="relative flex items-center w-full max-w-sm p-4 rounded-lg shadow border border-gray-200 bg-white text-gray-800 overflow-hidden" role="alert">
+                <div class="absolute bottom-0 left-0 h-1 ${color.bar} toast-timer-bar"></div>
+                <div class="inline-flex items-center justify-center shrink-0 w-8 h-8 mr-3 rounded-lg ${color.bg} ${color.text}">
+                    ${type === 'success' ? '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/></svg>' : '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z"/></svg>'}
+                </div>
+                <div class="ms-3 text-sm font-normal flex-1">${message}</div>
+                <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8" onclick="this.closest('[role=alert]').parentElement.remove()">
+                    <svg class="w-3 h-3" fill="none" viewBox="0 0 14 14" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
+                </button>
+            </div>
+        `;
+
+        document.body.appendChild(toastContainer);
+
+        // Auto-dismiss after 5 seconds
         setTimeout(() => {
-            toast.classList.add('hidden');
-        }, 3000);
+            toastContainer.style.transition = 'opacity 0.3s, transform 0.3s';
+            toastContainer.style.opacity = '0';
+            toastContainer.style.transform = 'translateX(20px)';
+            setTimeout(() => toastContainer.remove(), 300);
+        }, 5000);
     }
 </script>
 @endpush

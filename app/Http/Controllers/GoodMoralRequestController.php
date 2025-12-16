@@ -182,4 +182,58 @@ class GoodMoralRequestController extends Controller
         return redirect()->route('osas-gmc.requests')
             ->with('status', 'Good moral request deleted successfully.');
     }
+
+    public function markDone(GoodMoralRequest $goodMoralRequest)
+    {
+        $oldStatus = $goodMoralRequest->status;
+
+        $goodMoralRequest->update([
+            'status' => 'completed',
+            'completed_at' => now(),
+        ]);
+
+        AuditLog::create([
+            'auditable_type' => GoodMoralRequest::class,
+            'auditable_id' => $goodMoralRequest->id,
+            'action' => 'marked_done',
+            'user_id' => auth()->id(),
+            'staff_id' => optional(auth()->user())->staff_id,
+            'old_values' => ['status' => $oldStatus],
+            'new_values' => ['status' => 'completed'],
+            'ip_address' => request()->ip(),
+        ]);
+
+        return redirect()->route('osas-gmc.requests')
+            ->with('status', 'Good moral request marked as completed.');
+    }
+
+    public function changeStatus(Request $request, GoodMoralRequest $goodMoralRequest)
+    {
+        $request->validate([
+            'status' => ['required', 'string', 'in:pending,processing,completed'],
+        ]);
+
+        $oldStatus = $goodMoralRequest->status;
+
+        $updateData = ['status' => $request->status];
+        if ($request->status === 'completed' && !$goodMoralRequest->completed_at) {
+            $updateData['completed_at'] = now();
+        }
+
+        $goodMoralRequest->update($updateData);
+
+        AuditLog::create([
+            'auditable_type' => GoodMoralRequest::class,
+            'auditable_id' => $goodMoralRequest->id,
+            'action' => 'status_changed',
+            'user_id' => auth()->id(),
+            'staff_id' => optional(auth()->user())->staff_id,
+            'old_values' => ['status' => $oldStatus],
+            'new_values' => ['status' => $request->status],
+            'ip_address' => request()->ip(),
+        ]);
+
+        return redirect()->route('osas-gmc.requests')
+            ->with('status', 'Good moral request status updated.');
+    }
 }

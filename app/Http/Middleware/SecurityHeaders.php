@@ -36,11 +36,11 @@ class SecurityHeaders
         $response->headers->set(
             'Content-Security-Policy',
             "default-src 'self'; " .
-                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://www.svgrepo.com; " .
-                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com; " .
+                "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://www.svgrepo.com https://cdnjs.cloudflare.com http://[::1]:5173 http://localhost:5173; " .
+                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com https://cdnjs.cloudflare.com http://[::1]:5173 http://localhost:5173; " .
                 "font-src 'self' https://fonts.gstatic.com; " .
-                "img-src 'self' data: https://www.svgrepo.com; " .
-                "connect-src 'self';"
+                "img-src 'self' data: blob: https://www.svgrepo.com; " .
+                "connect-src 'self' ws://[::1]:5173 ws://localhost:5173 http://[::1]:5173 http://localhost:5173;"
         );
 
         return $response;

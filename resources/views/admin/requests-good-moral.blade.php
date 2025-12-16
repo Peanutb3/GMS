@@ -113,64 +113,34 @@
                         @endif
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                        @if($request->program && $request->year)
+                        @if($request->program_year)
                         @php
-                        // Convert full program name to abbreviation
-                        $programAbbr = $request->program;
-                        $abbreviations = [
-                        'Bachelor of Science in Computer Science' => 'BSCS',
-                        'Bachelor of Science in Information Technology' => 'BSIT',
-                        'Bachelor of Science in Information Systems' => 'BSIS',
-                        'Bachelor of Science in Entertainment and Multimedia Computing' => 'BSEMC',
-                        'Bachelor of Science in Civil Engineering' => 'BSCE',
-                        'Bachelor of Science in Electrical Engineering' => 'BSEE',
-                        'Bachelor of Science in Electronics Engineering' => 'BSEcE',
-                        'Bachelor of Science in Mechanical Engineering' => 'BSME',
-                        'Bachelor of Science in Geodetic Engineering' => 'BSGeoE',
-                        'Bachelor of Science in Mining Engineering' => 'BSMinE',
-                        'Bachelor of Science in Metallurgical Engineering' => 'BSMetE',
-                        'Bachelor of Science in Chemical Engineering' => 'BSChE',
-                        'Bachelor of Science in Architecture' => 'BSArch',
-                        'Bachelor of Science in Biology' => 'BSBio',
-                        'Bachelor of Science in Marine Biology' => 'BSMarBio',
-                        'Bachelor of Science in Chemistry' => 'BSChem',
-                        'Bachelor of Science in Mathematics' => 'BSMath',
-                        'Bachelor of Science in Physics' => 'BSPhys',
-                        'Bachelor of Science in Statistics' => 'BSStat',
-                        'Bachelor of Science in Psychology' => 'BSPsych',
-                        'Bachelor of Science in Social Work' => 'BSSW',
-                        'Bachelor of Arts in Communication' => 'BAComm',
-                        'Bachelor of Arts in English Language' => 'BAEL',
-                        'Bachelor of Arts in Filipino' => 'BAF',
-                        'Bachelor of Arts in History' => 'BAH',
-                        'Bachelor of Arts in Philosophy' => 'BAPhil',
-                        'Bachelor of Arts in Political Science' => 'BAPS',
-                        'Bachelor of Science in Economics' => 'BSEcon',
-                        'Bachelor of Science in Business Administration' => 'BSBA',
-                        'Bachelor of Science in Accountancy' => 'BSA',
-                        'Bachelor of Science in Entrepreneurship' => 'BSEntrep',
-                        'Bachelor of Science in Nursing' => 'BSN',
-                        'Bachelor of Science in Midwifery' => 'BSMidwifery',
-                        'Bachelor of Science in Physical Therapy' => 'BSPT',
-                        'Bachelor of Science in Medical Technology' => 'BSMT',
-                        'Bachelor of Science in Radiologic Technology' => 'BSRT',
-                        'Bachelor of Science in Pharmacy' => 'BSPharma',
-                        'Bachelor of Elementary Education' => 'BEEd',
-                        'Bachelor of Secondary Education' => 'BSEd',
-                        'Bachelor of Physical Education' => 'BPEd',
-                        'Bachelor of Early Childhood Education' => 'BECEd',
-                        'Bachelor of Science in Agriculture' => 'BSAgri',
-                        'Bachelor of Science in Forestry' => 'BSFor',
-                        'Bachelor of Science in Environmental Science' => 'BSES',
-                        'Bachelor of Science in Fisheries' => 'BSFish',
-                        'Bachelor of Science in Development Communication' => 'BSDC',
-                        'Bachelor of Science in Agricultural Engineering' => 'BSAgriE',
-                        'Bachelor of Science in Food Technology' => 'BSFT',
-                        ];
+                        // Extract program abbreviation from program_year field
+                        $programYear = $request->program_year;
+                        $displayProgramYear = $programYear;
 
-                        if (isset($abbreviations[$request->program])) {
-                        $programAbbr = $abbreviations[$request->program];
+                        // Try format: "Program Name (ABBR) - Year"
+                        if (preg_match('/\(([A-Z]+)\)\s*[-\/]\s*(.+)/', $programYear, $matches)) {
+                        $displayProgramYear = $matches[1] . ' - ' . $matches[2];
                         }
+                        // Try format: "Full Program Name - Year"
+                        elseif (preg_match('/^(.+?)\s*[-\/]\s*(.+)$/', $programYear, $matches)) {
+                        $fullProgram = trim($matches[1]);
+                        $year = trim($matches[2]);
+
+                        // Get program code from database
+                        $programModel = \App\Models\Program::where('name', $fullProgram)->first();
+                        if ($programModel && $programModel->code) {
+                        $displayProgramYear = $programModel->code . ' - ' . $year;
+                        }
+                        }
+                        @endphp
+                        {{ $displayProgramYear }}
+                        @elseif($request->program && $request->year)
+                        @php
+                        // Fallback: Get program code from database
+                        $programModel = \App\Models\Program::where('name', $request->program)->first();
+                        $programAbbr = $programModel && $programModel->code ? $programModel->code : $request->program;
                         @endphp
                         {{ $programAbbr }} - {{ $request->year }}
                         @else

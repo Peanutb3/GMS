@@ -75,6 +75,20 @@
             color: #dc2626;
             margin-top: 4px;
             display: none;
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+        }
+
+        /* Ensure parent container has space for error message */
+        .form-field-wrapper {
+            position: relative;
+            margin-bottom: 28px;
+        }
+
+        /* Add padding to form step containers to prevent error message cutoff */
+        .form-step .relative {
+            margin-bottom: 28px;
         }
     </style>
 </head>
@@ -404,9 +418,13 @@
             <input type="hidden" name="middle_name" id="loan-middle_name_hidden">
             <input type="hidden" name="last_name" id="loan-last_name_hidden">
             <input type="hidden" name="gender" id="loan-gender_hidden">
-            <input type="hidden" name="program_year" id="loan-program_year_hidden">
+            <input type="hidden" name="college" id="loan-college_hidden">
+            <input type="hidden" name="program" id="loan-program_hidden">
+            <input type="hidden" name="year" id="loan-year_hidden">
             <input type="hidden" name="student_status" id="loan-student_status_hidden">
             <input type="hidden" name="last_semester" id="loan-last_semester_hidden">
+            <input type="hidden" name="from_sy" id="loan-from_sy_hidden">
+            <input type="hidden" name="to_sy" id="loan-to_sy_hidden">
             <input type="hidden" name="year_graduated" id="loan-year_graduated_hidden">
             <input type="hidden" name="purpose" id="loan-purpose_hidden">
             <input type="hidden" name="loan_amount" id="loan-loan_amount_hidden" value="0">
@@ -500,9 +518,11 @@
                 <button class="close-btn absolute top-4 right-4 text-2xl text-gray-400 hover:text-gray-600">&times;</button>
 
                 <!-- Success Icon -->
-                <div class="mb-6">
-                    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-500">
-                        <i class="fas fa-check text-3xl text-white"></i>
+                <div class="mb-6 flex justify-center">
+                    <div class="flex items-center justify-center h-16 w-16 rounded-full bg-green-500">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                        </svg>
                     </div>
                 </div>
 
@@ -593,7 +613,7 @@
                     <!-- Loan Step 2: Academic Information -->
                     <div class="loan-form-step hidden" data-step="2">
                         <h2 class="text-2xl font-bold mb-6 text-gray-800">Academic Information</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-x-3 gap-y-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-3 gap-y-3">
                             <div class="relative">
                                 <input type="date" id="loanDate" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Select date">
                                 <label for="loanDate" class="absolute top-0 start-0 p-4 h-full text-sm text-gray-500 truncate pointer-events-none transition ease-in-out duration-100 origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-400 peer-valid:scale-90 peer-valid:translate-x-0.5 peer-valid:-translate-y-1.5 peer-valid:text-gray-400">Select date</label>
@@ -603,25 +623,93 @@
                                     </svg>
                                 </div>
                             </div>
-                            <div class="md:col-span-2 relative">
-                                <select id="loanStudentStatus" class="peer p-4 pe-9 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2 peer-valid:text-gray-900" onchange="toggleLoanLastSemInput(this.value === 'not-enrolled')">
+
+                            <div class="md:col-span-1 relative">
+                                <select id="loanStudentStatus" class="peer appearance-none p-4 pr-10 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2 peer-valid:text-gray-900 bg-white" onchange="toggleLoanLastSemInput(this.value === 'not-enrolled')" required>
                                     <option value=""></option>
                                     <option value="currently-enrolled">Currently Enrolled</option>
                                     <option value="not-enrolled">Not Enrolled</option>
                                 </select>
                                 <label for="loanStudentStatus" class="absolute top-0 start-0 p-4 h-full text-sm text-gray-500 truncate pointer-events-none transition ease-in-out duration-100 origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-400 peer-valid:scale-90 peer-valid:translate-x-0.5 peer-valid:-translate-y-1.5 peer-valid:text-gray-400">Student's Status</label>
+                                <div class="absolute inset-y-0 end-0 flex items-center pe-4 pointer-events-none">
+                                    <svg class="w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
                             </div>
-                            <div id="loanLastSemContainer" class="md:col-span-3 relative hidden">
-                                <input type="text" id="loanLastSem" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Last Sem & SY">
-                                <label for="loanLastSem" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Last Sem & SY</label>
+
+                            <!-- College Dropdown -->
+                            <div class="md:col-span-1 relative">
+                                <select id="loanCollege" class="peer appearance-none p-4 pr-10 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2 peer-valid:text-gray-900 bg-white" required>
+                                    <option value=""></option>
+                                    <!-- Dynamically loaded from database -->
+                                </select>
+                                <label for="loanCollege" class="absolute top-0 start-0 p-4 h-full text-sm text-gray-500 truncate pointer-events-none transition ease-in-out duration-100 origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-400 peer-valid:scale-90 peer-valid:translate-x-0.5 peer-valid:-translate-y-1.5 peer-valid:text-gray-400">College</label>
+                                <div class="absolute inset-y-0 end-0 flex items-center pe-4 pointer-events-none">
+                                    <svg class="w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
                             </div>
-                            <div class="relative md:col-span-2">
-                                <input type="text" id="loanProgram" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Program & Year" required>
-                                <label for="loanProgram" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Program & Year</label>
+
+                            <!-- Program -->
+                            <div class="md:col-span-1 relative">
+                                <select id="loanProgram" class="peer appearance-none p-4 pr-10 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2 peer-valid:text-gray-900 bg-white" required disabled>
+                                    <option value=""></option>
+                                </select>
+                                <label for="loanProgram" class="absolute top-0 start-0 p-4 h-full text-sm text-gray-500 truncate pointer-events-none transition ease-in-out duration-100 origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-400 peer-valid:scale-90 peer-valid:translate-x-0.5 peer-valid:-translate-y-1.5 peer-valid:text-gray-400">Program</label>
+                                <div class="absolute inset-y-0 end-0 flex items-center pe-4 pointer-events-none">
+                                    <svg class="w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
                             </div>
-                            <div class="relative">
+
+                            <!-- Year Level Dropdown -->
+                            <div class="md:col-span-1 relative">
+                                <select id="loanYear" class="peer appearance-none p-4 pr-10 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2 peer-valid:text-gray-900 bg-white" required>
+                                    <option value=""></option>
+                                    <option value="1st Year">1st Year</option>
+                                    <option value="2nd Year">2nd Year</option>
+                                    <option value="3rd Year">3rd Year</option>
+                                    <option value="4th Year">4th Year</option>
+                                    <option value="5th Year">5th Year</option>
+                                </select>
+                                <label for="loanYear" class="absolute top-0 start-0 p-4 h-full text-sm text-gray-500 truncate pointer-events-none transition ease-in-out duration-100 origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-400 peer-valid:scale-90 peer-valid:translate-x-0.5 peer-valid:-translate-y-1.5 peer-valid:text-gray-400">Year</label>
+                                <div class="absolute inset-y-0 end-0 flex items-center pe-4 pointer-events-none">
+                                    <svg class="w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- Year Graduated -->
+                            <div class="md:col-span-1 relative">
                                 <input type="text" id="loanYearGraduated" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Year Graduated">
                                 <label for="loanYearGraduated" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Year Graduated</label>
+                            </div>
+
+                            <!-- Not Enrolled details: nested 3-column grid -->
+                            <div class="md:col-span-2">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-3 gap-y-3">
+                                    <!-- Last Sem (for Not Enrolled students) -->
+                                    <div id="loanLastSemContainer" class="relative hidden">
+                                        <input type="text" id="loanLastSem" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Last Sem">
+                                        <label for="loanLastSem" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Last Sem</label>
+                                    </div>
+
+                                    <!-- From SY (for Not Enrolled students) -->
+                                    <div id="loanFromSYContainer" class="relative hidden">
+                                        <input type="text" id="loanFromSY" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="From SY">
+                                        <label for="loanFromSY" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">From SY</label>
+                                    </div>
+
+                                    <!-- To SY (for Not Enrolled students) -->
+                                    <div id="loanToSYContainer" class="relative hidden">
+                                        <input type="text" id="loanToSY" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="To SY">
+                                        <label for="loanToSY" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">To SY</label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -754,6 +842,61 @@
 
                 // Initialize colleges on load
                 loadColleges();
+
+                // Dynamic College and Program Loading for Loan Form
+                const loanCollegeSelect = document.getElementById('loanCollege');
+                const loanProgramSelect = document.getElementById('loanProgram');
+
+                // Load colleges for loan form (shares same data source)
+                async function loadLoanColleges() {
+                    try {
+                        const response = await fetch('/api/colleges');
+                        const colleges = await response.json();
+
+                        loanCollegeSelect.innerHTML = '<option value=""></option>';
+                        colleges.forEach(college => {
+                            const option = document.createElement('option');
+                            option.value = college.name;
+                            option.dataset.collegeId = college.id;
+                            option.textContent = college.name;
+                            loanCollegeSelect.appendChild(option);
+                        });
+                    } catch (error) {
+                        console.error('Error loading colleges:', error);
+                    }
+                }
+
+                // Load programs when college is selected (loan form)
+                loanCollegeSelect.addEventListener('change', async function() {
+                    const selectedOption = this.options[this.selectedIndex];
+                    const collegeId = selectedOption.dataset.collegeId;
+
+                    if (!collegeId) {
+                        loanProgramSelect.innerHTML = '<option value=""></option>';
+                        loanProgramSelect.disabled = true;
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch(`/api/programs/${collegeId}`);
+                        const programs = await response.json();
+
+                        loanProgramSelect.innerHTML = '<option value=""></option>';
+                        programs.forEach(program => {
+                            const option = document.createElement('option');
+                            option.value = program.name;
+                            option.textContent = program.name;
+                            loanProgramSelect.appendChild(option);
+                        });
+                        loanProgramSelect.disabled = false;
+                    } catch (error) {
+                        console.error('Error loading programs:', error);
+                        loanProgramSelect.innerHTML = '<option value="">Error loading programs</option>';
+                    }
+                });
+
+                // Initialize loan colleges on load
+                loadLoanColleges();
 
                 // Toggle Last Sem input based on student status
                 window.toggleLastSemInput = function(show) {
@@ -1182,15 +1325,30 @@
 
                 // Toggle Last Sem for loan
                 window.toggleLoanLastSemInput = function(show) {
-                    const container = document.getElementById('loanLastSemContainer');
-                    const input = document.getElementById('loanLastSem');
+                    const lastSemContainer = document.getElementById('loanLastSemContainer');
+                    const fromSYContainer = document.getElementById('loanFromSYContainer');
+                    const toSYContainer = document.getElementById('loanToSYContainer');
+                    const lastSemInput = document.getElementById('loanLastSem');
+                    const fromSYInput = document.getElementById('loanFromSY');
+                    const toSYInput = document.getElementById('loanToSY');
+
                     if (show) {
-                        container.classList.remove('hidden');
-                        input.required = true;
+                        lastSemContainer.classList.remove('hidden');
+                        fromSYContainer.classList.remove('hidden');
+                        toSYContainer.classList.remove('hidden');
+                        lastSemInput.required = false;
+                        fromSYInput.required = false;
+                        toSYInput.required = false;
                     } else {
-                        container.classList.add('hidden');
-                        input.required = false;
-                        input.value = '';
+                        lastSemContainer.classList.add('hidden');
+                        fromSYContainer.classList.add('hidden');
+                        toSYContainer.classList.add('hidden');
+                        lastSemInput.required = false;
+                        fromSYInput.required = false;
+                        toSYInput.required = false;
+                        lastSemInput.value = '';
+                        fromSYInput.value = '';
+                        toSYInput.value = '';
                     }
                 };
 
@@ -1298,7 +1456,11 @@
                     const dateNeeded = document.getElementById('loanDate').value;
                     const studentStatusRaw = document.getElementById('loanStudentStatus').value; // currently-enrolled | not-enrolled
                     const lastSem = document.getElementById('loanLastSem').value.trim();
-                    const programYear = document.getElementById('loanProgram').value.trim();
+                    const college = document.getElementById('loanCollege').value.trim();
+                    const program = document.getElementById('loanProgram').value.trim();
+                    const year = document.getElementById('loanYear').value.trim();
+                    const fromSy = document.getElementById('loanFromSY').value.trim();
+                    const toSy = document.getElementById('loanToSY').value.trim();
                     const yearGraduated = document.getElementById('loanYearGraduated').value.trim();
                     const email = document.getElementById('loanEmail').value.trim();
                     const purpose = document.getElementById('loanPurpose').value.trim();
@@ -1314,7 +1476,11 @@
                     document.getElementById('loan-date_needed').value = dateNeeded;
                     document.getElementById('loan-student_status_hidden').value = studentStatusRaw.replace('-', '_');
                     document.getElementById('loan-last_semester_hidden').value = lastSem;
-                    document.getElementById('loan-program_year_hidden').value = programYear;
+                    document.getElementById('loan-college_hidden').value = college;
+                    document.getElementById('loan-program_hidden').value = program;
+                    document.getElementById('loan-year_hidden').value = year;
+                    document.getElementById('loan-from_sy_hidden').value = fromSy;
+                    document.getElementById('loan-to_sy_hidden').value = toSy;
                     document.getElementById('loan-year_graduated_hidden').value = yearGraduated;
                     document.getElementById('loan-email_hidden').value = email;
                     document.getElementById('loan-purpose_hidden').value = purpose;

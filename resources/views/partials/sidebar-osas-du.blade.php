@@ -3,8 +3,8 @@
         <!-- Dashboard -->
         <a href="{{ route('osas-du.dashboard') }}"
             class="flex items-center gap-3 px-6 py-4 font-medium cursor-pointer {{ request()->routeIs('osas-du.dashboard') ? 'bg-red-900 text-white' : 'text-red-900 hover:bg-red-800 hover:text-white' }} transition-colors rounded-r-lg w-full">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6 flex-shrink-0">
-                <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" class="{{ isset($sidebarCollapsed) && $sidebarCollapsed ? 'w-8 h-8' : 'w-6 h-6' }} flex-shrink-0" />
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="w-6 h-6 flex-shrink-0">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
             </svg>
             <span class="sidebar-text text-small">Dashboard</span>
         </a>
@@ -13,32 +13,17 @@
             class="flex items-center gap-3 px-6 py-4 font-medium cursor-pointer
             {{ request()->routeIs('osas-du.file-grievances') ? 'bg-red-900 text-white' : 'text-red-900 hover:bg-red-800 hover:text-white' }}
             transition-colors rounded-r-lg w-full">
-
-            <!-- Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg"
-                class="w-6 h-6 flex-shrink-0" viewBox="0 0 16 16" fill="currentColor">
-                <path fill-rule="evenodd" d="M2.5 1.045a.5.5 0 0 0-.5.5v10.91a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V5.364a.5.5 0 0 0-.152-.36L7.911 1.188a.5.5 0 0 0-.348-.142zm7.766 3.819L8.063 2.727v2.137zM6 5.5H4v-1h2zM10 8H4V7h6zm-6 2.5h6v-1H4z" clip-rule="evenodd" />
-                <path d="M13 7.5V14H4.5v1h9a.5.5 0 0 0 .5-.5v-7z" />
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="w-6 h-6 flex-shrink-0">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-
-            <!-- Label (will hide when collapsed) -->
             <span class="sidebar-text text-small">File Grievances</span>
         </a>
 
         <!-- Grievances -->
         <a href="{{ route('osas-du.grievances') }}"
             class="flex items-center gap-3 px-6 py-4 font-medium cursor-pointer {{ request()->routeIs('osas-du.grievances') ? 'bg-red-900 text-white' : 'text-red-900 hover:bg-red-800 hover:text-white' }} transition-colors rounded-r-lg w-full">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="{{ isset($sidebarCollapsed) && $sidebarCollapsed ? 'w-8 h-8' : 'w-6 h-6' }} flex-shrink-0">
-                <defs>
-                    <mask id="SVGWVB6RddW">
-                        <g fill="none" stroke-linejoin="round" stroke-width="4">
-                            <path fill="#fff" stroke="#fff" d="M5 7a3 3 0 0 1 3-3h24a3 3 0 0 1 3 3v37H8a3 3 0 0 1-3-3z" />
-                            <path stroke="#fff" d="M35 24a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v17a3 3 0 0 1-3 3h-5z" />
-                            <path stroke="#000" stroke-linecap="round" d="M11 12h8m-8 7h12" />
-                        </g>
-                    </mask>
-                </defs>
-                <path fill="currentColor" d="M0 0h48v48H0z" mask="url(#SVGWVB6RddW)" />
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="w-6 h-6 flex-shrink-0">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
             <span class="sidebar-text text-small">Grievances</span>
         </a>
@@ -46,8 +31,8 @@
         <!-- Profile -->
         <a href="{{ route('osas-du.profile') }}"
             class="flex items-center gap-3 px-6 py-4 font-medium cursor-pointer {{ request()->routeIs('osas-du.profile') ? 'bg-red-900 text-white' : 'text-red-900 hover:bg-red-800 hover:text-white' }} transition-colors rounded-r-lg w-full">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="{{ isset($sidebarCollapsed) && $sidebarCollapsed ? 'w-8 h-8' : 'w-6 h-6' }} flex-shrink-0">
-                <path fill="currentColor" fill-rule="evenodd" d="M256 42.667A213.333 213.333 0 0 1 469.334 256c0 117.821-95.513 213.334-213.334 213.334c-117.82 0-213.333-95.513-213.333-213.334C42.667 138.18 138.18 42.667 256 42.667m21.334 234.667h-42.667c-52.815 0-98.158 31.987-117.715 77.648c30.944 43.391 81.692 71.685 139.048 71.685s108.104-28.294 139.049-71.688c-19.557-45.658-64.9-77.645-117.715-77.645M256 106.667c-35.346 0-64 28.654-64 64s28.654 64 64 64s64-28.654 64-64s-28.653-64-64-64" />
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="w-6 h-6 flex-shrink-0">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
             <span class="sidebar-text text-small">Profile</span>
         </a>
@@ -56,8 +41,8 @@
     <form method="POST" action="{{ route('logout') }}" class="mt-auto">
         @csrf
         <button type="submit" class="flex items-center gap-3 px-6 py-4 font-medium text-red-900 hover:bg-red-800 hover:text-white transition-colors rounded-r-lg w-full">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6 flex-shrink-0">
-                <path d="M16 13v-2H7V8l-5 4 5 4v-3h9zm3-10H5c-1.1 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" />
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="w-6 h-6 flex-shrink-0">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
             <span class="sidebar-text text-base">Log out</span>
         </button>

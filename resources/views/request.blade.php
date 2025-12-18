@@ -71,24 +71,38 @@
         }
 
         .error-msg {
-            font-size: 12px;
+            font-size: 10px;
             color: #dc2626;
-            margin-top: 4px;
+            margin-top: 2px;
             display: none;
-            position: absolute;
-            bottom: -20px;
-            left: 0;
+            transition: all 0.2s ease;
         }
 
         /* Ensure parent container has space for error message */
         .form-field-wrapper {
             position: relative;
-            margin-bottom: 28px;
+            transition: margin-bottom 0.2s ease;
+        }
+
+        .form-field-wrapper.has-error {
+            margin-bottom: 4px;
         }
 
         /* Add padding to form step containers to prevent error message cutoff */
         .form-step .relative {
-            margin-bottom: 28px;
+            transition: margin-bottom 0.2s ease;
+        }
+
+        .form-step .relative.has-error {
+            margin-bottom: 4px;
+        }
+
+        .loan-form-step .relative {
+            transition: margin-bottom 0.2s ease;
+        }
+
+        .loan-form-step .relative.has-error {
+            margin-bottom: 4px;
         }
     </style>
 </head>
@@ -135,9 +149,9 @@
 
         <!-- Form Modal (Multi-Step) -->
         <div id="good-moral-modal" class="modal fixed inset-0 hidden bg-black/50 z-50 items-center justify-center p-4">
-            <div class="modal-content bg-white rounded-2xl p-8 shadow-2xl max-w-2xl w-full relative overflow-y-auto max-h-[90vh]">
-                <button class="close-btn absolute top-4 right-4 text-2xl text-gray-400 hover:text-gray-600">&times;</button>
-
+            <div class="modal-content bg-gray-50 rounded-xl p-6 shadow-xl max-w-2xl w-2/3 relative overflow-y-auto max-h-[80vh]">
+                <button class="close-btn absolute top-3 right-3 text-xl text-gray-400 hover:text-red-600">&times;</button>
+                <h2 class="text-lg font-bold mb-4 text-center" style="color:#8B0000;">Good Moral Certificate Request</h2>
                 <!-- Step Progress Indicator -->
                 <div class="mb-8">
                     <div class="flex items-center justify-between max-w-md mx-auto">
@@ -299,12 +313,14 @@
                                     <div id="fromSYContainer" class="relative hidden">
                                         <input type="text" id="fromSY" name="fromSY" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="From SY">
                                         <label for="fromSY" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">From SY</label>
+                                        <div class="error-msg text-red-600 text-xs mt-1">Required</div>
                                     </div>
 
                                     <!-- To SY (for Not Enrolled students) -->
                                     <div id="toSYContainer" class="relative hidden">
                                         <input type="text" id="toSY" name="toSY" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="To SY">
                                         <label for="toSY" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">To SY</label>
+                                        <div class="error-msg text-red-600 text-xs mt-1">Required</div>
                                     </div>
                                 </div>
                             </div>
@@ -316,7 +332,7 @@
                         <h2 class="text-2xl font-bold mb-6 text-gray-800">Additional Information</h2>
                         <div class="space-y-3">
                             <div class="relative">
-                                <input type="email" id="email" name="email" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Email address" required>
+                                <input type="email" id="email" name="email" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" title="Please enter a valid email address" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Email address" required>
                                 <label for="email" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Email address</label>
                             </div>
 
@@ -702,12 +718,14 @@
                                     <div id="loanFromSYContainer" class="relative hidden">
                                         <input type="text" id="loanFromSY" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="From SY">
                                         <label for="loanFromSY" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">From SY</label>
+                                        <div class="error-msg text-red-600 text-xs mt-1">Required</div>
                                     </div>
 
                                     <!-- To SY (for Not Enrolled students) -->
                                     <div id="loanToSYContainer" class="relative hidden">
                                         <input type="text" id="loanToSY" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="To SY">
                                         <label for="loanToSY" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">To SY</label>
+                                        <div class="error-msg text-red-600 text-xs mt-1">Required</div>
                                     </div>
                                 </div>
                             </div>
@@ -718,7 +736,7 @@
                         <h2 class="text-2xl font-bold mb-6 text-gray-800">Additional Information</h2>
                         <div class="space-y-3">
                             <div class="relative">
-                                <input type="email" id="loanEmail" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Email address" required>
+                                <input type="email" id="loanEmail" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" title="Please enter a valid email address" class="peer p-4 block w-full border border-gray-300 rounded-lg text-sm placeholder:text-transparent focus:border-blue-500 focus:ring-0 focus:outline-none focus:pt-6 focus:pb-2 [&:not(:placeholder-shown)]:pt-6 [&:not(:placeholder-shown)]:pb-2" placeholder="Email address" required>
                                 <label for="loanEmail" class="absolute top-0 start-0 p-4 h-full text-gray-500 text-sm truncate pointer-events-none transition ease-in-out duration-100 border border-transparent origin-[0_0] peer-focus:scale-90 peer-focus:translate-x-0.5 peer-focus:-translate-y-1.5 peer-focus:text-gray-500 peer-[:not(:placeholder-shown)]:scale-90 peer-[:not(:placeholder-shown)]:translate-x-0.5 peer-[:not(:placeholder-shown)]:-translate-y-1.5 peer-[:not(:placeholder-shown)]:text-gray-500">Email address</label>
                             </div>
                             <div class="relative">
@@ -745,6 +763,8 @@
                 @if(session('success'))
                 window.lastPdfUrl = @json(session('pdf_url'));
                 lastSubmittedType = @json(session('success'));
+                console.log('PDF URL:', window.lastPdfUrl);
+                console.log('Request Type:', lastSubmittedType);
                 // Show success modal
                 const successModal = document.getElementById('success-modal');
                 if (successModal) {
@@ -1007,11 +1027,13 @@
 
                 function showFieldError(input, msg) {
                     input.classList.add('error-border');
-                    let em = input.parentElement.querySelector('.error-msg');
+                    const parent = input.closest('.relative') || input.parentElement;
+                    parent.classList.add('has-error');
+                    let em = parent.querySelector('.error-msg');
                     if (!em) {
                         em = document.createElement('div');
                         em.className = 'error-msg';
-                        input.parentElement.appendChild(em);
+                        parent.appendChild(em);
                     }
                     em.textContent = msg;
                     em.style.display = 'block';
@@ -1019,7 +1041,9 @@
 
                 function clearFieldError(input) {
                     input.classList.remove('error-border');
-                    const em = input.parentElement.querySelector('.error-msg');
+                    const parent = input.closest('.relative') || input.parentElement;
+                    parent.classList.remove('has-error');
+                    const em = parent.querySelector('.error-msg');
                     if (em) em.style.display = 'none';
                 }
 
@@ -1448,13 +1472,14 @@
                     submitBtn.dataset.loading = '1';
                     submitBtn.textContent = 'Submitting...';
                     submitBtn.classList.add('btn-disabled');
+
                     // Gather from loan wizard
                     const firstName = document.getElementById('loanFirstName').value.trim();
                     const lastName = document.getElementById('loanLastName').value.trim();
                     const middleName = document.getElementById('loanMiddleName').value.trim();
                     const contact = document.getElementById('loanContact').value.trim();
                     const dateNeeded = document.getElementById('loanDate').value;
-                    const studentStatusRaw = document.getElementById('loanStudentStatus').value; // currently-enrolled | not-enrolled
+                    const studentStatusRaw = document.getElementById('loanStudentStatus').value;
                     const lastSem = document.getElementById('loanLastSem').value.trim();
                     const college = document.getElementById('loanCollege').value.trim();
                     const program = document.getElementById('loanProgram').value.trim();
@@ -1468,7 +1493,7 @@
                     const gender = genderEl ? genderEl.value : '';
                     const loanAmt = parseFloat(document.getElementById('loan-amount').value) || 0;
 
-                    // Map
+                    // Map to hidden form
                     document.getElementById('loan-first_name_hidden').value = firstName;
                     document.getElementById('loan-last_name_hidden').value = lastName;
                     document.getElementById('loan-middle_name_hidden').value = middleName;
@@ -1485,48 +1510,29 @@
                     document.getElementById('loan-email_hidden').value = email;
                     document.getElementById('loan-purpose_hidden').value = purpose;
                     document.getElementById('loan-gender_hidden').value = gender;
-                    document.getElementById('loan-loan_amount_hidden').value = loanAmt.toFixed(2);
+                    document.getElementById('loan-loan_amount_hidden').value = loanAmt;
 
-                    // Store the reference for PDF viewing later
-                    const formData = new FormData(document.getElementById('loan-submit-form'));
-                    const loanSubmitUrl = @json(route('safeloan.store'));
-
-                    fetch(loanSubmitUrl, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    }).then(response => {
-                        if (response.redirected) {
-                            // Store the show page URL, we'll need to get print URL from it
-                            window.lastShowUrl = response.url;
-                            lastSubmittedType = 'safe-loan';
-
-                            // Reset button and show modal
-                            submitBtn.dataset.loading = '0';
-                            submitBtn.textContent = 'Submit Request';
-                            submitBtn.classList.remove('btn-disabled');
-                            closeModal(modals['payment-slip-loan']);
-                            openModal('success');
-                        }
-                    }).catch(error => {
-                        console.error('Error:', error);
-                        submitBtn.dataset.loading = '0';
-                        submitBtn.textContent = 'Submit Request';
-                        submitBtn.classList.remove('btn-disabled');
-                    });
+                    // Submit the form normally (not via AJAX)
+                    document.getElementById('loan-submit-form').submit();
                 });
 
                 // View slip button in success modal
                 document.getElementById('view-slip-btn').addEventListener('click', () => {
+                    console.log('View Receipt clicked');
+                    console.log('lastPdfUrl:', window.lastPdfUrl);
+                    console.log('lastShowUrl:', window.lastShowUrl);
+
                     // Open PDF in new window based on stored URL
                     if (window.lastPdfUrl) {
+                        console.log('Opening PDF:', window.lastPdfUrl);
                         window.open(window.lastPdfUrl, '_blank');
                     } else if (window.lastShowUrl) {
                         // For safe loan, construct the print URL from show URL
                         const printUrl = window.lastShowUrl.replace('/requests/safe-loan/', '/requests/safe-loan/') + '/print';
+                        console.log('Opening constructed URL:', printUrl);
                         window.open(printUrl, '_blank');
+                    } else {
+                        console.error('No PDF URL available');
                     }
                 }); // Helper functions
                 function openModal(option) {

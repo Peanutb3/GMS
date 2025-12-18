@@ -69,8 +69,8 @@
             <tr>
                 <th scope="col" class="px-6 py-3 font-medium">Case ID</th>
                 <th scope="col" class="px-6 py-3 font-medium">Name</th>
-                <th scope="col" class="px-6 py-3 font-medium">College</th>
                 <th scope="col" class="px-6 py-3 font-medium">Program</th>
+                <th scope="col" class="px-6 py-3 font-medium">Type</th>
                 <th scope="col" class="px-6 py-3 font-medium">Action</th>
                 <th scope="col" class="px-6 py-3 font-medium">Date</th>
             </tr>
@@ -82,30 +82,6 @@
                 <td class="px-6 py-4">{{ $h['name'] }}</td>
                 <td class="px-6 py-4">
                     @php
-                    // Get college from history item or try to lookup student
-                    $college = $h['college'] ?? '-';
-
-                    // If we have student_id and college is still empty, try to find student
-                    if ($college === '-' && !empty($h['student_id'])) {
-                    // Since student_id is encrypted, search all students and compare decrypted values
-                    $student = \App\Models\Student::all()->first(function($s) use ($h) {
-                    return $s->student_id === $h['student_id'];
-                    });
-                    $college = $student ? $student->college_name : '-';
-                    }
-
-                    // Look up college code from database
-                    if ($college !== '-') {
-                    $collegeModel = \App\Models\College::where('name', $college)->first();
-                    $collegeAbbr = $collegeModel && $collegeModel->code ? $collegeModel->code : $college;
-                    } else {
-                    $collegeAbbr = '-';
-                    }
-                    @endphp
-                    <span title="{{ $college }}">{{ $collegeAbbr }}</span>
-                </td>
-                <td class="px-6 py-4">
-                    @php
                     $prog = $h['program'];
 
                     // Look up program code from database
@@ -113,6 +89,9 @@
                     $progAbbr = $programModel && $programModel->code ? $programModel->code : $prog;
                     @endphp
                     <span title="{{ $prog }}">{{ $progAbbr }}</span>
+                </td>
+                <td class="px-6 py-4">
+                    {{ $h['grievance_type'] ?? 'Grievance' }}
                 </td>
                 <td class="px-6 py-4">
                     @php
@@ -130,7 +109,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="7" class="px-6 py-8 text-center text-gray-500">No history found.</td>
+                <td colspan="6" class="px-6 py-8 text-center text-gray-500">No history found.</td>
             </tr>
             @endforelse
         </tbody>
@@ -141,12 +120,12 @@
             <tr>
                 <th scope="col" class="px-6 py-3 font-medium">Case ID</th>
                 <th scope="col" class="px-6 py-3 font-medium">Name</th>
-                <th scope="col" class="px-6 py-3 font-medium">College</th>
                 <th scope="col" class="px-6 py-3 font-medium">Program</th>
+                <th scope="col" class="px-6 py-3 font-medium">Type</th>
                 <th scope="col" class="px-6 py-3 font-medium">Date</th>
                 <th scope="col" class="px-6 py-3 font-medium">Status</th>
                 <th scope="col" class="px-6 py-3 font-medium">Attachment</th>
-                <th scope="col" class="px-6 py-3 font-medium">Filed By</th>
+                <!-- <th scope="col" class="px-6 py-3 font-medium">Filed By</th> -->
                 <th scope="col" class="px-6 py-3 font-medium text-right">Action</th>
             </tr>
         </thead>
@@ -156,20 +135,6 @@
             <tr class="odd:bg-white even:bg-gray-50 border-b border-gray-200 hover:bg-gray-100 cursor-pointer" onclick="openGrievanceModal({{ $g->id }}, '{{ addslashes($g->case_id) }}', '{{ addslashes(optional($g->student)->first_name ? optional($g->student)->first_name . ' ' . optional($g->student)->last_name : ($g->name_snapshot ?? $g->name ?? '-')) }}', '{{ addslashes(optional($g->student)->program ?? ($g->program_snapshot ?? $g->program ?? '-')) }}', '{{ addslashes(str_replace('_', ' ', $g->grievance)) }}', '{{ $g->created_at->format('Y-m-d') }}', '{{ $g->status }}', '{{ addslashes($g->description ?? '') }}', '{{ addslashes($g->remarks ?? '') }}', '{{ addslashes($g->filed_by_display) }}')">
                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{{ $g->case_id }}</th>
                 <td class="px-6 py-4">{{ optional($g->student)->first_name ? optional($g->student)->first_name . ' ' . optional($g->student)->last_name : ($g->name_snapshot ?? $g->name ?? '-') }}</td>
-                <td class="px-6 py-4">
-                    @php
-                    $college = optional($g->student)->college_name ?? ($g->college_snapshot ?? '-');
-
-                    // Look up college code from database
-                    if ($college !== '-') {
-                    $collegeModel = \App\Models\College::where('name', $college)->first();
-                    $collegeAbbr = $collegeModel && $collegeModel->code ? $collegeModel->code : $college;
-                    } else {
-                    $collegeAbbr = '-';
-                    }
-                    @endphp
-                    <span title="{{ $college }}">{{ $collegeAbbr }}</span>
-                </td>
                 <td class="px-6 py-4">
                     @php
                     $prog = optional($g->student)->program_name ?? ($g->program_snapshot ?? '-');
@@ -184,6 +149,9 @@
                     @endphp
                     <span title="{{ $prog }}">{{ $progAbbr }}</span>
                 </td>
+                <td class="px-6 py-4">
+                    {{ str_replace('_', ' ', $g->grievance) }}
+                </td>
                 <td class="px-6 py-4">{{ $g->created_at->format('Y-m-d') }}</td>
                 <td class="px-6 py-4">
                     @php
@@ -194,7 +162,7 @@
                     default => 'bg-gray-100 text-gray-800'
                     };
                     @endphp
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $statusClass }}">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap {{ $statusClass }}">
                         {{ ucfirst(str_replace('_',' ',$g->status)) }}
                     </span>
                 </td>
@@ -210,7 +178,7 @@
                     <span class="text-gray-400 text-sm">—</span>
                     @endif
                 </td>
-                <td class="px-6 py-4">{{ $g->filed_by_display }}</td>
+                <!-- <td class="px-6 py-4">{{ $g->filed_by_display }}</td> -->
                 <td class="px-6 py-4 text-right">
                     <div class="relative inline-block" onclick="event.stopPropagation();">
                         <button onclick="toggleKebab(event, 'grv-{{ $g->id }}')" type="button" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-red-200">
@@ -614,7 +582,7 @@
             'in_progress': 'bg-blue-100 text-blue-800',
             'resolved': 'bg-green-100 text-green-800'
         } [status] || 'bg-gray-100 text-gray-800';
-        statusEl.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + statusClass;
+        statusEl.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ' + statusClass;
         statusEl.textContent = status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
 
         document.getElementById('grievanceModal').classList.remove('hidden');
@@ -798,22 +766,10 @@
         const spinner = document.getElementById('statusLoadingSpinner');
         const btnText = document.getElementById('statusBtnText');
 
-        // Show loading
+        // Show loading on button only
         btn.disabled = true;
         spinner.classList.remove('hidden');
         btnText.textContent = 'Updating...';
-
-        // Show browser loading indicator
-        const loadingOverlay = document.createElement('div');
-        loadingOverlay.id = 'page-loading-overlay';
-        loadingOverlay.className = 'fixed inset-0 bg-white bg-opacity-75 z-[10000] flex items-center justify-center';
-        loadingOverlay.innerHTML = `
-            <div class=\"flex flex-col items-center\">
-                <div class=\"animate-spin rounded-full h-12 w-12 border-b-2 border-red-800\"></div>
-                <p class=\"mt-4 text-gray-600 font-medium\">Updating status...</p>
-            </div>
-        `;
-        document.body.appendChild(loadingOverlay);
 
         fetch(`/osas-du/grievances/${id}/status`, {
                 method: 'PATCH',
@@ -844,7 +800,7 @@
             })
             .catch(err => {
                 console.error('Status change error:', err);
-                document.getElementById('page-loading-overlay')?.remove();
+
                 createToast('Failed to update status: ' + err.message, 'error');
                 btn.disabled = false;
                 spinner.classList.add('hidden');

@@ -265,43 +265,58 @@ class GrievanceController extends Controller
             $data['attachment_path'] = $path;
         }
 
-        // Generate case ID: GRV-YY-###
-        $year = date('y'); // Last 2 digits of year (e.g., 25 for 2025)
-        $count = Grievance::whereYear('created_at', date('Y'))->count() + 1;
-        $data['case_id'] = 'GRV-' . $year . '-' . str_pad($count, 3, '0', STR_PAD_LEFT);
-        $data['status'] = 'pending';
+        // Wrap entire grievance creation in a transaction to prevent duplicate case_ids
+        $grievance = \DB::transaction(function () use ($data) {
+            $year = date('y');
 
-        // Try to attach student_record_id and populate snapshot fields
-        if (!empty($data['student_id'])) {
-            // Since student_id is encrypted, we need to search all students and compare decrypted values
-            $student = \App\Models\Student::all()->first(function ($s) use ($data) {
-                return $s->student_id === $data['student_id'];
-            });
+            // Lock the table and get the last case_id for this year
+            $lastGrievance = Grievance::whereYear('created_at', date('Y'))
+                ->lockForUpdate()
+                ->orderByRaw('CAST(SUBSTRING(case_id, 8) AS UNSIGNED) DESC')
+                ->first();
 
-            if ($student) {
-                $data['student_record_id'] = $student->id;
-                // Populate snapshot fields from student record
-                $data['name_snapshot'] = $student->first_name . ' ' . $student->last_name;
-                $data['student_no_snapshot'] = $student->student_id;
-                $data['college_snapshot'] = $student->college_name;
-                $data['program_snapshot'] = $student->program_name;
+            if ($lastGrievance && preg_match('/GRV-' . $year . '-(\d+)/', $lastGrievance->case_id, $matches)) {
+                $count = intval($matches[1]) + 1;
             } else {
-                // Student ID provided but not found - use form data for snapshots
+                $count = 1;
+            }
+
+            $caseId = 'GRV-' . $year . '-' . str_pad($count, 3, '0', STR_PAD_LEFT);
+            $data['case_id'] = $caseId;
+            $data['status'] = 'pending';
+
+            // Try to attach student_record_id and populate snapshot fields
+            if (!empty($data['student_id'])) {
+                // Since student_id is encrypted, we need to search all students and compare decrypted values
+                $student = \App\Models\Student::all()->first(function ($s) use ($data) {
+                    return $s->student_id === $data['student_id'];
+                });
+
+                if ($student) {
+                    $data['student_record_id'] = $student->id;
+                    // Populate snapshot fields from student record
+                    $data['name_snapshot'] = $student->first_name . ' ' . $student->last_name;
+                    $data['student_no_snapshot'] = $student->student_id;
+                    $data['college_snapshot'] = $student->college_name;
+                    $data['program_snapshot'] = $student->program_name;
+                } else {
+                    // Student ID provided but not found - use form data for snapshots
+                    $data['name_snapshot'] = $data['name'];
+                    $data['student_no_snapshot'] = $data['student_id'];
+                    $data['college_snapshot'] = $data['college'] ?? null;
+                    $data['program_snapshot'] = $data['program'] ?? null;
+                }
+            } else {
+                // No student ID - use form data for snapshots
                 $data['name_snapshot'] = $data['name'];
-                $data['student_no_snapshot'] = $data['student_id'];
+                $data['student_no_snapshot'] = null;
                 $data['college_snapshot'] = $data['college'] ?? null;
                 $data['program_snapshot'] = $data['program'] ?? null;
             }
-        } else {
-            // No student ID - use form data for snapshots
-            $data['name_snapshot'] = $data['name'];
-            $data['student_no_snapshot'] = null;
-            $data['college_snapshot'] = $data['college'] ?? null;
-            $data['program_snapshot'] = $data['program'] ?? null;
-        }
 
-        // No need to set filed_by here anymore — model handles it.
-        $grievance = Grievance::create($data);
+            // Create the grievance inside the transaction
+            return Grievance::create($data);
+        });
 
         // Notify all admins about new grievance
         $studentName = $data['name'];

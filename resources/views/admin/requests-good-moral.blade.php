@@ -91,6 +91,7 @@
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Student</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Program & Year</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Purpose</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">OR Number</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Status</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Date</th>
                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Actions</th>
@@ -149,6 +150,9 @@
                     </td>
                     <td class="px-6 py-4 text-sm text-gray-700">
                         {{ $request->purpose ?? 'N/A' }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                        {{ $request->or_number ?? '—' }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <span class="px-3 py-1 text-xs font-semibold rounded-full

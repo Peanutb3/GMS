@@ -38,7 +38,9 @@ class SafeLoanRequestController extends Controller
 
         $req = SafeLoanRequest::create($data);
 
-        return redirect()->route('safe-loan.show', $req);
+        return redirect()->route('request')
+            ->with('success', 'safe-loan')
+            ->with('pdf_url', route('safe-loan.print', $req));
     }
 
     public function show(SafeLoanRequest $requestModel)
@@ -90,6 +92,33 @@ class SafeLoanRequestController extends Controller
         $pdf->setPaper('A4', 'portrait');
 
         return $pdf->stream('safe-loan-request-' . $requestModel->reference_no . '.pdf');
+    }
+
+    public function enterOrNumber(Request $request, $id)
+    {
+        $request->validate([
+            'or_number' => ['required', 'string', 'max:100'],
+        ]);
+
+        $safeLoanRequest = SafeLoanRequest::findOrFail($id);
+
+        $safeLoanRequest->update([
+            'or_number' => $request->or_number,
+            'or_entered_at' => now(),
+        ]);
+
+        \App\Models\AuditLog::create([
+            'auditable_type' => SafeLoanRequest::class,
+            'auditable_id' => $safeLoanRequest->id,
+            'action' => 'or_entered',
+            'user_id' => optional($request->user())->id,
+            'staff_id' => optional($request->user()->staff ?? null)->id,
+            'old_values' => ['or_number' => null],
+            'new_values' => ['or_number' => $request->or_number],
+            'ip_address' => $request->ip(),
+        ]);
+
+        return response()->json(['success' => true]);
     }
 
     public function markDone($id)
@@ -155,14 +184,15 @@ class SafeLoanRequestController extends Controller
         \App\Models\AuditLog::create([
             'auditable_type' => SafeLoanRequest::class,
             'auditable_id' => $safeLoanRequest->id,
-            'action' => 'deleted',
+            'action' => 'soft_deleted',
             'user_id' => auth()->id(),
             'staff_id' => optional(auth()->user())->staff_id,
             'old_values' => $safeLoanRequest->toArray(),
-            'new_values' => null,
+            'new_values' => ['deleted_at' => now()],
             'ip_address' => request()->ip(),
         ]);
 
+        // Soft delete
         $safeLoanRequest->delete();
 
         return redirect()->route('osas-gmc.requests', ['tab' => 'safeloan'])

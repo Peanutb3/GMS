@@ -51,6 +51,7 @@ Route::patch('/good-moral/{goodMoralRequest}/change-status', [GoodMoralRequestCo
 Route::delete('/good-moral/{goodMoralRequest}', [GoodMoralRequestController::class, 'destroy'])->name('good-moral.delete');
 Route::post('/requests/safe-loan', [SafeLoanRequestController::class, 'store'])->name('safeloan.store');
 Route::get('/requests/safe-loan/{requestModel}', [SafeLoanRequestController::class, 'show'])->name('safe-loan.show');
+Route::post('/safe-loan/{id}/enter-or', [SafeLoanRequestController::class, 'enterOrNumber'])->name('safe-loan.enter-or');
 Route::patch('/safe-loan/{id}/mark-done', [SafeLoanRequestController::class, 'markDone'])->name('safe-loan.mark-done');
 Route::patch('/safe-loan/{id}/change-status', [SafeLoanRequestController::class, 'changeStatus'])->name('safe-loan.change-status');
 Route::delete('/safe-loan/{id}', [SafeLoanRequestController::class, 'destroy'])->name('safe-loan.delete');
@@ -58,7 +59,6 @@ Route::delete('/safe-loan/{id}', [SafeLoanRequestController::class, 'destroy'])-
 // API endpoints for dynamic form data
 Route::get('/api/colleges', [\App\Http\Controllers\CollegeProgramController::class, 'getColleges']);
 Route::get('/api/programs/{collegeId}', [\App\Http\Controllers\CollegeProgramController::class, 'getProgramsByCollege']);
-Route::get('/requests/safe-loan/{requestModel}/print', [SafeLoanRequestController::class, 'print'])->name('safe-loan.print');
 Route::get('/requests/safe-loan/{requestModel}/print', [SafeLoanRequestController::class, 'print'])->name('safe-loan.print');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 

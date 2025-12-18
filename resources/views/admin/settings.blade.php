@@ -157,12 +157,12 @@
 
     <form action="{{ route('admin.settings.test-email') }}" method="POST" class="space-y-4">
         @csrf
-        <div class="flex gap-4 items-end">
+        <div class="flex gap-4 items-start">
             <div class="flex-1">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Test Email Address</label>
                 <input type="email" name="test_email"
                     placeholder="Enter email address to test"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent"
+                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-transparent"
                     required>
                 <p class="text-xs text-gray-500 mt-1">
                     @if(config('mail.default') === 'log')
@@ -172,7 +172,7 @@
                     @endif
                 </p>
             </div>
-            <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors flex items-center gap-2">
+            <button type="submit" class="mt-7 px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                 </svg>

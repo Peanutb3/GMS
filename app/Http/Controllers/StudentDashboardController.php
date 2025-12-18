@@ -18,21 +18,31 @@ class StudentDashboardController extends Controller
             return view('student.dashboard', compact('user', 'student', 'myGrievances'));
         }
 
-        // Get all grievances and filter them after loading
-        // Since student_id is encrypted, we can't do a direct database WHERE comparison
-        $myGrievances = Grievance::where('student_record_id', $student->id)
+        // Get recent grievances (last 7 days) for dashboard preview
+        $recentGrievances = Grievance::where('student_record_id', $student->id)
             ->orWhere(function ($q) use ($student) {
-                // Get all grievances with a student_no_snapshot
                 $q->whereNotNull('student_no_snapshot');
             })
+            ->where('created_at', '>=', now()->subDays(7))
             ->orderByDesc('created_at')
+            ->take(5)
             ->get()
             ->filter(function ($grievance) use ($student) {
-                // Filter: either direct link OR student_no_snapshot matches decrypted student_id
                 return $grievance->student_record_id === $student->id
                     || $grievance->student_no_snapshot === $student->student_id;
             });
 
-        return view('student.dashboard', compact('user', 'student', 'myGrievances'));
+        // Get total counts for summary cards (all time)
+        $totalGrievances = Grievance::where('student_record_id', $student->id)
+            ->orWhere(function ($q) use ($student) {
+                $q->whereNotNull('student_no_snapshot');
+            })
+            ->get()
+            ->filter(function ($grievance) use ($student) {
+                return $grievance->student_record_id === $student->id
+                    || $grievance->student_no_snapshot === $student->student_id;
+            });
+
+        return view('student.dashboard', compact('user', 'student', 'recentGrievances', 'totalGrievances'));
     }
 }

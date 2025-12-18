@@ -13,15 +13,15 @@ $currentStyle = $styles[$type] ?? $styles['info'];
 
 <!-- Fixed position toast below header at top right -->
 <div class="!fixed !top-20 !right-4 !z-50 animate-fade-in" style="position: fixed !important; top: 5rem !important; right: 1rem !important; z-index: 9999 !important; width: calc(100% - 2rem); max-width: 24rem;">
-    <div id="toast-{{ $type }}" class="relative flex items-center w-full max-w-sm p-4 rounded-lg shadow border border-gray-200 {{ $currentStyle }} overflow-hidden" role="alert">
+    <div id="toast-{{ $type }}" class="relative flex items-center w-full max-w-sm p-4 rounded-lg shadow border border-gray-200 {{ $currentStyle }}" role="alert">
         <!-- Timer Progress Bar -->
-        <div class="absolute bottom-0 left-0 h-1
+        <div class="absolute bottom-0 left-0 h-1 w-full
             @if($type === 'success') bg-green-500
             @elseif($type === 'error') bg-red-500
             @elseif($type === 'warning') bg-orange-500
             @else bg-blue-500
             @endif
-            toast-timer-bar"></div>
+            toast-timer-bar" style="transform-origin: left;"></div>
 
         <div class="inline-flex items-center justify-center shrink-0 w-8 h-8 mr-3 rounded-lg
             @if($type === 'success') bg-green-100 text-green-600
@@ -76,16 +76,16 @@ $currentStyle = $styles[$type] ?? $styles['info'];
 
     @keyframes timer-progress {
         from {
-            width: 100%;
+            transform: scaleX(1);
         }
 
         to {
-            width: 0%;
+            transform: scaleX(0);
         }
     }
 
     .toast-timer-bar {
-        animation: timer-progress 3s linear forwards;
+        animation: timer-progress 5s linear forwards;
     }
 </style>
 

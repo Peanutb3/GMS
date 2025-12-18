@@ -56,8 +56,8 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="relative">
-                        <label for="student_id" class="block text-sm font-medium text-gray-700 mb-2">Student ID</label>
-                        <input type="text" id="student_id" name="student_id" placeholder="Enter student ID"
+                        <label for="student_id" class="block text-sm font-medium text-gray-700 mb-2">Student ID <span class="text-red-600">*</span></label>
+                        <input type="text" id="student_id" name="student_id" placeholder="Enter student ID" required
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-red-800 outline-none transition-all hover:border-gray-400" />
                     </div>
 
@@ -70,8 +70,8 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="relative">
-                        <label for="college" class="block text-sm font-medium text-gray-700 mb-2">College</label>
-                        <select id="college" name="college"
+                        <label for="college" class="block text-sm font-medium text-gray-700 mb-2">College <span class="text-red-600">*</span></label>
+                        <select id="college" name="college" required
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-red-800 outline-none appearance-none bg-white transition-all hover:border-gray-400">
                             <option value=""></option>
                         </select>
@@ -83,8 +83,8 @@
                     </div>
 
                     <div class="relative">
-                        <label for="program" class="block text-sm font-medium text-gray-700 mb-2">Program</label>
-                        <select id="program" name="program" disabled
+                        <label for="program" class="block text-sm font-medium text-gray-700 mb-2">Program <span class="text-red-600">*</span></label>
+                        <select id="program" name="program" disabled required
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-red-800 outline-none appearance-none bg-white transition-all hover:border-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed">
                             <option value=""></option>
                         </select>
@@ -108,8 +108,8 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="relative">
-                        <label for="date" class="block text-sm font-medium text-gray-700 mb-2">Date</label>
-                        <input type="date" id="date" name="date"
+                        <label for="date" class="block text-sm font-medium text-gray-700 mb-2">Date <span class="text-red-600">*</span></label>
+                        <input type="date" id="date" name="date" required
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-red-800 outline-none transition-all hover:border-gray-400" />
                     </div>
 

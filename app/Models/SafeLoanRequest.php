@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SafeLoanRequest extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'student_id',
@@ -39,6 +40,7 @@ class SafeLoanRequest extends Model
     protected $casts = [
         'or_entered_at' => 'datetime',
         'completed_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     public function student()

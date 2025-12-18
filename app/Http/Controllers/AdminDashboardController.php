@@ -16,7 +16,7 @@ class AdminDashboardController extends Controller
         // Overview counts
         $stats = [
             'total_students' => Student::count(),
-            'total_staff' => User::where('role', 'staff')->count(),
+            'total_staff' => User::whereIn('role', ['staff', 'osas_gmc', 'osas_du'])->count(),
             'total_admins' => User::where('role', 'admin')->count(),
             'total_grievances' => Grievance::count(),
             'pending_grievances' => Grievance::where('status', 'pending')->count(),
@@ -25,8 +25,9 @@ class AdminDashboardController extends Controller
             'pending_good_moral' => GoodMoralRequest::where('status', 'pending')->count(),
         ];
 
-        // Recent grievances
-        $recentGrievances = Grievance::latest()
+        // Recent grievances (last 7 days)
+        $recentGrievances = Grievance::where('created_at', '>=', now()->subDays(7))
+            ->latest()
             ->take(5)
             ->get();
 
@@ -47,8 +48,9 @@ class AdminDashboardController extends Controller
             ->get()
             ->pluck('count', 'status');
 
-        // Recent good moral requests
-        $recentGoodMoral = GoodMoralRequest::latest()
+        // Recent good moral requests (last 7 days)
+        $recentGoodMoral = GoodMoralRequest::where('created_at', '>=', now()->subDays(7))
+            ->latest()
             ->take(5)
             ->get();
 

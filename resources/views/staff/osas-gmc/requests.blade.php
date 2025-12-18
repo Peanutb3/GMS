@@ -55,12 +55,6 @@
     </div>
 </div>
 
-@if (session('status'))
-<div class="mb-4 px-4 py-3 rounded-md bg-green-50 text-green-800 border border-green-200">
-    {{ session('status') }}
-</div>
-@endif
-
 
 
 @php
@@ -102,6 +96,7 @@ return str_contains($hay, strtoupper($q));
                 <th scope="col" class="px-6 py-3 font-medium">Loan Amount</th>
                 <th scope="col" class="px-6 py-3 font-medium">Purpose</th>
                 @if((request('view') ?? 'active') === 'history')
+                <th scope="col" class="px-6 py-3 font-medium">OR Number</th>
                 <th scope="col" class="px-6 py-3 font-medium">Completed Date</th>
                 @else
                 <th scope="col" class="px-6 py-3 font-medium">Status</th>
@@ -117,6 +112,7 @@ return str_contains($hay, strtoupper($q));
                 <td class="px-6 py-4">{{ $r->loan_amount ? '₱'.number_format($r->loan_amount,2) : '—' }}</td>
                 <td class="px-6 py-4 max-w-xs truncate" title="{{ $r->purpose }}">{{ $r->purpose }}</td>
                 @if((request('view') ?? 'active') === 'history')
+                <td class="px-6 py-4">{{ $r->or_number ?? '—' }}</td>
                 <td class="px-6 py-4">{{ $r->completed_at ? \Carbon\Carbon::parse($r->completed_at)->format('M d, Y h:i A') : '—' }}</td>
                 @else
                 <td class="px-6 py-4">
@@ -143,6 +139,12 @@ return str_contains($hay, strtoupper($q));
                                 </svg>
                                 <span>View Document</span>
                             </a>
+                            <button onclick="event.stopPropagation(); openSLORModal({{ $r->id }}, '{{ $r->reference_no }}')" type="button" class="flex items-center gap-3 w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                <span>Enter OR Number</span>
+                            </button>
                             <button onclick="event.stopPropagation(); openSLStatusModal({{ $r->id }}, '{{ $r->reference_no }}', '{{ $r->status }}')" type="button" class="flex items-center gap-3 w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors text-left">
                                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
@@ -176,11 +178,15 @@ return str_contains($hay, strtoupper($q));
             </tr>
             @empty
             <tr>
-                <td colspan="{{ (request('view') ?? 'active') === 'history' ? '5' : '6' }}" class="px-6 py-8 text-center text-gray-500">No safe loan requests found.</td>
+                <td colspan="{{ (request('view') ?? 'active') === 'history' ? '6' : '6' }}" class="px-6 py-8 text-center text-gray-500">No safe loan requests found.</td>
             </tr>
             @endforelse
         </tbody>
     </table>
+</div>
+<!-- Pagination Links for Safe Loan -->
+<div class="mt-4">
+    {{ $safeLoans->appends(request()->except('sl_page'))->links() }}
 </div>
 @else
 <!-- Good Moral Requests Table -->
@@ -326,6 +332,10 @@ return str_contains($hay, strtoupper($q));
         </tbody>
     </table>
 </div>
+<!-- Pagination Links for Good Moral -->
+<div class="mt-4">
+    {{ $goodMorals->appends(request()->except('gm_page'))->links() }}
+</div>
 @endif
 <!-- Modal for printable view -->
 <div id="printModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
@@ -355,6 +365,26 @@ return str_contains($hay, strtoupper($q));
             </div>
             <div class="flex gap-3 justify-end">
                 <button type="button" onclick="closeORModal()" class="px-4 py-2 bg-gray-200 rounded-lg text-sm hover:bg-gray-300">Cancel</button>
+                <button type="submit" class="px-4 py-2 bg-red-800 text-white rounded-lg text-sm hover:bg-red-700">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Safe Loan OR Number Entry Modal -->
+<div id="slOrModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+    <div class="bg-white w-full max-w-md rounded-lg shadow-xl p-6">
+        <h3 class="text-lg font-semibold mb-4">Enter OR Number (Safe Loan)</h3>
+        <form id="slOrForm" method="POST" action="">
+            @csrf
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Reference No: <span id="slOrRefNo" class="font-bold"></span></label>
+                <input type="text" name="or_number" id="sl_or_number" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-red-800 outline-none"
+                    placeholder="Enter OR number">
+            </div>
+            <div class="flex gap-3 justify-end">
+                <button type="button" onclick="closeSLORModal()" class="px-4 py-2 bg-gray-200 rounded-lg text-sm hover:bg-gray-300">Cancel</button>
                 <button type="submit" class="px-4 py-2 bg-red-800 text-white rounded-lg text-sm hover:bg-red-700">Submit</button>
             </div>
         </form>
@@ -422,6 +452,32 @@ return str_contains($hay, strtoupper($q));
 </div>
 
 <script>
+    // Show toast notification function
+    function showToast(type, message) {
+        const toastHTML = `
+            <div class="fixed top-20 right-4 z-50 animate-fade-in" style="position: fixed !important; top: 5rem !important; right: 1rem !important; z-index: 9999 !important; width: calc(100% - 2rem); max-width: 24rem;">
+                <div class="relative flex items-center w-full max-w-sm p-4 rounded-lg shadow border border-gray-200 bg-white text-gray-800 overflow-hidden" role="alert">
+                    <div class="absolute bottom-0 left-0 h-1 ${type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500'} toast-timer-bar"></div>
+                    <div class="inline-flex items-center justify-center shrink-0 w-8 h-8 mr-3 rounded-lg ${type === 'success' ? 'bg-green-100 text-green-600' : type === 'error' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'}">
+                        ${type === 'success' ? '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/></svg>' : '<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z"/></svg>'}
+                    </div>
+                    <div class="ms-3 text-sm font-normal flex-1">${message}</div>
+                    <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8" onclick="this.closest('[role=alert]').parentElement.remove()">
+                        <svg class="w-3 h-3" fill="none" viewBox="0 0 14 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/></svg>
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', toastHTML);
+        const toast = document.body.lastElementChild;
+        setTimeout(() => {
+            toast.style.transition = 'opacity 0.3s, transform 0.3s';
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(20px)';
+            setTimeout(() => toast.remove(), 300);
+        }, 5000);
+    }
+
     // Kebab menu toggle with smooth animations
     function toggleKebab(event, menuId) {
         event.preventDefault();
@@ -519,6 +575,61 @@ return str_contains($hay, strtoupper($q));
 
                         // Close modal and reload page
                         closeORModal();
+                        window.location.reload();
+                    } else {
+                        alert('Failed to submit OR number');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred');
+                }
+            });
+        }
+    });
+
+    // Safe Loan OR Number Modal
+    function openSLORModal(requestId, refNo) {
+        const modal = document.getElementById('slOrModal');
+        const form = document.getElementById('slOrForm');
+        const refDisplay = document.getElementById('slOrRefNo');
+
+        form.action = `/safe-loan/${requestId}/enter-or`;
+        form.dataset.requestId = requestId;
+        refDisplay.textContent = refNo || '—';
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeSLORModal() {
+        const modal = document.getElementById('slOrModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.getElementById('sl_or_number').value = '';
+    }
+
+    // Handle Safe Loan OR form submission
+    document.addEventListener('DOMContentLoaded', function() {
+        const slOrForm = document.getElementById('slOrForm');
+        if (slOrForm) {
+            slOrForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(slOrForm);
+                const requestId = slOrForm.dataset.requestId;
+
+                try {
+                    const response = await fetch(slOrForm.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+
+                    if (response.ok) {
+                        // Close modal and reload page
+                        closeSLORModal();
                         window.location.reload();
                     } else {
                         alert('Failed to submit OR number');
@@ -697,6 +808,49 @@ return str_contains($hay, strtoupper($q));
                 }
             });
         }
+
+        // Show session messages as toast
+        @if(session('status'))
+        showToast('success', '{{ session('
+            status ') }}');
+        @endif
+
+        @if(session('error'))
+        showToast('error', '{{ session('
+            error ') }}');
+        @endif
     });
 </script>
+
+<style>
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .animate-fade-in {
+        animation: fade-in 0.3s ease-out;
+    }
+
+    @keyframes timer-progress {
+        from {
+            width: 100%;
+        }
+
+        to {
+            width: 0%;
+        }
+    }
+
+    .toast-timer-bar {
+        animation: timer-progress 5s linear forwards;
+    }
+</style>
 @endsection

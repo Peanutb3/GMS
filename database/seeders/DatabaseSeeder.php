@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
         // Custom seeder
         $this->call([
             AdminUserSeeder::class,
+            CollegesProgramsSeeder::class,
         ]);
     }
 }

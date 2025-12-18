@@ -38,21 +38,21 @@
             <h3 class="text-xl font-semibold mb-4">Summary</h3>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div class="bg-white rounded-lg shadow p-6 text-center">
-                    <p class="text-4xl font-bold text-red-800 mb-2">{{ $myGrievances->count() }}</p>
+                    <p class="text-4xl font-bold text-red-800 mb-2">{{ $totalGrievances->count() }}</p>
                     <p class="text-sm text-gray-600 flex items-center justify-center">
                         <span class="w-3 h-3 bg-blue-500 rounded-full mr-3"></span>
                         Total Grievances
                     </p>
                 </div>
                 <div class="bg-white rounded-lg shadow p-6 text-center">
-                    <p class="text-4xl font-bold text-black mb-2">{{ $myGrievances->where('status', 'pending')->count() }}</p>
+                    <p class="text-4xl font-bold text-black mb-2">{{ $totalGrievances->where('status', 'pending')->count() }}</p>
                     <p class="text-sm text-gray-600 flex items-center justify-center">
                         <span class="w-3 h-3 bg-orange-500 rounded-full mr-3"></span>
                         Pending Cases
                     </p>
                 </div>
                 <div class="bg-white rounded-lg shadow p-6 text-center">
-                    <p class="text-4xl font-bold text-red-800 mb-2">{{ $myGrievances->where('status', 'resolved')->count() }}</p>
+                    <p class="text-4xl font-bold text-red-800 mb-2">{{ $totalGrievances->where('status', 'resolved')->count() }}</p>
                     <p class="text-sm text-gray-600 flex items-center justify-center">
                         <span class="w-3 h-3 bg-green-500 rounded-full mr-3"></span>
                         Resolved Cases
@@ -79,10 +79,8 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
-                            @php $items = collect($myGrievances ?? [])->take(3); @endphp
-
-                            @if($items->isNotEmpty())
-                            @foreach($items as $g)
+                            @if($recentGrievances->isNotEmpty())
+                            @foreach($recentGrievances as $g)
                             <tr class="hover:bg-gray-50">
                                 <td class="px-4 py-3 text-gray-900">{{ $g->case_id }}</td>
                                 <td class="px-4 py-3 text-gray-700">{{ Str::limit($g->grievance ?? $g->description, 50) }}</td>
@@ -122,7 +120,7 @@
                     alt="Profile Avatar"
                     class="h-20 w-20 rounded-full border-4 border-pink-300 mx-auto mb-4 object-cover">
                 @else
-                <div class="h-20 w-20 rounded-full border-4 border-pink-300 bg-gradient-to-br from-blue-800 to-blue-600 flex items-center justify-center mx-auto mb-4">
+                <div class="h-20 w-20 rounded-full border-4 border-pink-300 bg-gradient-to-br from-red-800 to-red-600 flex items-center justify-center mx-auto mb-4">
                     <span class="text-2xl font-bold text-white">{{ substr($user->name ?? 'S', 0, 1) }}</span>
                 </div>
                 @endif

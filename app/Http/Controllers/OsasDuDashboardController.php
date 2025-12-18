@@ -17,23 +17,23 @@ class OsasDuDashboardController extends Controller
         $investigatingGrievances = Grievance::where('status', 'in_progress')->withoutTrashed()->count();
         $resolvedGrievances = Grievance::where('status', 'resolved')->withoutTrashed()->count();
 
-        // Recent grievances
+        // Recent grievances (last 7 days)
         // Only show:
         // - Not deleted (withoutTrashed)
-        // - Status is pending/in_progress OR filed within last 30 days
-        // - Exclude resolved grievances older than 30 days
-        $thirtyDaysAgo = now()->subDays(30);
+        // - Status is pending/in_progress OR filed within last 7 days
+        // - Exclude resolved grievances older than 7 days
+        $sevenDaysAgo = now()->subDays(7);
 
         $recentGrievances = Grievance::with('student')
             ->withoutTrashed()
-            ->where(function ($query) use ($thirtyDaysAgo) {
+            ->where(function ($query) use ($sevenDaysAgo) {
                 $query->whereIn('status', ['pending', 'in_progress'])
-                    ->orWhere('created_at', '>=', $thirtyDaysAgo);
+                    ->orWhere('created_at', '>=', $sevenDaysAgo);
             })
-            ->where(function ($query) use ($thirtyDaysAgo) {
-                // Exclude resolved grievances older than 30 days
+            ->where(function ($query) use ($sevenDaysAgo) {
+                // Exclude resolved grievances older than 7 days
                 $query->where('status', '!=', 'resolved')
-                    ->orWhere('created_at', '>=', $thirtyDaysAgo);
+                    ->orWhere('created_at', '>=', $sevenDaysAgo);
             })
             ->latest('created_at')
             ->take(10)

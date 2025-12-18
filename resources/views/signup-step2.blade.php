@@ -67,8 +67,10 @@
                     <!--Email -->
                     <div class="w-full">
                         <input type="email" name="email" value="{{ old('email') }}" placeholder="Email Address" required
+                            pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+                            title="Please enter a valid email address (e.g., user@example.com)"
                             class="w-full border-b border-white/70 focus:border-white focus:outline-none pb-3
-                     text-white/80 bg-transparent placeholder-white/70 text-sm">
+                     text-white/80 bg-transparent placeholder-white/70 text-sm invalid:border-red-400">
                         @error('email')
                         <p class="text-red-400 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -77,6 +79,8 @@
                     <!-- Password -->
                     <div class="relative w-full">
                         <input type="password" id="password" name="password" placeholder="Password" required
+                            minlength="6"
+                            title="Password must be at least 6 characters long"
                             class="w-full border-b border-white/70 focus:border-white focus:outline-none pb-3
                      text-white/80 bg-transparent placeholder-white/70 text-sm pr-10"
                             oninput="checkPasswordStrength(this.value)">
@@ -105,6 +109,7 @@
                     <!-- Confirm Password -->
                     <div class="relative w-full">
                         <input type="password" id="confirmPassword" name="password_confirmation" placeholder="Confirm Password" required
+                            minlength="6"
                             class="w-full border-b border-white/70 focus:border-white focus:outline-none pb-3
                      text-white/80 bg-transparent placeholder-white/70 text-sm pr-10">
                         <button type="button" onclick="togglePassword('confirmPassword','confirmEyeIcon')"

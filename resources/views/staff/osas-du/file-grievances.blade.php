@@ -6,7 +6,6 @@
 @include('partials.sidebar-osas-du')
 @endsection
 
-
 @section('content')
 <!-- <div class="max-w-4l mx-auto px-1 overflow-x-hidden"> -->
 
@@ -57,13 +56,17 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="relative">
                         <label for="student_id" class="block text-sm font-medium text-gray-700 mb-2">Student ID <span class="text-red-600">*</span></label>
-                        <input type="text" id="student_id" name="student_id" placeholder="Enter student ID" required
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-red-800 outline-none transition-all hover:border-gray-400" />
+                        <input type="text" id="student_id" name="student_id" placeholder="Enter student ID" required value="{{ old('student_id') }}"
+                            class="w-full px-4 py-3 border @error('student_id') border-red-500 @else border-gray-300 @enderror rounded-lg focus:ring-2 focus:ring-red-800 focus:border-red-800 outline-none transition-all hover:border-gray-400" />
+                        <div id="studentLookupStatus" class="mt-1 text-sm text-gray-500"></div>
+                        @error('student_id')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div class="relative">
                         <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Full Name <span class="text-red-600">*</span></label>
-                        <input type="text" id="name" name="name" placeholder="Enter student name" required
+                        <input type="text" id="name" name="name" placeholder="Enter student name" required value="{{ old('name') }}"
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-800 focus:border-red-800 outline-none transition-all hover:border-gray-400" />
                     </div>
                 </div>
@@ -209,6 +212,9 @@
     const programSelect = document.getElementById('program');
     const findUrlBase = '{{ url("osas-du/students/find") }}';
     const statusEl = document.getElementById('studentLookupStatus');
+    const submitBtn = document.querySelector('button[type="submit"]');
+
+    let studentFound = false; // Track if student ID is valid
 
     // File upload feedback
     const fileInput = document.getElementById('attachment');
@@ -310,9 +316,15 @@
     if (studentIdInput) {
         const lookup = debounce(function() {
             const val = studentIdInput.value.trim();
-            if (!val) return;
+            if (!val) {
+                studentFound = false;
+                return;
+            }
             const url = `${findUrlBase}/${encodeURIComponent(val)}`;
-            if (statusEl) statusEl.textContent = 'Looking up...';
+            if (statusEl) {
+                statusEl.textContent = 'Looking up...';
+                statusEl.className = 'mt-1 text-sm text-blue-600';
+            }
             fetch(url)
                 .then(res => {
                     if (!res.ok) throw new Error('not found');
@@ -320,6 +332,7 @@
                 })
                 .then(data => {
                     if (data.found) {
+                        studentFound = true;
                         nameInput.value = data.student.name || '';
 
                         // Parse college and program from the combined string
@@ -367,18 +380,54 @@
                             }
                         }
 
-                        if (statusEl) statusEl.textContent = 'Found';
+                        if (statusEl) {
+                            statusEl.textContent = '✓ Student found';
+                            statusEl.className = 'mt-1 text-sm text-green-600 font-medium';
+                        }
                     } else {
-                        if (statusEl) statusEl.textContent = 'Not found';
+                        studentFound = false;
+                        // Clear fields
+                        nameInput.value = '';
+                        collegeSelect.selectedIndex = 0;
+                        programSelect.innerHTML = '<option value=""></option>';
+                        programSelect.disabled = true;
+
+                        if (statusEl) {
+                            statusEl.textContent = '✗ Student ID not found in the system';
+                            statusEl.className = 'mt-1 text-sm text-red-600 font-medium';
+                        }
                     }
                 })
                 .catch((err) => {
                     console.log('student lookup error', err);
-                    if (statusEl) statusEl.textContent = 'Not found';
+                    studentFound = false;
+                    // Clear fields
+                    nameInput.value = '';
+                    collegeSelect.selectedIndex = 0;
+                    programSelect.innerHTML = '<option value=""></option>';
+                    programSelect.disabled = true;
+
+                    if (statusEl) {
+                        statusEl.textContent = '✗ Student ID not found in the system';
+                        statusEl.className = 'mt-1 text-sm text-red-600 font-medium';
+                    }
                 });
-        }, 400);
+        }, 300);
 
         studentIdInput.addEventListener('input', lookup);
+
+        // Prevent form submission if student not found
+        const form = studentIdInput.closest('form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                if (studentIdInput.value.trim() && !studentFound) {
+                    e.preventDefault();
+                    alert('Please enter a valid Student ID. The Student ID you entered was not found in the system.');
+                    studentIdInput.focus();
+                    return false;
+                }
+            });
+        }
     }
 
     //   if (testBtn) {

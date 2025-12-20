@@ -124,6 +124,15 @@ class GoodMoralRequestController extends Controller
             'ip_address' => $request->ip(),
         ]);
 
+        // Send email notification that request is ready for processing (after payment)
+        if ($goodMoralRequest->email) {
+            try {
+                \Mail::to($goodMoralRequest->email)->send(new \App\Mail\GoodMoralReadyNotification($goodMoralRequest));
+            } catch (\Exception $e) {
+                \Log::error('Failed to send good moral ready email: ' . $e->getMessage());
+            }
+        }
+
         return redirect()->route('good-moral.certificate', $goodMoralRequest);
     }
 
@@ -202,6 +211,15 @@ class GoodMoralRequestController extends Controller
             'new_values' => ['status' => 'completed'],
             'ip_address' => request()->ip(),
         ]);
+
+        // Send email notification that certificate is ready for pickup
+        if ($goodMoralRequest->email && $goodMoralRequest->or_number) {
+            try {
+                \Mail::to($goodMoralRequest->email)->send(new \App\Mail\GoodMoralCompletedNotification($goodMoralRequest));
+            } catch (\Exception $e) {
+                \Log::error('Failed to send good moral completed email: ' . $e->getMessage());
+            }
+        }
 
         return redirect()->route('osas-gmc.requests')
             ->with('status', 'Good moral request marked as completed.');

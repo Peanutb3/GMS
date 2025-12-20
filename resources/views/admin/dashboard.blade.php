@@ -31,7 +31,7 @@
         <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 mb-1">Total Students</p>
+                    <p class="text-sm text-gray-600 mb-1">Total Student(s)</p>
                     <p class="text-3xl font-bold text-gray-800">{{ $stats['total_students'] }}</p>
                 </div>
                 <div class="bg-blue-100 p-3 rounded-full">
@@ -46,7 +46,7 @@
         <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-purple-500">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 mb-1">Total Staff</p>
+                    <p class="text-sm text-gray-600 mb-1">Total Staff(s)</p>
                     <p class="text-3xl font-bold text-gray-800">{{ $stats['total_staff'] }}</p>
                 </div>
                 <div class="bg-purple-100 p-3 rounded-full">
@@ -62,7 +62,7 @@
         <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-red-500">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 mb-1">Total Grievances</p>
+                    <p class="text-sm text-gray-600 mb-1">Total Grievance(s)</p>
                     <p class="text-3xl font-bold text-gray-800">{{ $stats['total_grievances'] }}</p>
                 </div>
                 <div class="bg-red-100 p-3 rounded-full">
@@ -77,7 +77,7 @@
         <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-orange-500">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 mb-1">Pending Grievances</p>
+                    <p class="text-sm text-gray-600 mb-1">Pending Grievance(s)</p>
                     <p class="text-3xl font-bold text-gray-800">{{ $stats['pending_grievances'] }}</p>
                 </div>
                 <div class="bg-orange-100 p-3 rounded-full">
@@ -92,7 +92,7 @@
         <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 mb-1">Resolved Grievances</p>
+                    <p class="text-sm text-gray-600 mb-1">Resolved Grievance(s)</p>
                     <p class="text-3xl font-bold text-gray-800">{{ $stats['resolved_grievances'] }}</p>
                 </div>
                 <div class="bg-green-100 p-3 rounded-full">
@@ -107,7 +107,7 @@
         <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-indigo-500">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 mb-1">Total Admins</p>
+                    <p class="text-sm text-gray-600 mb-1">Total Admin(s)</p>
                     <p class="text-3xl font-bold text-gray-800">{{ $stats['total_admins'] }}</p>
                 </div>
                 <div class="bg-indigo-100 p-3 rounded-full">
@@ -122,7 +122,7 @@
         <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-teal-500">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 mb-1">Good Moral Requests</p>
+                    <p class="text-sm text-gray-600 mb-1">Good Moral Request(s)</p>
                     <p class="text-3xl font-bold text-gray-800">{{ $stats['total_good_moral'] }}</p>
                 </div>
                 <div class="bg-teal-100 p-3 rounded-full">
@@ -137,7 +137,7 @@
         <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-yellow-500">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600 mb-1">Pending Requests</p>
+                    <p class="text-sm text-gray-600 mb-1">Pending Request(s)</p>
                     <p class="text-3xl font-bold text-gray-800">{{ $stats['pending_good_moral'] }}</p>
                 </div>
                 <div class="bg-yellow-100 p-3 rounded-full">

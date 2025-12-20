@@ -66,9 +66,9 @@
 
                     <!--Email -->
                     <div class="w-full">
-                        <input type="email" name="email" value="{{ old('email') }}" placeholder="Email Address" required
-                            pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
-                            title="Please enter a valid email address (e.g., user@example.com)"
+                        <input type="email" name="email" value="{{ old('email') }}" placeholder="Email Address (e.g., name@usep.edu.ph)" required
+                            pattern="[a-zA-Z0-9._%+-]+@usep\.edu\.ph"
+                            title="Please use your USeP email address (@usep.edu.ph)"
                             class="w-full border-b border-white/70 focus:border-white focus:outline-none pb-3
                      text-white/80 bg-transparent placeholder-white/70 text-sm invalid:border-red-400">
                         @error('email')

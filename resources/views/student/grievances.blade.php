@@ -58,7 +58,7 @@
                 <th scope="col" class="px-6 py-3 font-medium">Type</th>
                 <th scope="col" class="px-6 py-3 font-medium">Date Filed</th>
                 <th scope="col" class="px-6 py-3 font-medium">Status</th>
-                <th scope="col" class="px-6 py-3 font-medium">Filed By</th>
+                <th scope="col" class="px-6 py-3 font-medium">Attachment</th>
             </tr>
         </thead>
         <tbody>
@@ -95,7 +95,18 @@
                         {{ ucfirst(str_replace('_',' ',$g->status)) }}
                     </span>
                 </td>
-                <td class="px-6 py-4">{{ $g->filed_by_display }}</td>
+                <td class="px-6 py-4">
+                    @if($g->attachment_path)
+                    <a href="{{ asset('storage/' . $g->attachment_path) }}" target="_blank" class="text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                        </svg>
+                        View
+                    </a>
+                    @else
+                    <span class="text-gray-400 text-sm">No attachment</span>
+                    @endif
+                </td>
             </tr>
             @empty
             <tr>

@@ -59,65 +59,65 @@
                 @endif
 
                 <!-- Testing Code Display (REMOVE IN PRODUCTION) -->
-                @if(session('2fa:test:code'))
+                {{-- @if(session('2fa:test:code'))
                 <div class="bg-yellow-500 text-black px-4 py-3 rounded mb-4 text-sm font-bold text-center">
                     TEST CODE: {{ session('2fa:test:code') }}
-                </div>
-                @endif
-
-                <!-- Error Messages -->
-                @if($errors->any())
-                <div class="bg-red-500 text-white px-4 py-3 rounded mb-4 text-sm">
-                    @foreach($errors->all() as $error)
-                    <p>{{ $error }}</p>
-                    @endforeach
-                </div>
-                @endif
-
-                <!-- Form -->
-                <form action="{{ route('2fa.verify') }}" method="POST">
-                    @csrf
-
-                    <!-- OTP Input -->
-                    <div class="mb-6">
-                        <input type="text"
-                            name="code"
-                            placeholder="Enter 6-digit code"
-                            required
-                            maxlength="6"
-                            pattern="[0-9]{6}"
-                            class="w-full border-b pb-3 bg-transparent text-center text-3xl tracking-widest mx-auto text-white placeholder-white/60 focus:outline-none border-white focus:border-white">
-                    </div>
-
-                    <!-- Verify Button -->
-                    <button type="submit"
-                        class="w-full bg-white text-black font-semibold py-3 rounded-full text-base uppercase hover:bg-gray-100 transition mb-4">
-                        VERIFY
-                    </button>
-
-                    <!-- Resend Link -->
-                    <div class="text-center">
-                        <p class="text-white/80 text-sm">
-                            Didn't receive the code?
-                            <button type="button" onclick="document.getElementById('resendForm').submit()"
-                                class="text-blue-300 hover:underline font-semibold">
-                                Resend
-                            </button>
-                        </p>
-                    </div>
-                </form>
-
-                <!-- Hidden Resend Form -->
-                <form id="resendForm" action="{{ route('2fa.resend') }}" method="POST" class="hidden">
-                    @csrf
-                </form>
             </div>
-        </div>
+            @endif --}}
 
-        <!-- Back to login -->
-        <div class="text-center text-white text-sm mb-6">
-            <a href="{{ route('login') }}" class="text-blue-300 hover:underline">Back to Login</a>
+            <!-- Error Messages -->
+            @if($errors->any())
+            <div class="bg-red-500 text-white px-4 py-3 rounded mb-4 text-sm">
+                @foreach($errors->all() as $error)
+                <p>{{ $error }}</p>
+                @endforeach
+            </div>
+            @endif
+
+            <!-- Form -->
+            <form action="{{ route('2fa.verify') }}" method="POST">
+                @csrf
+
+                <!-- OTP Input -->
+                <div class="mb-6">
+                    <input type="text"
+                        name="code"
+                        placeholder="Enter 6-digit code"
+                        required
+                        maxlength="6"
+                        pattern="[0-9]{6}"
+                        class="w-full border-b pb-3 bg-transparent text-center text-3xl tracking-widest mx-auto text-white placeholder-white/60 focus:outline-none border-white focus:border-white">
+                </div>
+
+                <!-- Verify Button -->
+                <button type="submit"
+                    class="w-full bg-white text-black font-semibold py-3 rounded-full text-base uppercase hover:bg-gray-100 transition mb-4">
+                    VERIFY
+                </button>
+
+                <!-- Resend Link -->
+                <div class="text-center">
+                    <p class="text-white/80 text-sm">
+                        Didn't receive the code?
+                        <button type="button" onclick="document.getElementById('resendForm').submit()"
+                            class="text-blue-300 hover:underline font-semibold">
+                            Resend
+                        </button>
+                    </p>
+                </div>
+            </form>
+
+            <!-- Hidden Resend Form -->
+            <form id="resendForm" action="{{ route('2fa.resend') }}" method="POST" class="hidden">
+                @csrf
+            </form>
         </div>
+    </div>
+
+    <!-- Back to login -->
+    <div class="text-center text-white text-sm mb-6">
+        <a href="{{ route('login') }}" class="text-blue-300 hover:underline">Back to Login</a>
+    </div>
     </div>
 
     <!-- Right Panel -->

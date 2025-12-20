@@ -51,6 +51,9 @@
                 </svg>
             </summary>
             <div class="sidebar-text bg-red-50 bg-opacity-10">
+                <a href="{{ route('admin.user-approvals') }}" class="flex items-center py-3 pl-[60px] pr-6 text-sm {{ request()->routeIs('admin.user-approvals') ? 'bg-red-900 text-white' : 'text-red-900 hover:bg-red-800 hover:text-white' }} transition-colors">
+                    Pending Approvals
+                </a>
                 <a href="{{ route('admin.manage-students') }}" class="flex items-center py-3 pl-[60px] pr-6 text-sm {{ request()->routeIs('admin.manage-students') ? 'bg-red-900 text-white' : 'text-red-900 hover:bg-red-800 hover:text-white' }} transition-colors">
                     Students
                 </a>

@@ -198,9 +198,7 @@ class AdminStudentController extends Controller
 
         $student->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Student deleted successfully'
-        ]);
+        return redirect()->route('admin.manage-students')
+            ->with('success', 'Student deleted successfully');
     }
 }

@@ -257,6 +257,19 @@ class GrievanceController extends Controller
             'attachment' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120', // 5MB max
         ]);
 
+        // If student_id is provided, validate it exists
+        if (!empty($data['student_id'])) {
+            $studentExists = \App\Models\Student::all()->first(function ($s) use ($data) {
+                return $s->student_id === $data['student_id'];
+            });
+
+            if (!$studentExists) {
+                return back()
+                    ->withInput()
+                    ->withErrors(['student_id' => 'Student ID not found. Please check and try again.']);
+            }
+        }
+
         // Handle file upload
         if ($request->hasFile('attachment')) {
             $file = $request->file('attachment');
@@ -266,57 +279,91 @@ class GrievanceController extends Controller
         }
 
         // Wrap entire grievance creation in a transaction to prevent duplicate case_ids
-        $grievance = \DB::transaction(function () use ($data) {
-            $year = date('y');
+        // Retry up to 3 times in case of race conditions
+        $maxRetries = 3;
+        $attempt = 0;
+        $grievance = null;
 
-            // Lock the table and get the last case_id for this year
-            $lastGrievance = Grievance::whereYear('created_at', date('Y'))
-                ->lockForUpdate()
-                ->orderByRaw('CAST(SUBSTRING(case_id, 8) AS UNSIGNED) DESC')
-                ->first();
+        while ($attempt < $maxRetries && !$grievance) {
+            try {
+                $grievance = \DB::transaction(function () use ($data) {
+                    $year = date('y');
 
-            if ($lastGrievance && preg_match('/GRV-' . $year . '-(\d+)/', $lastGrievance->case_id, $matches)) {
-                $count = intval($matches[1]) + 1;
-            } else {
-                $count = 1;
-            }
+                    // Lock the table and get the last case_id for this year (INCLUDING SOFT DELETED)
+                    // This prevents case_id duplication when grievances are soft deleted
+                    $lastGrievance = Grievance::withTrashed()
+                        ->where('case_id', 'like', 'GRV-' . $year . '-%')
+                        ->lockForUpdate()
+                        ->orderByRaw('CAST(SUBSTRING(case_id, 8) AS UNSIGNED) DESC')
+                        ->first();
 
-            $caseId = 'GRV-' . $year . '-' . str_pad($count, 3, '0', STR_PAD_LEFT);
-            $data['case_id'] = $caseId;
-            $data['status'] = 'pending';
+                    if ($lastGrievance && preg_match('/GRV-' . $year . '-(\d+)/', $lastGrievance->case_id, $matches)) {
+                        $count = intval($matches[1]) + 1;
+                    } else {
+                        $count = 1;
+                    }
 
-            // Try to attach student_record_id and populate snapshot fields
-            if (!empty($data['student_id'])) {
-                // Since student_id is encrypted, we need to search all students and compare decrypted values
-                $student = \App\Models\Student::all()->first(function ($s) use ($data) {
-                    return $s->student_id === $data['student_id'];
+                    $caseId = 'GRV-' . $year . '-' . str_pad($count, 3, '0', STR_PAD_LEFT);
+
+                    // Double-check this case_id doesn't exist (INCLUDING SOFT DELETED)
+                    if (Grievance::withTrashed()->where('case_id', $caseId)->exists()) {
+                        throw new \Exception('Case ID already exists, retrying...');
+                    }
+
+                    $data['case_id'] = $caseId;
+                    $data['status'] = 'pending';
+
+                    // Try to attach student_record_id and populate snapshot fields
+                    if (!empty($data['student_id'])) {
+                        // Since student_id is encrypted, we need to search all students and compare decrypted values
+                        $student = \App\Models\Student::all()->first(function ($s) use ($data) {
+                            return $s->student_id === $data['student_id'];
+                        });
+
+                        if ($student) {
+                            $data['student_record_id'] = $student->id;
+                            // Populate snapshot fields from student record
+                            $data['name_snapshot'] = $student->first_name . ' ' . $student->last_name;
+                            $data['student_no_snapshot'] = $student->student_id;
+                            $data['college_snapshot'] = $student->college_name;
+                            $data['program_snapshot'] = $student->program_name;
+                        } else {
+                            // Student ID provided but not found - use form data for snapshots
+                            $data['name_snapshot'] = $data['name'];
+                            $data['student_no_snapshot'] = $data['student_id'];
+                            $data['college_snapshot'] = $data['college'] ?? null;
+                            $data['program_snapshot'] = $data['program'] ?? null;
+                        }
+                    } else {
+                        // No student ID - use form data for snapshots
+                        $data['name_snapshot'] = $data['name'];
+                        $data['student_no_snapshot'] = null;
+                        $data['college_snapshot'] = $data['college'] ?? null;
+                        $data['program_snapshot'] = $data['program'] ?? null;
+                    }
+
+                    // Create the grievance inside the transaction
+                    return Grievance::create($data);
                 });
-
-                if ($student) {
-                    $data['student_record_id'] = $student->id;
-                    // Populate snapshot fields from student record
-                    $data['name_snapshot'] = $student->first_name . ' ' . $student->last_name;
-                    $data['student_no_snapshot'] = $student->student_id;
-                    $data['college_snapshot'] = $student->college_name;
-                    $data['program_snapshot'] = $student->program_name;
-                } else {
-                    // Student ID provided but not found - use form data for snapshots
-                    $data['name_snapshot'] = $data['name'];
-                    $data['student_no_snapshot'] = $data['student_id'];
-                    $data['college_snapshot'] = $data['college'] ?? null;
-                    $data['program_snapshot'] = $data['program'] ?? null;
+            } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
+                $attempt++;
+                if ($attempt >= $maxRetries) {
+                    throw $e;
                 }
-            } else {
-                // No student ID - use form data for snapshots
-                $data['name_snapshot'] = $data['name'];
-                $data['student_no_snapshot'] = null;
-                $data['college_snapshot'] = $data['college'] ?? null;
-                $data['program_snapshot'] = $data['program'] ?? null;
+                // Wait a bit before retrying (exponential backoff)
+                usleep(100000 * $attempt); // 100ms, 200ms, 300ms
+            } catch (\Exception $e) {
+                $attempt++;
+                if ($attempt >= $maxRetries) {
+                    return back()->withErrors(['error' => 'Failed to create grievance after multiple attempts. Please try again.']);
+                }
+                usleep(100000 * $attempt);
             }
+        }
 
-            // Create the grievance inside the transaction
-            return Grievance::create($data);
-        });
+        if (!$grievance) {
+            return back()->withErrors(['error' => 'Failed to create grievance. Please try again.']);
+        }
 
         // Notify all admins about new grievance
         $studentName = $data['name'];

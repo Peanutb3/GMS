@@ -14,8 +14,9 @@ class StudentDashboardController extends Controller
         $student = $user->student;
 
         if (!$student) {
-            $myGrievances = collect();
-            return view('student.dashboard', compact('user', 'student', 'myGrievances'));
+            $recentGrievances = collect();
+            $totalGrievances = collect();
+            return view('student.dashboard', compact('user', 'student', 'recentGrievances', 'totalGrievances'));
         }
 
         // Get recent grievances (last 7 days) for dashboard preview

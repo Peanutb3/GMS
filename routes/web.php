@@ -279,6 +279,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     // Dashboard
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
+    // User Approval Management
+    Route::get('/user-approvals', [\App\Http\Controllers\Admin\UserApprovalController::class, 'index'])->name('admin.user-approvals');
+    Route::post('/users/{id}/approve', [\App\Http\Controllers\Admin\UserApprovalController::class, 'approve'])->name('admin.users.approve');
+    Route::delete('/users/{id}/reject', [\App\Http\Controllers\Admin\UserApprovalController::class, 'reject'])->name('admin.users.reject');
+
     // Grievances Management
     Route::get('/grievances', [AdminGrievanceController::class, 'index'])->name('admin.grievances');
     Route::get('/grievances/{id}', [AdminGrievanceController::class, 'show'])->name('admin.grievances.show');

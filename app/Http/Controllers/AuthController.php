@@ -71,7 +71,12 @@ class AuthController extends Controller
         }
 
         $data = $request->validate([
-            'email' => 'required|email|unique:users,email',
+            'email' => [
+                'required',
+                'email',
+                'unique:users,email',
+                'regex:/^[a-zA-Z0-9._%+-]+@usep\.edu\.ph$/'
+            ],
             'password' => [
                 'required',
                 'string',
@@ -83,6 +88,7 @@ class AuthController extends Controller
                 'regex:/[@$!%*#?&_\-]/'
             ],
         ], [
+            'email.regex' => 'Email must be a valid USeP email address (@usep.edu.ph).',
             'password.min' => 'Password must be at least 8 characters.',
             'password.confirmed' => 'Password confirmation does not match.',
         ]);
@@ -93,6 +99,7 @@ class AuthController extends Controller
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
             'role' => 'student',
+            'is_approved' => false, // Requires admin approval
         ]);
 
         // Create student record
@@ -115,7 +122,7 @@ class AuthController extends Controller
         $user->sendEmailVerificationNotification();
 
         return redirect()->route('login')
-            ->with('success', 'Account created! Please check your email to verify your account before logging in.');
+            ->with('success', 'Account created! Please verify your email and wait for admin approval before logging in.');
     }
 
     /**
@@ -154,6 +161,13 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
         if (!$user) {
             return back()->withErrors(['email' => 'No account found with this email.'])->onlyInput('email');
+        }
+
+        // Check if account is approved (for students only)
+        if ($user->role === 'student' && !$user->is_approved) {
+            return back()->withErrors([
+                'email' => 'Your account is pending admin approval. Please wait for approval before logging in.'
+            ])->onlyInput('email');
         }
 
         // Email verification is no longer required for any role (2FA is sufficient)

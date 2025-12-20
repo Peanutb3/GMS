@@ -18,6 +18,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'role', // 'admin', 'staff', or 'student'
         'otp_expires_at',
         'trusted_devices',
+        'is_approved',
+        'approved_at',
+        'approved_by',
     ];
 
     protected $hidden = [
@@ -29,6 +32,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
         'last_login_at' => 'datetime',
         'otp_expires_at' => 'datetime',
+        'approved_at' => 'datetime',
         'trusted_devices' => 'array',
         'password' => 'hashed',
     ];

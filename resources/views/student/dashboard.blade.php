@@ -41,7 +41,7 @@
                     <p class="text-4xl font-bold text-red-800 mb-2">{{ $totalGrievances->count() }}</p>
                     <p class="text-sm text-gray-600 flex items-center justify-center">
                         <span class="w-3 h-3 bg-blue-500 rounded-full mr-3"></span>
-                        Total Grievances
+                        Total Grievance(s)
                     </p>
                 </div>
                 <div class="bg-white rounded-lg shadow p-6 text-center">
